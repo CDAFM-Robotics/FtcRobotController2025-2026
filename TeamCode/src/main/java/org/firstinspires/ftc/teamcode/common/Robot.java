@@ -76,10 +76,13 @@ public class Robot {
     double backRightPower;
     double heading;
 
-    public void setMotorPowers(double x, double y, double rx, double speed) {
-        heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-
+    public void setMotorPowers(double x, double y, double rx, double speed, boolean fieldCentric) {
+        if(fieldCentric) {
+            heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        }
+        else {
+            heading = 0;
+        }
 
         rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
         rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
