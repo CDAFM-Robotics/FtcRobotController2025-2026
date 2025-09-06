@@ -1,41 +1,13 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import java.lang.Math
+
+import java.lang.Math;
 
 
 /*
@@ -51,9 +23,9 @@ import java.lang.Math
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="INVERSE KINEMATICS", group="Linear OpMode")
+@TeleOp(name="Inverse Kinematics Test", group="Testing")
 @Disabled
-public class BasicOpMode_Linear extends LinearOpMode {
+public class InverseKinematicsTestOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -86,22 +58,23 @@ public class BasicOpMode_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
-        public static int ARM_ONE_LENGTH_MM = 400;
-        public static int ARM_TWO_LENGTH_MM = 300;
+        int ARM_ONE_LENGTH_MM = 400;
+        int ARM_TWO_LENGTH_MM = 300;
+
+        double x;
+        double y;
+        double z;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            float x;
-            float y;
-            float z;
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
-            telemetry.addData("z", z);
+//            telemetry.addData("x", x);
+//            telemetry.addData("y", y);
+//            telemetry.addData("z", z);
 
-            float baseAngle = Math.atan(x/y);
-            float AngleA = Math.acos(((-1*Math.pow(ARM_TWO_LENGTH_MM, 2)) + Math.pow(ARM_ONE_LENGTH_MM, 2), + Math.pow(x, 2) + Math.pow(z, 2))/(2*ARM_ONE_LENGTH_MM*Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2))));
-            float Servo1 = AngleA + Math.atan(z/x);
-            float Servo2 = Math.asin((Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2)) * Math.sin(AngleA)) / ARM_TWO_LENGTH_MM)
+//            double baseAngle = (double) Math.atan(x/y);
+//            double AngleA = Math.acos(((-1*Math.pow(ARM_TWO_LENGTH_MM, 2)) + Math.pow(ARM_ONE_LENGTH_MM, 2) + Math.pow(x, 2) + Math.pow(z, 2))/(2*ARM_ONE_LENGTH_MM*Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2)));
+//            double Servo1 = AngleA + Math.atan(z/x);
+//            double Servo2 = Math.asin((Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2)) * Math.sin(AngleA)) / ARM_TWO_LENGTH_MM)
             telemetry.update();
         }
     }
