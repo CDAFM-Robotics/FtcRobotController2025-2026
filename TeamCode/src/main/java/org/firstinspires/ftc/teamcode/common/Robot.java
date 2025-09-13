@@ -55,10 +55,10 @@ public class Robot {
         backLeftMotor = hwMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hwMap.get(DcMotor.class, "backRightMotor");
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,6 +102,7 @@ public class Robot {
 
         targetHeading = (currentTime - prevTime) * MAX_ROTATIONAL_VELOCITY * rx;
         targetHeading -= targetHeading > Math.PI ? Math.PI * 2 : (targetHeading < Math.PI ? -Math.PI*2 : 0);
+*/
 
         if(fieldCentric) {
             heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -109,7 +110,6 @@ public class Robot {
         else {
             heading = 0;
         }
-*/
 
         rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
         rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
@@ -120,12 +120,12 @@ public class Robot {
 
         denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
 
-        error = targetHeading - heading;
+        // error = targetHeading - heading;
 
-        frontLeftPower = ((rotY - rotX) * speed + rx) / denominator;
-        backLeftPower = ((rotY + rotX) * speed + rx) / denominator;
-        frontRightPower = ((rotY + rotX) * speed - rx) / denominator;
-        backRightPower = ((rotY - rotX) * speed - rx) / denominator;
+        frontLeftPower = ((rotY + rotX) * speed + rx) / denominator;
+        backLeftPower = ((rotY - rotX) * speed + rx) / denominator;
+        frontRightPower = ((rotY - rotX) * speed - rx) / denominator;
+        backRightPower = ((rotY + rotX) * speed - rx) / denominator;
 
 
 
@@ -136,7 +136,7 @@ public class Robot {
         telemetry.addData("Heading", heading);
         telemetry.addData("powers", "front left: %.2f, front right: %.2f, back left: %.2f, back right: %.2f",frontLeftPower*speed*100, frontRightPower*speed*100, backLeftPower*speed*100, backRightPower*speed*100);
 
-        //prevTime = currentTime;
+        // prevTime = currentTime;
 
     }
 }
