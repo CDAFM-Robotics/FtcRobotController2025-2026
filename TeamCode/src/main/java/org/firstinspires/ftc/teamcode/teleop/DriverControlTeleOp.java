@@ -19,12 +19,12 @@ public class DriverControlTeleOp extends LinearOpMode {
         double driveSpeed = 1;
         boolean fieldCentric = true;
 
-        waitForStart();
-
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
+
+        waitForStart();
 
         while(opModeIsActive()){
             previousGamepad1.copy(currentGamepad1);

@@ -23,7 +23,7 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Inverse Kinematics Test", group="Testing")
+@TeleOp(name="Inverse Kinematics Test", group="testing")
 @Disabled
 public class InverseKinematicsTestOpMode extends LinearOpMode {
 

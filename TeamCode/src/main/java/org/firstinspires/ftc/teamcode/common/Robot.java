@@ -104,7 +104,7 @@ public class Robot {
         targetHeading -= targetHeading > Math.PI ? Math.PI * 2 : (targetHeading < Math.PI ? -Math.PI*2 : 0);
 */
 
-        if(fieldCentric) {
+        if (fieldCentric) {
             heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         }
         else {
