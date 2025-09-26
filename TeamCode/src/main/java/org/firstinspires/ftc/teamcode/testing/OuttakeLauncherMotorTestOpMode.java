@@ -28,7 +28,7 @@ public class OuttakeLauncherMotorTestOpMode extends LinearOpMode {
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         outtakeMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        outtakeMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         double launchSpeed = 0;
 
