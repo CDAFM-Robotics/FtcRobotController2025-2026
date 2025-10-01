@@ -12,9 +12,7 @@ public class DriverControlTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(this);
-
-        robot.initializeDevices();
+        Robot robot = new Robot(hardwareMap, telemetry);
 
         double driveSpeed = 1;
         boolean fieldCentric = true;
@@ -44,7 +42,7 @@ public class DriverControlTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            robot.setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
+            robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
             telemetry.update();
         }

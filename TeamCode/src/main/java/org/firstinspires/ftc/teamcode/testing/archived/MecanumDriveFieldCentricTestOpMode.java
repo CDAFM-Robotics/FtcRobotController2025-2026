@@ -12,9 +12,7 @@ public class MecanumDriveFieldCentricTestOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this);
-
-        robot.initializeDevices();
+        Robot robot = new Robot(hardwareMap, telemetry);
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -37,7 +35,7 @@ public class MecanumDriveFieldCentricTestOpMode extends LinearOpMode {
 
             fieldcentric = (currentGamepad1.start && !previousGamepad1.start) != fieldcentric;
 
-            robot.setMotorPowers(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 1, fieldcentric);
+            robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 1, fieldcentric);
             telemetry.update();
         }
     }
