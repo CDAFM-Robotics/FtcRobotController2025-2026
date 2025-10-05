@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Indexer {
 
@@ -20,7 +23,14 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
-    enum ArtifactColor {
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0;
+    public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0;
+    public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0;
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0;
+    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0;
+    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0;
+
+    public enum ArtifactColor {
         PURPLE,
         GREEN,
         NONE,
@@ -30,6 +40,7 @@ public class Indexer {
     public Indexer(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+        initializeIndexerDevices();
     }
 
     public void initializeIndexerDevices() {
@@ -49,4 +60,60 @@ public class Indexer {
         colorSensor3Left.setGain(8);
         colorSensor3Right.setGain(8);
     }
+
+    private ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
+
+        ArtifactColor sensor1DetectedColor;
+
+        if (sensor1Distance > 3) {
+            sensor1DetectedColor = ArtifactColor.NONE;
+        }
+        else if (sensor1RGBA.blue > sensor1RGBA.green) {
+            sensor1DetectedColor = ArtifactColor.PURPLE;
+        }
+        else {
+            sensor1DetectedColor = ArtifactColor.GREEN;
+        }
+
+        ArtifactColor sensor2DetectedColor;
+
+        if (sensor2Distance > 3) {
+            sensor2DetectedColor = ArtifactColor.NONE;
+        }
+        else if (sensor2RGBA.blue > sensor2RGBA.green) {
+            sensor2DetectedColor = ArtifactColor.PURPLE;
+        }
+        else {
+            sensor2DetectedColor = ArtifactColor.GREEN;
+        }
+
+        if (sensor1DetectedColor == sensor2DetectedColor) {
+            return sensor1DetectedColor;
+        }
+        else if (sensor2DetectedColor == ArtifactColor.NONE) {
+            return  sensor1DetectedColor;
+        }
+        else if (sensor1DetectedColor == ArtifactColor.NONE){
+            return  sensor2DetectedColor;
+        }
+        else {
+            return  ArtifactColor.UNKNOWN;
+        }
+    }
+
+    public ArtifactColor[] getBallColors() {
+
+        ArtifactColor[] colors = new ArtifactColor[3];
+
+        colors[0] = getPredictedColor(colorSensor1Left.getNormalizedColors(), colorSensor1Right.getNormalizedColors(), ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+        colors[1] = getPredictedColor(colorSensor2Left.getNormalizedColors(), colorSensor2Right.getNormalizedColors(), ((DistanceSensor) colorSensor2Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor2Right).getDistance(DistanceUnit.CM));
+        colors[2] = getPredictedColor(colorSensor3Left.getNormalizedColors(), colorSensor3Right.getNormalizedColors(), ((DistanceSensor) colorSensor3Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor3Right).getDistance(DistanceUnit.CM));
+
+        return colors;
+    }
+
+    public /* Jude Bravo */ void rotateToPosition(double position) {
+        indexerServo.setPosition(position);
+    }
+
 }

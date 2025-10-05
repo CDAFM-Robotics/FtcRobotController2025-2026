@@ -24,6 +24,8 @@ public class DriveBase {
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+
+        initializeDriveBaseDevices();
     }
 
     public void initializeDriveBaseDevices() {

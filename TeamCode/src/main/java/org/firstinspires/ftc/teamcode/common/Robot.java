@@ -21,14 +21,15 @@ public class Robot {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    /***************************************************************************************************
-     ******************************************** CONSTANTS ********************************************
-     ***************************************************************************************************/
-
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+
+        initializeSubsystems();
+    }
+
+    public void initializeSubsystems() {
 
         // Create an instance of every subsystem in the Robot class
         this.driveBase = new DriveBase(this.hardwareMap, this.telemetry);
