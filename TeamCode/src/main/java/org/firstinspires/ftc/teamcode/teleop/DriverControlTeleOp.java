@@ -30,6 +30,8 @@ public class DriverControlTeleOp extends LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
+            // Drive Base
+
             if (currentGamepad1.left_stick_button && !previousGamepad1.left_stick_button){
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
@@ -44,7 +46,27 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
+            // Intake
+
+            if (currentGamepad2.a && !previousGamepad2.a) {
+                robot.getIntake().toggleIntake();
+            }
+
+            // Indexer
+
+            // We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
+
+
+            //Launcher
+
+            if (currentGamepad2.b && !previousGamepad2.b) {
+                robot.getLauncher().toggleLauncher();
+            }
+
+
+
             telemetry.update();
+
         }
     }
 }
