@@ -6,13 +6,13 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 
+import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class AutonomousTrajectoryBuilder {
+public class AutonomousActionBuilder {
 
     public Action redFarStartToFarLaunch;
     public Action redFarLaunchPickupThirdMark;
-    public Action redFarLaunchPickupHumanPlayerZone;
     public Action redFarLaunchToLeaveLaunchZone;
 
     public Action redCloseStartToCloseLaunch;
@@ -22,13 +22,22 @@ public class AutonomousTrajectoryBuilder {
 
     public Action blueFarStartToFarLaunch;
     public Action blueFarLaunchPickupThirdMark;
-    public Action blueFarLaunchPickupHumanPlayerZone;
     public Action blueFarLaunchToLeaveLaunchZone;
 
     public Action blueCloseStartToCloseLaunch;
     public Action blueCloseLaunchPickupFirstMark;
     public Action blueCloseLaunchPickupSecondMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
+
+    public Action spinUpAction;
+    public Action stopSpinUpAction;
+    public Action goToFirstBallAction;
+    public Action goToSecondBallAction;
+    public Action goToThirdBallAction;
+    public Action launchBallAction;
+    public Action startIntakeAction;
+    public Action stopIntakeAction;
+    public Action resetKickerAction;
 
     public Pose2d redFarLaunchPose = new Pose2d(57.7, 12.5, Math.toRadians(165));
     public Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(135));
@@ -39,7 +48,7 @@ public class AutonomousTrajectoryBuilder {
     public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(20);
     public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
 
-    public AutonomousTrajectoryBuilder(MecanumDrive md) {
+    public AutonomousActionBuilder(MecanumDrive md, Robot robot) {
 
         redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180)))
             .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
@@ -52,14 +61,6 @@ public class AutonomousTrajectoryBuilder {
           .setTangent(Math.toRadians(-90))
           .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
           .build();
-
-        redFarLaunchPickupHumanPlayerZone = md.actionBuilder(redFarLaunchPose)
-            .setTangent(Math.toRadians(90))
-            .splineToSplineHeading(new Pose2d(60, 47.5, Math.toRadians(90)), Math.toRadians(90), normalTranslationalVelConstraint)
-            .strafeToConstantHeading(new Vector2d(60, 61), slowTranslationalVelConstraint)
-            .setTangent(Math.toRadians(-90))
-            .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-90), normalTranslationalVelConstraint)
-            .build();
 
         redFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
           .lineToX(43, normalTranslationalVelConstraint)
@@ -101,14 +102,6 @@ public class AutonomousTrajectoryBuilder {
             .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(15), normalTranslationalVelConstraint)
             .build();
 
-        blueFarLaunchPickupHumanPlayerZone = md.actionBuilder(blueFarLaunchPose)
-            .setTangent(Math.toRadians(-90))
-            .splineToSplineHeading(new Pose2d(60, -47.5, Math.toRadians(-90)), Math.toRadians(-90), normalTranslationalVelConstraint)
-            .strafeToConstantHeading(new Vector2d(60, -61), slowTranslationalVelConstraint)
-            .setTangent(Math.toRadians(90))
-            .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(90), normalTranslationalVelConstraint)
-            .build();
-
         blueFarLaunchToLeaveLaunchZone = md.actionBuilder(blueFarLaunchPose)
             .lineToX(43, normalTranslationalVelConstraint)
             .build();
@@ -116,8 +109,6 @@ public class AutonomousTrajectoryBuilder {
         blueCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(53)))
             .strafeToSplineHeading(blueCloseLaunchPose.position, blueCloseLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
-
-        // TODO: 9/27/2025 Reverse the trajectories' y values, angles, and tangents down from this point.
 
         blueCloseLaunchPickupFirstMark = md.actionBuilder(blueCloseLaunchPose)
             .setTangent(Math.toRadians(0))
@@ -138,9 +129,69 @@ public class AutonomousTrajectoryBuilder {
         blueCloseLaunchToLeaveLaunchZone = md.actionBuilder(blueCloseLaunchPose)
             .strafeToConstantHeading(new Vector2d( -10, 30))
             .build();
+
+
+        // Non-driving actions
+
+        spinUpAction = robot.getLauncher().getSpinLauncherAction(1000);
+        stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
+
+        goToFirstBallAction = robot.getIndexer().getGoToFirstBallAction();
+        goToSecondBallAction = robot.getIndexer().getGoToSecondBallAction();
+        goToThirdBallAction = robot.getIndexer().getGoToThirdBallAction();
+
+        launchBallAction = robot.getLauncher().getKickBallAction();
+        resetKickerAction = robot.getLauncher().getResetKickerAction();
+
+        startIntakeAction = robot.getIntake().getStartIntakeAction();
+        stopIntakeAction = robot.getIntake().getStopIntakeAction();
     }
 
     public Action[] getRedFarTrajectories() {
-        return new Action[] {redFarStartToFarLaunch, redFarLaunchPickupThirdMark, redFarLaunchPickupHumanPlayerZone, redFarLaunchToLeaveLaunchZone};
+        return new Action[] {
+            redFarStartToFarLaunch,
+            redFarLaunchPickupThirdMark,
+            redFarLaunchToLeaveLaunchZone
+        };
+    }
+
+    public Action[] getRedCloseTrajectories() {
+        return new Action[] {
+            redCloseStartToCloseLaunch,
+            redCloseLaunchPickupFirstMark,
+            redCloseLaunchPickupSecondMark,
+            redCloseLaunchToLeaveLaunchZone
+        };
+    }
+
+    public Action[] getBlueFarTrajectories() {
+        return new Action[] {
+            blueFarStartToFarLaunch,
+            blueFarLaunchPickupThirdMark,
+            blueFarLaunchToLeaveLaunchZone
+        };
+    }
+
+    public Action[] getBlueCloseTrajectories() {
+        return new Action[] {
+            blueCloseStartToCloseLaunch,
+            blueCloseLaunchPickupFirstMark,
+            blueCloseLaunchPickupSecondMark,
+            blueCloseLaunchToLeaveLaunchZone
+        };
+    }
+
+    public Action[] getOtherActions() {
+        return new Action[] {
+            spinUpAction,
+            stopSpinUpAction,
+            goToFirstBallAction,
+            goToSecondBallAction,
+            goToThirdBallAction,
+            launchBallAction,
+            startIntakeAction,
+            stopIntakeAction,
+            resetKickerAction,
+        };
     }
 }

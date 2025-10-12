@@ -60,7 +60,7 @@ public class DriveBase {
 
         double heading;
         if (fieldCentric) {
-            heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         }
         else {
             heading = 0;

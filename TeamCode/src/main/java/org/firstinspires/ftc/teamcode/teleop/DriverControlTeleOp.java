@@ -44,7 +44,9 @@ public class DriverControlTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
+            robot.getDriveBase().setMotorPowers(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, driveSpeed, fieldCentric);
+
+            // TODO We need 2 states: pickup and shoot
 
             // Intake
 
@@ -54,13 +56,28 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             // Indexer
 
-            // We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
+            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
+                robot.getIndexer().rotateRight();
+            }
+
+            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
+                robot.getIndexer().rotateLeft();
+            }
+
+            // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
 
             //Launcher
 
             if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
+            }
+
+            if (currentGamepad2.y) {
+                robot.getLauncher().kickBall();
+            }
+            else {
+                robot.getLauncher().resetKicker();
             }
 
 

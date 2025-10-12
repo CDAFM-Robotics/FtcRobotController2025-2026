@@ -29,8 +29,12 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
-
-            position += currentGamepad2.a && !previousGamepad2.a ? 0.1 : (currentGamepad2.b && !previousGamepad2.b ? -0.1 : 0);
+            if (currentGamepad1.a && !previousGamepad1.a) {
+                position += 0.1;
+            }
+            if (currentGamepad1.b && !previousGamepad1.b) {
+                position -= 0.1;
+            }
 
             robot.getIndexer().rotateToPosition(position);
         }

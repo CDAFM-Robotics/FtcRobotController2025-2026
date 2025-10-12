@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -23,12 +30,51 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0;
-    public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0;
-    public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0;
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0;
-    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0;
-    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0;
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0.944444444;
+    public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0.055555556;
+    public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0.5;
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.07;
+    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.5;
+    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.93;
+
+    public class RotateIndexerAction implements Action {
+
+        private boolean initialized = false;
+
+        public double position;
+
+        public RotateIndexerAction(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                indexerServo.setPosition(position);
+                initialized = true;
+            }
+            return true;
+        }
+    }
+
+    public Action getRotateIndexerAction(double position) {
+        return new SequentialAction(
+            new RotateIndexerAction(position),
+            new SleepAction(1000)
+        );
+    }
+
+    public Action getGoToFirstBallAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+    }
+
+    public Action getGoToSecondBallAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+    }
+
+    public Action getGoToThirdBallAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+    }
 
     public enum ArtifactColor {
         PURPLE,
@@ -59,6 +105,8 @@ public class Indexer {
         colorSensor2Right.setGain(8);
         colorSensor3Left.setGain(8);
         colorSensor3Right.setGain(8);
+
+        indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
     }
 
     private ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
@@ -112,8 +160,37 @@ public class Indexer {
         return colors;
     }
 
-    public /* Jude Bravo */ void rotateToPosition(double position) {
+    public void rotateToPosition(double position) {
         indexerServo.setPosition(position);
     }
+
+    public void rotateLeft() {
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        }
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        }
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        }
+    }
+
+    public void rotateRight() {
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        }
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        }
+        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
+            rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        }
+        else {
+            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        }
+    }
+
+
 
 }
