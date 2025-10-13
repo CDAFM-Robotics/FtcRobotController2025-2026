@@ -16,6 +16,7 @@ public class DriverControlTeleOp extends LinearOpMode {
 
         double driveSpeed = 1;
         boolean fieldCentric = true;
+        double index_position = 0.5;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -55,14 +56,27 @@ public class DriverControlTeleOp extends LinearOpMode {
             }
 
             // Indexer
+            index_position += currentGamepad2.x && !previousGamepad2.x ? 0.4 : (currentGamepad2.y && !previousGamepad2.y ? -0.4 : 0);
 
-            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
+            if (index_position > 1) {
+                index_position -= 0.4;
+            }
+
+            if (index_position < 0) {
+                index_position += 0.4;
+            }
+
+            robot.getIndexer().rotateToPosition(index_position);
+            telemetry.addData("index position:", index_position);
+
+
+/*            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
                 robot.getIndexer().rotateRight();
             }
 
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
                 robot.getIndexer().rotateLeft();
-            }
+            }*/
 
             // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
@@ -73,7 +87,7 @@ public class DriverControlTeleOp extends LinearOpMode {
                 robot.getLauncher().toggleLauncher();
             }
 
-            if (currentGamepad2.y) {
+            if (currentGamepad2.right_bumper) {
                 robot.getLauncher().kickBall();
             }
             else {

@@ -144,8 +144,10 @@ public class Launcher {
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
     }
 
+    private boolean launcherActive = false;
+
     public void toggleKicker() {
-        if (kickerServo.getPosition() == POSITION_KICKER_SERVO_INIT) {
+        if (kickerServo.getPosition() == POSITION_KICKER_SERVO_INIT && launcherActive) {
             kickBall();
         }
         else {
@@ -154,7 +156,9 @@ public class Launcher {
     }
     
     public void kickBall() {
-        kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
+        if (launcherActive) {
+            kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
+        }
     }
 
     public void resetKicker() {
@@ -172,14 +176,17 @@ public class Launcher {
 
     public void startLauncher() {
         setLauncherPower(1);
+        launcherActive = true;
     }
 
     public void stopLauncher() {
         setLauncherPower(0);
+        launcherActive = false;
     }
 
     public void setLauncherPower(double power) {
         launcherMotor2.setPower(power);
         launcherMotor1.setPower(power);
+        launcherActive = power != 0;
     }
 }
