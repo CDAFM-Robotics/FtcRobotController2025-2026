@@ -27,7 +27,7 @@ public class Launcher {
 
     // TODO: 10/8/2025 DETERMINE CONSTANTS EMPIRICALLY
     
-    public final double POSITION_KICKER_SERVO_KICK_BALL = 1;
+    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.88;
     public final double POSITION_KICKER_SERVO_INIT = 0.6;
 
     public class SpinLauncherAction implements Action {

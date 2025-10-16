@@ -33,9 +33,9 @@ public class Indexer {
     public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0.944444444;
     public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0.055555556;
     public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0.5;
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.07;
-    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.5;
-    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.93;
+    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.10;//was 0.07
+    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.51;//was 0.5
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.89;//was 0.93
 
     public class RotateIndexerAction implements Action {
 
@@ -65,7 +65,7 @@ public class Indexer {
     }
 
     public Action getGoToFirstBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
     }
 
     public Action getGoToSecondBallAction() {
@@ -160,37 +160,32 @@ public class Indexer {
         return colors;
     }
 
+    public double getIndexerPosition() {
+        return indexerServo.getPosition();
+    }
+
     public void rotateToPosition(double position) {
         indexerServo.setPosition(position);
     }
 
-    public void rotateLeft() {
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+    public void rotateClock() {
+        double position = indexerServo.getPosition();
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
         }
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
-        }
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
         }
     }
 
-    public void rotateRight() {
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+    public void rotateCounterClock() {
+        double position = indexerServo.getPosition();
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
         }
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
-        }
-        if (indexerServo.getPosition() == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
-            rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
-        }
-        else {
-            rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
         }
     }
-
-
 
 }
