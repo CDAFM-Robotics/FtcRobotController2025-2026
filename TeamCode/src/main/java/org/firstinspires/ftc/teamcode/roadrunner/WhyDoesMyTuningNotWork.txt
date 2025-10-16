@@ -1,0 +1,9 @@
+Why Does My Tuning For The FTC RoadRunner Library Not Work, by Jonathan Witt et al.
+
+There are a few problems with the roadrunner library
+
+All logger potentially have a problem where the timestamp gets messed up and becomes either far in
+the past or far in the future. This can be prevented by connecting to the control hub and
+deleting/renaming the folder called Roadrunner
+
+Who made mecanum motor direction debugger go the wrong way?
