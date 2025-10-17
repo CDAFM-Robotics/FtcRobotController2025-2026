@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous.trajectories;
+package org.firstinspires.ftc.teamcode.autonomous.actions;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -39,18 +39,18 @@ public class AutonomousActionBuilder {
     public Action stopIntakeAction;
     public Action resetKickerAction;
 
-    public Pose2d redFarLaunchPose = new Pose2d(57.7, 12.5, Math.toRadians(165));
-    public Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(135));
+    public Pose2d redFarLaunchPose = new Pose2d(57.7, 12.5, Math.toRadians(255));
+    public Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(225));
 
-    public Pose2d blueFarLaunchPose = new Pose2d(57.7, -12.5, Math.toRadians(165));
-    public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-135));
+    public Pose2d blueFarLaunchPose = new Pose2d(57.7, -12.5, Math.toRadians(-75));
+    public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(20);
-    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
+    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(5);
+    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(5);
 
     public AutonomousActionBuilder(MecanumDrive md, Robot robot) {
 
-        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180)))
+        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(57.7, 12.5), Math.toRadians(180)))
             .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
@@ -63,8 +63,8 @@ public class AutonomousActionBuilder {
           .build();
 
         redFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
-          .lineToX(43, normalTranslationalVelConstraint)
-          .build();
+            .strafeTo(new Vector2d(47.5, 23.5), normalTranslationalVelConstraint)
+            .build();
 
         redCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(-53)))
           .strafeToSplineHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
@@ -102,8 +102,8 @@ public class AutonomousActionBuilder {
             .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(15), normalTranslationalVelConstraint)
             .build();
 
-        blueFarLaunchToLeaveLaunchZone = md.actionBuilder(blueFarLaunchPose)
-            .lineToX(43, normalTranslationalVelConstraint)
+        blueFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
+            .strafeTo(new Vector2d(47.5, -23.5), normalTranslationalVelConstraint)
             .build();
 
         blueCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(53)))
@@ -133,7 +133,7 @@ public class AutonomousActionBuilder {
 
         // Non-driving actions
 
-        spinUpAction = robot.getLauncher().getSpinLauncherAction(1000);
+        spinUpAction = robot.getLauncher().getSpinLauncherAction();
         stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
 
         goToFirstBallAction = robot.getIndexer().getGoToFirstBallAction();

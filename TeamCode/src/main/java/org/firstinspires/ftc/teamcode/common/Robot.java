@@ -39,6 +39,13 @@ public class Robot {
 
     }
 
+    public enum ArtifactColor {
+        PURPLE,
+        GREEN,
+        NONE,
+        UNKNOWN
+    }
+
     public DriveBase getDriveBase() {
         return driveBase;
     }

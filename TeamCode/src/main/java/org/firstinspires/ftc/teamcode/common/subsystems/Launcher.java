@@ -4,15 +4,22 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.ftccommon.configuration.RobotConfigResFilter;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.Robot;
 
+import java.util.List;
 import java.util.Set;
 
 public class Launcher {
@@ -22,6 +29,8 @@ public class Launcher {
 
     DcMotorEx launcherMotor1;
     DcMotorEx launcherMotor2;
+
+    private Limelight3A limelight;
 
     Servo kickerServo;
 
@@ -34,10 +43,8 @@ public class Launcher {
 
         private boolean initialized = false;
 
-        public double velocity;
 
-        public SpinLauncherAction(double velocity) {
-            this.velocity = velocity;
+        public SpinLauncherAction() {
         }
 
         @Override
@@ -48,12 +55,7 @@ public class Launcher {
                 initialized = true;
             }
 
-            double vel1 = launcherMotor1.getVelocity();
-            double vel2 = launcherMotor2.getVelocity();
-
-            telemetryPacket.put("Shooter Velocity", System.out.format("1: %.4f, 2: %.4f", vel1, vel2));
-
-            return vel2 + vel1 > velocity * 2;
+            return false;
         }
     }
 
@@ -74,7 +76,7 @@ public class Launcher {
                 launcherMotor2.setPower(power);
                 initialized = true;
             }
-            return true;
+            return false;
         }
     }
 
@@ -95,12 +97,15 @@ public class Launcher {
                 initialized = true;
             }
 
-            return true;
+            return false;
         }
     }
 
-    public Action getSpinLauncherAction(double velocity) {
-        return new SpinLauncherAction(velocity);
+    public Action getSpinLauncherAction() {
+        return new ParallelAction(
+            new SpinLauncherAction(),
+            new SleepAction(1500)
+            );
     }
 
     public Action getRotateKickerAction(double position) {
@@ -142,6 +147,30 @@ public class Launcher {
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
 
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(3);
+
+        limelight.start();
+    }
+
+    public Robot.ArtifactColor[] getMotifPattern() {
+        LLResult result = limelight.getLatestResult();
+        if (result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                if (fr.getFiducialId() == 21) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                }
+                else if (fr.getFiducialId() == 22) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                }
+                else if (fr.getFiducialId() == 23) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                }
+            }
+        }
+        return null;
     }
 
     private boolean launcherActive = false;
@@ -188,5 +217,9 @@ public class Launcher {
         launcherMotor2.setPower(power);
         launcherMotor1.setPower(power);
         launcherActive = power != 0;
+    }
+
+    public double getLauncherVelocity() {
+        return launcherMotor1.getVelocity();
     }
 }

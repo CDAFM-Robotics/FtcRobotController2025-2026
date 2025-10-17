@@ -63,11 +63,11 @@ public class DriverControlTeleOp extends LinearOpMode {
             telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
 
            if (currentGamepad2.x && !previousGamepad2.x) {
-                robot.getIndexer().rotateClock();
+                robot.getIndexer().rotateClockwise();
             }
 
            if (currentGamepad2.y && !previousGamepad2.y) {
-                robot.getIndexer().rotateCounterClock();
+                robot.getIndexer().rotateCounterClockwise();
            }
            telemetry.addData("index position2: ", robot.getIndexer().getIndexerPosition());
 
