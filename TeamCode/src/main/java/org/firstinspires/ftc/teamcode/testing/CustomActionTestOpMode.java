@@ -13,6 +13,6 @@ public class CustomActionTestOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, telemetry);
         waitForStart();
-        Actions.runBlocking(robot.getLauncher().getSpinLauncherAction(1000000));
+        Actions.runBlocking(robot.getLauncher().getSpinLauncherAction(10000));
     }
 }

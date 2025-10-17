@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.common.Robot;
 
 public class Indexer {
 
@@ -33,7 +34,7 @@ public class Indexer {
     public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0.944444444;
     public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0.055555556;
     public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0.5;
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.07;
+    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.0555555556;
     public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.5;
     public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.93;
 
@@ -76,12 +77,7 @@ public class Indexer {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
     }
 
-    public enum ArtifactColor {
-        PURPLE,
-        GREEN,
-        NONE,
-        UNKNOWN
-    }
+
 
     public Indexer(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -109,49 +105,49 @@ public class Indexer {
         indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
     }
 
-    private ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
+    private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
 
-        ArtifactColor sensor1DetectedColor;
+        Robot.ArtifactColor sensor1DetectedColor;
 
         if (sensor1Distance > 3) {
-            sensor1DetectedColor = ArtifactColor.NONE;
+            sensor1DetectedColor = Robot.ArtifactColor.NONE;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {
-            sensor1DetectedColor = ArtifactColor.PURPLE;
+            sensor1DetectedColor = Robot.ArtifactColor.PURPLE;
         }
         else {
-            sensor1DetectedColor = ArtifactColor.GREEN;
+            sensor1DetectedColor = Robot.ArtifactColor.GREEN;
         }
 
-        ArtifactColor sensor2DetectedColor;
+        Robot.ArtifactColor sensor2DetectedColor;
 
         if (sensor2Distance > 3) {
-            sensor2DetectedColor = ArtifactColor.NONE;
+            sensor2DetectedColor = Robot.ArtifactColor.NONE;
         }
         else if (sensor2RGBA.blue > sensor2RGBA.green) {
-            sensor2DetectedColor = ArtifactColor.PURPLE;
+            sensor2DetectedColor = Robot.ArtifactColor.PURPLE;
         }
         else {
-            sensor2DetectedColor = ArtifactColor.GREEN;
+            sensor2DetectedColor = Robot.ArtifactColor.GREEN;
         }
 
         if (sensor1DetectedColor == sensor2DetectedColor) {
             return sensor1DetectedColor;
         }
-        else if (sensor2DetectedColor == ArtifactColor.NONE) {
+        else if (sensor2DetectedColor == Robot.ArtifactColor.NONE) {
             return  sensor1DetectedColor;
         }
-        else if (sensor1DetectedColor == ArtifactColor.NONE){
+        else if (sensor1DetectedColor == Robot.ArtifactColor.NONE){
             return  sensor2DetectedColor;
         }
         else {
-            return  ArtifactColor.UNKNOWN;
+            return  Robot.ArtifactColor.UNKNOWN;
         }
     }
 
-    public ArtifactColor[] getBallColors() {
+    public Robot.ArtifactColor[] getBallColors() {
 
-        ArtifactColor[] colors = new ArtifactColor[3];
+        Robot.ArtifactColor[] colors = new Robot.ArtifactColor[3];
 
         colors[0] = getPredictedColor(colorSensor1Left.getNormalizedColors(), colorSensor1Right.getNormalizedColors(), ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
         colors[1] = getPredictedColor(colorSensor2Left.getNormalizedColors(), colorSensor2Right.getNormalizedColors(), ((DistanceSensor) colorSensor2Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor2Right).getDistance(DistanceUnit.CM));

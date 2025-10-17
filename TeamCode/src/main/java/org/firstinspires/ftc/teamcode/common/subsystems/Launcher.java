@@ -6,13 +6,19 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.ftccommon.configuration.RobotConfigResFilter;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.Robot;
 
+import java.util.List;
 import java.util.Set;
 
 public class Launcher {
@@ -22,6 +28,8 @@ public class Launcher {
 
     DcMotorEx launcherMotor1;
     DcMotorEx launcherMotor2;
+
+    private Limelight3A limelight;
 
     Servo kickerServo;
 
@@ -142,6 +150,30 @@ public class Launcher {
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
 
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(3);
+
+        limelight.start();
+    }
+
+    public Robot.ArtifactColor[] getMotifPattern() {
+        LLResult result = limelight.getLatestResult();
+        if (result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                if (fr.getFiducialId() == 21) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                }
+                else if (fr.getFiducialId() == 22) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                }
+                else if (fr.getFiducialId() == 23) {
+                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                }
+            }
+        }
+        return null;
     }
 
     private boolean launcherActive = false;
