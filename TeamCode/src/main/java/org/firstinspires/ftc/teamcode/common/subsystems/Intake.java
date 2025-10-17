@@ -72,12 +72,25 @@ public class Intake {
         }
     }
 
+    public void reverseToggleIntake() {
+        if (intakeMotor.getPower() != 0) {
+            stopIntake();
+        }
+        else {
+            reverseIntake();
+        }
+    }
+
     public void startIntake() {
         setIntakeMotorPower(1);
     }
     public void stopIntake() {
         setIntakeMotorPower(0);
     }
+    public void reverseIntake() {
+        setIntakeMotorPower(-1);
+    }
+
     public void setIntakeMotorPower(double speed) {
         intakeMotor.setPower(speed);
     }

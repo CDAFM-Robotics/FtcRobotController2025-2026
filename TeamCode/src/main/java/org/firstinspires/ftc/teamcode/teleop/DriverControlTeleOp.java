@@ -47,37 +47,20 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             robot.getDriveBase().setMotorPowers(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
-            // TODO We need 2 states: pickup and shoot
+          // TODO We need 2 states: pickup and shoot
 
             // Intake
 
             if (currentGamepad1.a && !previousGamepad1.a) {
                 robot.getIntake().toggleIntake();
             }
+            if (currentGamepad1.b && !previousGamepad1.b) {
+                robot.getIntake().reverseToggleIntake();
+            }
 
             // Indexer
-            //index_position += (currentGamepad2.x && !previousGamepad2.x) ? 0.4 : ((currentGamepad2.y && !previousGamepad2.y) ? -0.4 : 0);
-            //index_position += (currentGamepad2.x && !previousGamepad2.x) ? 0.01 : ((currentGamepad2.y && !previousGamepad2.y) ? -0.01 : 0);
-
-            /*if (index_position > 1) {
-                index_position -= 0.4;
-            }
-
-            if (index_position < 0) {
-                index_position += 0.4;
-            }**/
-
-            /*if (index_position > 1) {
-                index_position =1;
-            }
-
-            if (index_position < 0) {
-                index_position =0;
-            }*/
-
             //robot.getIndexer().rotateToPosition(index_position);
             telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
-
 
            if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getIndexer().rotateClock();
@@ -104,8 +87,6 @@ public class DriverControlTeleOp extends LinearOpMode {
             else {
                 robot.getLauncher().resetKicker();
             }
-
-
 
             telemetry.update();
 
