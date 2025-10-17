@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -164,7 +163,7 @@ public class Indexer {
         indexerServo.setPosition(position);
     }
 
-    public void rotateClock() {
+    public void rotateClockwise() {
         double position = indexerServo.getPosition();
         if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
             indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
@@ -174,7 +173,7 @@ public class Indexer {
         }
     }
 
-    public void rotateCounterClock() {
+    public void rotateCounterClockwise() {
         double position = indexerServo.getPosition();
         if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
             indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
