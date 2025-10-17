@@ -47,8 +47,8 @@ public class DriveBase {
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-            RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+            RevHubOrientationOnRobot.UsbFacingDirection.UP
         )
         );
 
@@ -87,4 +87,5 @@ public class DriveBase {
         telemetry.addData("Heading", heading);
         telemetry.addData("powers", "front left: %.2f, front right: %.2f, back left: %.2f, back right: %.2f", frontLeftPower *speed*100, frontRightPower *speed*100, backLeftPower *speed*100, backRightPower *speed*100);
     }
+
 }
