@@ -45,12 +45,12 @@ public class AutonomousActionBuilder {
     public Pose2d blueFarLaunchPose = new Pose2d(57.7, -12.5, Math.toRadians(-75));
     public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(20);
-    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
+    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(5);
+    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(5);
 
     public AutonomousActionBuilder(MecanumDrive md, Robot robot) {
 
-        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180)))
+        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(57.7, 12.5), Math.toRadians(180)))
             .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
@@ -133,7 +133,7 @@ public class AutonomousActionBuilder {
 
         // Non-driving actions
 
-        spinUpAction = robot.getLauncher().getSpinLauncherAction(1000);
+        spinUpAction = robot.getLauncher().getSpinLauncherAction();
         stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
 
         goToFirstBallAction = robot.getIndexer().getGoToFirstBallAction();

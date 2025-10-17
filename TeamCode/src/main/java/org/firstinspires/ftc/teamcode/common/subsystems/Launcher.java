@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.ftccommon.configuration.RobotConfigResFilter;
@@ -42,10 +43,8 @@ public class Launcher {
 
         private boolean initialized = false;
 
-        public double velocity;
 
-        public SpinLauncherAction(double velocity) {
-            this.velocity = velocity;
+        public SpinLauncherAction() {
         }
 
         @Override
@@ -56,12 +55,7 @@ public class Launcher {
                 initialized = true;
             }
 
-            double vel1 = launcherMotor1.getVelocity();
-            double vel2 = launcherMotor2.getVelocity();
-
-            telemetryPacket.put("Shooter Velocity", System.out.format("1: %.4f, 2: %.4f", vel1, vel2));
-
-            return vel2 + vel1 > velocity * 2;
+            return false;
         }
     }
 
@@ -82,7 +76,7 @@ public class Launcher {
                 launcherMotor2.setPower(power);
                 initialized = true;
             }
-            return true;
+            return false;
         }
     }
 
@@ -103,12 +97,15 @@ public class Launcher {
                 initialized = true;
             }
 
-            return true;
+            return false;
         }
     }
 
-    public Action getSpinLauncherAction(double velocity) {
-        return new SpinLauncherAction(velocity);
+    public Action getSpinLauncherAction() {
+        return new ParallelAction(
+            new SpinLauncherAction(),
+            new SleepAction(1500)
+            );
     }
 
     public Action getRotateKickerAction(double position) {
@@ -220,5 +217,9 @@ public class Launcher {
         launcherMotor2.setPower(power);
         launcherMotor1.setPower(power);
         launcherActive = power != 0;
+    }
+
+    public double getLauncherVelocity() {
+        return launcherMotor1.getVelocity();
     }
 }

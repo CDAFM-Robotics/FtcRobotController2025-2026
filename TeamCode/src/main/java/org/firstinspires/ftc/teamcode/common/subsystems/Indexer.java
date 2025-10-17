@@ -54,7 +54,7 @@ public class Indexer {
                 indexerServo.setPosition(position);
                 initialized = true;
             }
-            return true;
+            return false;
         }
     }
 

@@ -34,7 +34,7 @@ public class Intake {
                 initialized = true;
             }
 
-            return true;
+            return false;
         }
     }
 

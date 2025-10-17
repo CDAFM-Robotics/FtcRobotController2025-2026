@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 public class RedBackAutonomousOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(57.7, 12.5, Math.toRadians(180)));
         Robot robot = new Robot(hardwareMap, telemetry);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
@@ -49,15 +49,10 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             otherActions[0]
         ));
 
-        sleep(1000);
-
         Actions.runBlocking(otherActions[5]);
 
-        sleep(1000);
 
         Actions.runBlocking(otherActions[8]);
-
-        sleep(1000);
 
         if (motif[0] == Robot.ArtifactColor.GREEN) {
             Actions.runBlocking(otherActions[2]);
@@ -69,15 +64,9 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(otherActions[4]);
         }
 
-        sleep(1000);
-
         Actions.runBlocking(otherActions[5]);
 
-        sleep(1000);
-
         Actions.runBlocking(otherActions[8]);
-
-        sleep(1000);
 
         if (motif[0] == Robot.ArtifactColor.GREEN) {
             Actions.runBlocking(otherActions[4]);
@@ -89,11 +78,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(otherActions[3]);
         }
 
-        sleep(1000);
-
         Actions.runBlocking(otherActions[5]);
-
-        sleep(1000);
 
         Actions.runBlocking(otherActions[8]);
 
@@ -101,7 +86,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         //Actions.runBlocking(trajectories[1]);
 
-        sleep(2000);
+        sleep(1000);
 
         // LEave
 
