@@ -51,32 +51,43 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             // Intake
 
-            if (currentGamepad2.a && !previousGamepad2.a) {
+            if (currentGamepad1.a && !previousGamepad1.a) {
                 robot.getIntake().toggleIntake();
             }
 
             // Indexer
-            index_position += currentGamepad2.x && !previousGamepad2.x ? 0.4 : (currentGamepad2.y && !previousGamepad2.y ? -0.4 : 0);
+            //index_position += (currentGamepad2.x && !previousGamepad2.x) ? 0.4 : ((currentGamepad2.y && !previousGamepad2.y) ? -0.4 : 0);
+            //index_position += (currentGamepad2.x && !previousGamepad2.x) ? 0.01 : ((currentGamepad2.y && !previousGamepad2.y) ? -0.01 : 0);
 
-            if (index_position > 1) {
+            /*if (index_position > 1) {
                 index_position -= 0.4;
             }
 
             if (index_position < 0) {
                 index_position += 0.4;
+            }**/
+
+            /*if (index_position > 1) {
+                index_position =1;
             }
 
-            robot.getIndexer().rotateToPosition(index_position);
-            telemetry.addData("index position:", index_position);
-
-
-/*            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
-                robot.getIndexer().rotateRight();
-            }
-
-            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
-                robot.getIndexer().rotateLeft();
+            if (index_position < 0) {
+                index_position =0;
             }*/
+
+            //robot.getIndexer().rotateToPosition(index_position);
+            telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
+
+
+           if (currentGamepad2.x && !previousGamepad2.x) {
+                robot.getIndexer().rotateClock();
+            }
+
+           if (currentGamepad2.y && !previousGamepad2.y) {
+                robot.getIndexer().rotateCounterClock();
+           }
+           telemetry.addData("index position2: ", robot.getIndexer().getIndexerPosition());
+
 
             // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
