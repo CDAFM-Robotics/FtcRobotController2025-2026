@@ -41,16 +41,19 @@ public class DriverControlTeleOp extends LinearOpMode {
                 fieldCentric = !fieldCentric;
             }
 
+            if (currentGamepad1.start && !previousGamepad1.start){
+                robot.getDriveBase().resetIMU();
+            }
+
             if (currentGamepad1.right_bumper != previousGamepad1.right_bumper) {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
             robot.getDriveBase().setMotorPowers(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
-          // TODO We need 2 states: pickup and shoot
+            // TODO We need 2 states: pickup and shoot
 
             // Intake
-
             if (currentGamepad1.a && !previousGamepad1.a) {
                 robot.getIntake().toggleIntake();
             }
@@ -58,18 +61,17 @@ public class DriverControlTeleOp extends LinearOpMode {
                 robot.getIntake().reverseToggleIntake();
             }
 
-            // Indexer
-            //robot.getIndexer().rotateToPosition(index_position);
-            telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
+            // Indexer control
 
-           if (currentGamepad2.x && !previousGamepad2.x) {
+            if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getIndexer().rotateClockwise();
             }
 
-           if (currentGamepad2.y && !previousGamepad2.y) {
+            if (currentGamepad2.y && !previousGamepad2.y) {
                 robot.getIndexer().rotateCounterClockwise();
-           }
-           telemetry.addData("index position2: ", robot.getIndexer().getIndexerPosition());
+            }
+
+            telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
 
 
             // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
@@ -79,6 +81,10 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
+            }
+
+            if (currentGamepad2.a && !previousGamepad2.a) {
+              robot.getLauncher().toggleLauncherPartialPower();
             }
 
             if (currentGamepad2.right_bumper) {

@@ -89,17 +89,17 @@ public class Indexer {
 
         colorSensor1Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Left");
         colorSensor1Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Right");
-        colorSensor2Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor2Left");
-        colorSensor2Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor2Right");
-        colorSensor3Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor3Left");
-        colorSensor3Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor3Right");
+        //colorSensor2Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor2Left");
+        //colorSensor2Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor2Right");
+        //colorSensor3Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor3Left");
+        //colorSensor3Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor3Right");
 
         colorSensor1Left.setGain(8);
         colorSensor1Right.setGain(8);
-        colorSensor2Left.setGain(8);
-        colorSensor2Right.setGain(8);
-        colorSensor3Left.setGain(8);
-        colorSensor3Right.setGain(8);
+        //colorSensor2Left.setGain(8);
+        //colorSensor2Right.setGain(8);
+        //colorSensor3Left.setGain(8);
+        //colorSensor3Right.setGain(8);
 
         indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
     }
@@ -149,8 +149,8 @@ public class Indexer {
         Robot.ArtifactColor[] colors = new Robot.ArtifactColor[3];
 
         colors[0] = getPredictedColor(colorSensor1Left.getNormalizedColors(), colorSensor1Right.getNormalizedColors(), ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
-        colors[1] = getPredictedColor(colorSensor2Left.getNormalizedColors(), colorSensor2Right.getNormalizedColors(), ((DistanceSensor) colorSensor2Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor2Right).getDistance(DistanceUnit.CM));
-        colors[2] = getPredictedColor(colorSensor3Left.getNormalizedColors(), colorSensor3Right.getNormalizedColors(), ((DistanceSensor) colorSensor3Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor3Right).getDistance(DistanceUnit.CM));
+        //colors[1] = getPredictedColor(colorSensor2Left.getNormalizedColors(), colorSensor2Right.getNormalizedColors(), ((DistanceSensor) colorSensor2Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor2Right).getDistance(DistanceUnit.CM));
+        //colors[2] = getPredictedColor(colorSensor3Left.getNormalizedColors(), colorSensor3Right.getNormalizedColors(), ((DistanceSensor) colorSensor3Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor3Right).getDistance(DistanceUnit.CM));
 
         return colors;
     }

@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.ftccommon.configuration.RobotConfigResFilter;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -20,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
 import java.util.List;
-import java.util.Set;
 
 public class Launcher {
 
@@ -203,8 +201,22 @@ public class Launcher {
         }
     }
 
+    public void toggleLauncherPartialPower() {
+        if (launcherMotor1.getPower() != 0.5) {
+            startLauncherPartialPower();
+        }
+        else {
+            stopLauncher();
+        }
+    }
+
     public void startLauncher() {
         setLauncherPower(1);
+        launcherActive = true;
+    }
+
+    public void startLauncherPartialPower() {
+        setLauncherPower(0.8);
         launcherActive = true;
     }
 

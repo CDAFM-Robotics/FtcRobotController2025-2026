@@ -56,6 +56,18 @@ public class DriveBase {
         imu.resetYaw();
     }
 
+    public void resetIMU(){
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP
+        )
+        );
+
+        imu.initialize(parameters);
+        imu.resetYaw();
+
+    }
+
     public void setMotorPowers(double x, double y, double rx, double speed, boolean fieldCentric) {
 
         double heading;
