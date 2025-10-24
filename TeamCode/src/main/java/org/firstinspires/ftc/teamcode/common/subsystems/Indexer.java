@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
+import java.util.Arrays;
+
 public class Indexer {
 
     HardwareMap hardwareMap;
@@ -30,12 +32,11 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_INPUT = 0.944444444;
-    public double POSITION_INDEXER_SERVO_SECOND_BALL_INPUT = 0.055555556;
-    public double POSITION_INDEXER_SERVO_THIRD_BALL_INPUT = 0.5;
-    public double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.10;//was 0.07
-    public double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.51;//was 0.5
-    public double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.89;//was 0.93
+    Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[3];
+
+    public final double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.10;//was 0.07
+    public final double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.51;//was 0.5
+    public final double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.89;//was 0.93
 
     public class RotateIndexerAction implements Action {
 
@@ -101,7 +102,7 @@ public class Indexer {
         //colorSensor3Left.setGain(8);
         //colorSensor3Right.setGain(8);
 
-        indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        indexerServo.setPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
     }
 
     private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
@@ -144,15 +145,20 @@ public class Indexer {
         }
     }
 
+    public void updateBallColors() {
+        artifactColorArray[getIndexerSlotPosition() == 3 ? 0 : getIndexerSlotPosition()] = getPredictedColor(
+                colorSensor1Left.getNormalizedColors(),
+                colorSensor1Right.getNormalizedColors(),
+                ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
+                ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+    }
+
+
+
     public Robot.ArtifactColor[] getBallColors() {
 
-        Robot.ArtifactColor[] colors = new Robot.ArtifactColor[3];
-
-        colors[0] = getPredictedColor(colorSensor1Left.getNormalizedColors(), colorSensor1Right.getNormalizedColors(), ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
-        //colors[1] = getPredictedColor(colorSensor2Left.getNormalizedColors(), colorSensor2Right.getNormalizedColors(), ((DistanceSensor) colorSensor2Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor2Right).getDistance(DistanceUnit.CM));
-        //colors[2] = getPredictedColor(colorSensor3Left.getNormalizedColors(), colorSensor3Right.getNormalizedColors(), ((DistanceSensor) colorSensor3Left).getDistance(DistanceUnit.CM), ((DistanceSensor) colorSensor3Right).getDistance(DistanceUnit.CM));
-
-        return colors;
+        updateBallColors();
+        return artifactColorArray.clone();
     }
 
     public double getIndexerPosition() {
@@ -161,6 +167,18 @@ public class Indexer {
 
     public void rotateToPosition(double position) {
         indexerServo.setPosition(position);
+    }
+
+    public void rotateToFirstPosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+    }
+
+    public void rotateToSecondPosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+    }
+
+    public void rotateToThirdPosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
     }
 
     public void rotateClockwise() {
@@ -182,5 +200,10 @@ public class Indexer {
             indexerServo.setPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
         }
     }
+
+    public int getIndexerSlotPosition() {
+        return indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT ? 1 : (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT ? 2 : 3);
+    }
+
 
 }

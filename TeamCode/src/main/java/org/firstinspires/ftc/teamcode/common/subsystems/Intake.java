@@ -94,6 +94,9 @@ public class Intake {
     public void setIntakeMotorPower(double speed) {
         intakeMotor.setPower(speed);
     }
+    public double getIntakeMotorPower() {
+        return intakeMotor.getPower();
+    }
 
 
 }

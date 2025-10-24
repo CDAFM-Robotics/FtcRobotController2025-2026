@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 
@@ -23,6 +24,8 @@ public class DriverControlTeleOp extends LinearOpMode {
         Gamepad currentGamepad2 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
+        ElapsedTime timeSinceLastIncident = new ElapsedTime();
+
         waitForStart();
 
         while(opModeIsActive()){
@@ -30,6 +33,8 @@ public class DriverControlTeleOp extends LinearOpMode {
             previousGamepad2.copy(currentGamepad2);
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
+
+            timeSinceLastIncident.reset();
 
             // Drive Base
 

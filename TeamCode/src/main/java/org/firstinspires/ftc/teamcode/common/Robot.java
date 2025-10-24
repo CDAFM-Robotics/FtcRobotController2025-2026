@@ -9,6 +9,10 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 
+import java.util.Arrays;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 public class Robot {
 
     private DriveBase driveBase;
@@ -16,7 +20,9 @@ public class Robot {
     private Launcher launcher;
     private Intake intake;
 
-    private ElapsedTime elapsedTime = new ElapsedTime();
+    private ElapsedTime timeSinceIndex = new ElapsedTime();
+
+    private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -60,5 +66,83 @@ public class Robot {
 
     public Intake getIntake() {
         return intake;
+    }
+
+    public void runIndexer(boolean launchGreen, boolean launchPurple) {
+        ArtifactColor[] ballColors = indexer.getBallColors();
+        int currentIntakePosition = indexer.getIndexerSlotPosition() == 3 ? 0 : indexer.getIndexerSlotPosition();
+        int currentOuttakePosition = indexer.getIndexerSlotPosition() - 1;
+        if (intake.getIntakeMotorPower() > 0.01 && timeSinceIndex.milliseconds() >= 500) {
+            if (ballColors[currentIntakePosition] == ArtifactColor.GREEN || ballColors[currentIntakePosition] == ArtifactColor.PURPLE) {
+                if (ballColors[0] == ArtifactColor.NONE) {
+                    indexer.rotateToFirstPosition();
+                    timeSinceIndex.reset();
+                }
+                else if (ballColors[1] == ArtifactColor.NONE) {
+                    indexer.rotateToSecondPosition();
+                    timeSinceIndex.reset();
+                }
+                else if (ballColors[2] == ArtifactColor.NONE){
+                    indexer.rotateToThirdPosition();
+                    timeSinceIndex.reset();
+                }
+            }
+        }
+
+        if (launchGreen) {
+            if (Arrays.stream(ballColors).anyMatch(artifactColor -> artifactColor == ArtifactColor.GREEN)) {
+                queuedLaunches.add(ArtifactColor.GREEN);
+            }
+        }
+
+        if (launchPurple) {
+            if (Arrays.stream(ballColors).anyMatch(artifactColor -> artifactColor == ArtifactColor.PURPLE)) {
+                queuedLaunches.add(ArtifactColor.PURPLE);
+            }
+        }
+
+        if (queuedLaunches.element() == ArtifactColor.GREEN) {
+            if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && timeSinceIndex.milliseconds() > 500) {
+                if (ballColors[0] == ArtifactColor.GREEN) {
+                    indexer.rotateToFirstPosition();
+                    timeSinceIndex.reset();
+                } else if (ballColors[1] == ArtifactColor.GREEN) {
+                    indexer.rotateToSecondPosition();
+                    timeSinceIndex.reset();
+                } else if (ballColors[2] == ArtifactColor.GREEN) {
+                    indexer.rotateToThirdPosition();
+                    timeSinceIndex.reset();
+                }
+            }
+            else if (timeSinceIndex.milliseconds() > 500) {
+                launcher.kickBall();
+            }
+        }
+
+        if (queuedLaunches.element() == ArtifactColor.PURPLE) {
+            if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && timeSinceIndex.milliseconds() > 500) {
+                if (ballColors[0] == ArtifactColor.PURPLE) {
+                    indexer.rotateToFirstPosition();
+                    timeSinceIndex.reset();
+                } else if (ballColors[1] == ArtifactColor.PURPLE) {
+                    indexer.rotateToSecondPosition();
+                    timeSinceIndex.reset();
+                } else if (ballColors[2] == ArtifactColor.PURPLE) {
+                    indexer.rotateToThirdPosition();
+                    timeSinceIndex.reset();
+                }
+            }
+            else if (timeSinceIndex.milliseconds() > 500) {
+                launcher.kickBall();
+                timeSinceIndex.reset();
+            }
+        }
+
+        if (queuedLaunches.element() != null) {
+            if (timeSinceIndex.milliseconds() > 500 && launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+                launcher.resetKicker();
+                timeSinceIndex.reset();
+            }
+        }
     }
 }
