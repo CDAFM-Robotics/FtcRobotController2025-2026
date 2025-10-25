@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
 @TeleOp(name = "Driver Control Teleop", group = "0teleop")
-public class DriverControlTeleOp extends LinearOpMode {
+public class DriverControlWithIndexerTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +28,7 @@ public class DriverControlTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()){
+        while (opModeIsActive()){
             previousGamepad1.copy(currentGamepad1);
             previousGamepad2.copy(currentGamepad2);
             currentGamepad1.copy(gamepad1);
@@ -56,7 +56,6 @@ public class DriverControlTeleOp extends LinearOpMode {
 
             robot.getDriveBase().setMotorPowers(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
-            // TODO We need 2 states: pickup and shoot
 
             // Intake
             if (currentGamepad1.a && !previousGamepad1.a) {
@@ -65,6 +64,8 @@ public class DriverControlTeleOp extends LinearOpMode {
             if (currentGamepad1.b && !previousGamepad1.b) {
                 robot.getIntake().reverseToggleIntake();
             }
+
+            /*
 
             // Indexer control
 
@@ -76,13 +77,15 @@ public class DriverControlTeleOp extends LinearOpMode {
                 robot.getIndexer().rotateCounterClockwise();
             }
 
+            */
+
             telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
 
 
             // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
-
             //Launcher
+
 
             if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
@@ -91,7 +94,7 @@ public class DriverControlTeleOp extends LinearOpMode {
             if (currentGamepad2.a && !previousGamepad2.a) {
               robot.getLauncher().toggleLauncherPartialPower();
             }
-
+            /*
             if (currentGamepad2.right_bumper) {
                 robot.getLauncher().kickBall();
             }
@@ -99,8 +102,15 @@ public class DriverControlTeleOp extends LinearOpMode {
                 robot.getLauncher().resetKicker();
             }
 
-            telemetry.update();
+            */
 
+            robot.runIndexer(currentGamepad2.left_bumper && !previousGamepad2.left_bumper && robot.getIntake().getIntakeMotorPower() >= 0,
+                currentGamepad2.right_bumper && !previousGamepad2.right_bumper && robot.getIntake().getIntakeMotorPower() >= 0,
+                currentGamepad2.right_trigger != 0 && previousGamepad1.right_trigger == 0 && robot.getIntake().getIntakeMotorPower() >= 0);
+
+
+
+            telemetry.update();
         }
     }
 }

@@ -192,6 +192,10 @@ public class Launcher {
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
     }
 
+    public double getKickerPosition() {
+        return kickerServo.getPosition();
+    }
+
     public void toggleLauncher() {
         if (launcherMotor1.getPower() == 0) {
             startLauncher();
