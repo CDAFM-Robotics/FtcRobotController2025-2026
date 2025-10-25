@@ -68,10 +68,15 @@ public class Robot {
         return intake;
     }
 
-    public void runIndexer(boolean launchGreen, boolean launchPurple) {
+    public void runIndexer(boolean launchGreen, boolean launchPurple, boolean launchAll) {
         ArtifactColor[] ballColors = indexer.getBallColors();
-        int currentIntakePosition = indexer.getIndexerSlotPosition() == 3 ? 0 : indexer.getIndexerSlotPosition();
-        int currentOuttakePosition = indexer.getIndexerSlotPosition() - 1;
+        int currentIntakePosition = indexer.getIndexerSlotPosition() + 1;
+        int currentOuttakePosition = indexer.getIndexerSlotPosition();
+        if (currentIntakePosition > 2) {
+            currentIntakePosition = 0;
+        }
+
+        // Auto-Indexing for intake
         if (intake.getIntakeMotorPower() > 0.01 && timeSinceIndex.milliseconds() >= 500) {
             if (ballColors[currentIntakePosition] == ArtifactColor.GREEN || ballColors[currentIntakePosition] == ArtifactColor.PURPLE) {
                 if (ballColors[0] == ArtifactColor.NONE) {
@@ -89,6 +94,18 @@ public class Robot {
             }
         }
 
+        if (launchAll) {
+            if (ballColors[0] != null) {
+                queuedLaunches.add(ballColors[0]);
+            }
+            if (ballColors[1] != null) {
+                queuedLaunches.add(ballColors[1]);
+            }
+            if (ballColors[2] != null) {
+                queuedLaunches.add(ballColors[2]);
+            }
+        }
+
         if (launchGreen) {
             if (Arrays.stream(ballColors).anyMatch(artifactColor -> artifactColor == ArtifactColor.GREEN)) {
                 queuedLaunches.add(ArtifactColor.GREEN);
@@ -101,48 +118,57 @@ public class Robot {
             }
         }
 
-        if (queuedLaunches.element() == ArtifactColor.GREEN) {
-            if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && timeSinceIndex.milliseconds() > 500) {
-                if (ballColors[0] == ArtifactColor.GREEN) {
-                    indexer.rotateToFirstPosition();
-                    timeSinceIndex.reset();
-                } else if (ballColors[1] == ArtifactColor.GREEN) {
-                    indexer.rotateToSecondPosition();
-                    timeSinceIndex.reset();
-                } else if (ballColors[2] == ArtifactColor.GREEN) {
-                    indexer.rotateToThirdPosition();
+        if (!queuedLaunches.isEmpty()) {
+            if (queuedLaunches.element() == ArtifactColor.GREEN) {
+                if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && timeSinceIndex.milliseconds() > 500) {
+                    if (ballColors[0] == ArtifactColor.GREEN) {
+                        indexer.rotateToFirstPosition();
+                        timeSinceIndex.reset();
+                    } else if (ballColors[1] == ArtifactColor.GREEN) {
+                        indexer.rotateToSecondPosition();
+                        timeSinceIndex.reset();
+                    } else if (ballColors[2] == ArtifactColor.GREEN) {
+                        indexer.rotateToThirdPosition();
+                        timeSinceIndex.reset();
+                    }
+                } else if (timeSinceIndex.milliseconds() > 500) {
+                    launcher.kickBall();
+                }
+            }
+
+            if (queuedLaunches.element() == ArtifactColor.PURPLE) {
+                if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && timeSinceIndex.milliseconds() > 500) {
+                    if (ballColors[0] == ArtifactColor.PURPLE) {
+                        indexer.rotateToFirstPosition();
+                        timeSinceIndex.reset();
+                    } else if (ballColors[1] == ArtifactColor.PURPLE) {
+                        indexer.rotateToSecondPosition();
+                        timeSinceIndex.reset();
+                    } else if (ballColors[2] == ArtifactColor.PURPLE) {
+                        indexer.rotateToThirdPosition();
+                        timeSinceIndex.reset();
+                    }
+                } else if (timeSinceIndex.milliseconds() > 500) {
+                    launcher.kickBall();
                     timeSinceIndex.reset();
                 }
             }
-            else if (timeSinceIndex.milliseconds() > 500) {
-                launcher.kickBall();
-            }
-        }
 
-        if (queuedLaunches.element() == ArtifactColor.PURPLE) {
-            if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && timeSinceIndex.milliseconds() > 500) {
-                if (ballColors[0] == ArtifactColor.PURPLE) {
-                    indexer.rotateToFirstPosition();
-                    timeSinceIndex.reset();
-                } else if (ballColors[1] == ArtifactColor.PURPLE) {
-                    indexer.rotateToSecondPosition();
-                    timeSinceIndex.reset();
-                } else if (ballColors[2] == ArtifactColor.PURPLE) {
-                    indexer.rotateToThirdPosition();
-                    timeSinceIndex.reset();
-                }
-            }
-            else if (timeSinceIndex.milliseconds() > 500) {
-                launcher.kickBall();
-                timeSinceIndex.reset();
-            }
-        }
 
-        if (queuedLaunches.element() != null) {
             if (timeSinceIndex.milliseconds() > 500 && launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                 launcher.resetKicker();
                 timeSinceIndex.reset();
             }
         }
+
+        telemetry.addData("Ball Colors", ballColors[0].toString() + ", "  + ballColors[1].toString() + ", " + ballColors[2].toString());
+        if (!queuedLaunches.isEmpty()) {
+            telemetry.addData("Queue", queuedLaunches.element());
+        }
+        else {
+            telemetry.addData("Queue", "Empty");
+        }
+        telemetry.addData("Intake Position", currentIntakePosition);
+        telemetry.addData("outtake Position", currentOuttakePosition);
     }
 }

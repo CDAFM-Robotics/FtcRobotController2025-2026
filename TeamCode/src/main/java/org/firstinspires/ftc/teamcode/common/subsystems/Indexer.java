@@ -16,8 +16,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
-import java.util.Arrays;
-
 public class Indexer {
 
     HardwareMap hardwareMap;
@@ -32,11 +30,11 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
-    Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[3];
+    Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
-    public final double POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT = 0.10;//was 0.07
-    public final double POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT = 0.51;//was 0.5
-    public final double POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT = 0.89;//was 0.93
+    public final double POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT = 0.10;//was 0.07
+    public final double POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT = 0.51;//was 0.5
+    public final double POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT = 0.89;//was 0.93
 
     public class RotateIndexerAction implements Action {
 
@@ -66,15 +64,15 @@ public class Indexer {
     }
 
     public Action getGoToFirstBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
     }
 
     public Action getGoToSecondBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
     }
 
     public Action getGoToThirdBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
     }
 
 
@@ -102,7 +100,7 @@ public class Indexer {
         //colorSensor3Left.setGain(8);
         //colorSensor3Right.setGain(8);
 
-        indexerServo.setPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        indexerServo.setPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
     }
 
     private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
@@ -162,7 +160,7 @@ public class Indexer {
     }
 
     public double getIndexerPosition() {
-        return indexerServo.getPosition();
+        return (double) Math.round(indexerServo.getPosition() * 100) / 100.00;
     }
 
     public void rotateToPosition(double position) {
@@ -170,39 +168,39 @@ public class Indexer {
     }
 
     public void rotateToFirstPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        rotateToPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
     }
 
     public void rotateToSecondPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        rotateToPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
     }
 
     public void rotateToThirdPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        rotateToPosition(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
     }
 
     public void rotateClockwise() {
         double position = indexerServo.getPosition();
-        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
         }
-        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT);
+        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
         }
     }
 
     public void rotateCounterClockwise() {
         double position = indexerServo.getPosition();
-        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT);
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
         }
-        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_THIRD_BALL_OUTPUT);
+        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
         }
     }
 
     public int getIndexerSlotPosition() {
-        return indexerServo.getPosition() == POSITION_INDEXER_SERVO_FIRST_BALL_OUTPUT ? 1 : (indexerServo.getPosition() == POSITION_INDEXER_SERVO_SECOND_BALL_OUTPUT ? 2 : 3);
+        return getIndexerPosition() == POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT ? 0 : (getIndexerPosition() == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT ? 1 : 2);
     }
 
 
