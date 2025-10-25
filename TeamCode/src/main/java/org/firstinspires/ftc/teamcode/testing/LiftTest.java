@@ -32,30 +32,30 @@ public class LiftTest extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            Gamepad gamepad1 = new Gamepad();
+            //Gamepad gamepad1 = new Gamepad();
 
-           //Gamepad currentGamepad1 = new Gamepad();
-           //Gamepad previousGamepad1 = new Gamepad();
-           //
-           //previousGamepad1.copy(currentGamepad1);
-           //currentGamepad1.copy(gamepad1);
+           Gamepad currentGamepad1 = new Gamepad();
+           Gamepad previousGamepad1 = new Gamepad();
 
-            if (gamepad1.bWasPressed()) {
+           previousGamepad1.copy(currentGamepad1);
+           currentGamepad1.copy(gamepad1);
+
+            if (currentGamepad1.right_trigger != 0 && previousGamepad1.right_trigger == 0) {
                 lift1.setPower(1);
                 lift2.setPower(1);
             }
 
-            if (gamepad1.bWasReleased()) {
+            if (currentGamepad1.right_trigger == 0 && previousGamepad1.right_trigger != 0) {
                 lift1.setPower(0);
                 lift2.setPower(0);
             }
 
-            if (gamepad1.aWasPressed()) {
+            if (currentGamepad1.left_trigger != 0 && previousGamepad1.left_trigger == 0) {
                 lift1.setPower(-0.25);
                 lift2.setPower(-0.25);
             }
 
-            if (gamepad1.aWasReleased()) {
+            if (currentGamepad1.left_trigger == 0 && previousGamepad1.left_trigger != 0) {
                 lift1.setPower(0);
                 lift2.setPower(0);
             }
