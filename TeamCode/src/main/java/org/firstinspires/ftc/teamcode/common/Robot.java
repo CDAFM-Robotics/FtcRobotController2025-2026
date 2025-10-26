@@ -31,6 +31,7 @@ public class Robot {
         // Create an instance of the hardware map and telemetry in the Robot class
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+        timeSinceIndex.startTime();
 
         initializeSubsystems();
     }
@@ -42,6 +43,7 @@ public class Robot {
         this.indexer = new Indexer(this.hardwareMap, this.telemetry);
         this.launcher = new Launcher(this.hardwareMap, this.telemetry);
         this.intake = new Intake(this.hardwareMap, this.telemetry);
+        telemetry.update();
 
     }
 
@@ -77,22 +79,22 @@ public class Robot {
         }
 
         // Auto-Indexing for intake
-        if (intake.getIntakeMotorPower() > 0.01 && timeSinceIndex.milliseconds() >= 500) {
+        /*if (intake.getIntakeMotorPower() > 0.01 && timeSinceIndex.milliseconds() >= 500) {
             if (ballColors[currentIntakePosition] == ArtifactColor.GREEN || ballColors[currentIntakePosition] == ArtifactColor.PURPLE) {
                 if (ballColors[0] == ArtifactColor.NONE) {
-                    indexer.rotateToFirstPosition();
+                    indexer.rotateToOnePosition();
                     timeSinceIndex.reset();
                 }
                 else if (ballColors[1] == ArtifactColor.NONE) {
-                    indexer.rotateToSecondPosition();
+                    indexer.rotateToTwoPosition();
                     timeSinceIndex.reset();
                 }
                 else if (ballColors[2] == ArtifactColor.NONE){
-                    indexer.rotateToThirdPosition();
+                    indexer.rotateToZeroPosition();
                     timeSinceIndex.reset();
                 }
             }
-        }
+        }*/
 
         if (launchAll) {
             if (ballColors[0] != null) {
@@ -122,13 +124,15 @@ public class Robot {
             if (queuedLaunches.element() == ArtifactColor.GREEN) {
                 if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && timeSinceIndex.milliseconds() > 500) {
                     if (ballColors[0] == ArtifactColor.GREEN) {
-                        indexer.rotateToFirstPosition();
+                        indexer.rotateToZeroPosition();
                         timeSinceIndex.reset();
-                    } else if (ballColors[1] == ArtifactColor.GREEN) {
-                        indexer.rotateToSecondPosition();
+                    }
+                    else if (ballColors[1] == ArtifactColor.GREEN) {
+                        indexer.rotateToOnePosition();
                         timeSinceIndex.reset();
-                    } else if (ballColors[2] == ArtifactColor.GREEN) {
-                        indexer.rotateToThirdPosition();
+                    }
+                    else if (ballColors[2] == ArtifactColor.GREEN) {
+                        indexer.rotateToTwoPosition();
                         timeSinceIndex.reset();
                     }
                 } else if (timeSinceIndex.milliseconds() > 500) {
@@ -139,13 +143,15 @@ public class Robot {
             if (queuedLaunches.element() == ArtifactColor.PURPLE) {
                 if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && timeSinceIndex.milliseconds() > 500) {
                     if (ballColors[0] == ArtifactColor.PURPLE) {
-                        indexer.rotateToFirstPosition();
+                        indexer.rotateToZeroPosition();
                         timeSinceIndex.reset();
-                    } else if (ballColors[1] == ArtifactColor.PURPLE) {
-                        indexer.rotateToSecondPosition();
+                    }
+                    else if (ballColors[1] == ArtifactColor.PURPLE) {
+                        indexer.rotateToOnePosition();
                         timeSinceIndex.reset();
-                    } else if (ballColors[2] == ArtifactColor.PURPLE) {
-                        indexer.rotateToThirdPosition();
+                    }
+                    else if (ballColors[2] == ArtifactColor.PURPLE) {
+                        indexer.rotateToTwoPosition();
                         timeSinceIndex.reset();
                     }
                 } else if (timeSinceIndex.milliseconds() > 500) {
@@ -170,5 +176,21 @@ public class Robot {
         }
         telemetry.addData("Intake Position", currentIntakePosition);
         telemetry.addData("outtake Position", currentOuttakePosition);
+    }
+
+     // Auto-Indexing for intake
+     public void intakeWithIndexerTurn(){
+         telemetry.addLine("intakeWithIndexerTurn");
+        if (indexer.checkEmptySlot()){
+            telemetry.addLine("Robot: found empty slot");
+            if(indexer.turnEmptySlotToIntake() ) {
+                timeSinceIndex.reset();
+
+            }
+            if ( timeSinceIndex.milliseconds() > 800 ) {
+                telemetry.addLine("Robot:updateBallColor");
+                indexer.updateBallColors();
+            }
+        }
     }
 }

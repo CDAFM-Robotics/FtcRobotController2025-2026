@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,6 +23,9 @@ public class Indexer {
     Telemetry telemetry;
 
     Servo indexerServo = null;
+    private ElapsedTime timeSinceTurnIndex = new ElapsedTime();
+    private int nextEmptySlot;
+
 
     NormalizedColorSensor colorSensor1Left = null;
     NormalizedColorSensor colorSensor1Right = null;
@@ -32,9 +36,12 @@ public class Indexer {
 
     Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
-    public final double POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT = 0.10;//was 0.07
-    public final double POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT = 0.51;//was 0.5
-    public final double POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT = 0.89;//was 0.93
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
 
     public class RotateIndexerAction implements Action {
 
@@ -64,15 +71,15 @@ public class Indexer {
     }
 
     public Action getGoToFirstBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
     public Action getGoToSecondBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
     public Action getGoToThirdBallAction() {
-        return getRotateIndexerAction(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
 
@@ -100,12 +107,20 @@ public class Indexer {
         //colorSensor3Left.setGain(8);
         //colorSensor3Right.setGain(8);
 
-        indexerServo.setPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
+        indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
+        telemetry.addData("color:", artifactColorArray[0]);
+        telemetry.addData("color:", artifactColorArray[1]);
+        telemetry.addData("color:", artifactColorArray[2]);
+
+
     }
 
     private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
 
         Robot.ArtifactColor sensor1DetectedColor;
+        telemetry.addData("sensor1Distance", sensor1Distance);
+        telemetry.addData("sensor2Distance", sensor2Distance);
+
 
         if (sensor1Distance > 3) {
             sensor1DetectedColor = Robot.ArtifactColor.NONE;
@@ -144,11 +159,32 @@ public class Indexer {
     }
 
     public void updateBallColors() {
-        artifactColorArray[getIndexerSlotPosition() == 3 ? 0 : getIndexerSlotPosition()] = getPredictedColor(
+        telemetry.addData("color:", artifactColorArray[0]);
+        telemetry.addData("color:", artifactColorArray[1]);
+        telemetry.addData("color:", artifactColorArray[2]);
+        double position = getIndexerPosition();
+
+        int i = -1;
+
+        if (position == POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
+            i = 0;
+        }
+        else if(position == POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+            i = 1;
+        }
+        else if (position == POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
+            i = 2;
+        }
+        else {
+            telemetry.addLine("ERROR: updateBallCollors");
+        }
+        artifactColorArray[i] = getPredictedColor(
                 colorSensor1Left.getNormalizedColors(),
                 colorSensor1Right.getNormalizedColors(),
                 ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
                 ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+        telemetry.addData("updateBallColorn index", i);
+        telemetry.addData("updateBallColorn color", artifactColorArray[i]);
     }
 
 
@@ -160,48 +196,95 @@ public class Indexer {
     }
 
     public double getIndexerPosition() {
-        return (double) Math.round(indexerServo.getPosition() * 100) / 100.00;
+        double position = indexerServo.getPosition();
+        telemetry.addData("position getindexposition", position);
+        return (double) Math.round(position * 100) / 100.00;
     }
 
     public void rotateToPosition(double position) {
         indexerServo.setPosition(position);
     }
 
-    public void rotateToFirstPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
+    public void rotateToZeroPosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    public void rotateToSecondPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
+    public void rotateToOnePosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
-    public void rotateToThirdPosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
+    public void rotateToTwoPosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
     public void rotateClockwise() {
         double position = indexerServo.getPosition();
-        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
         }
-        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT);
+        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
+        }
+        else if((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
         }
     }
 
     public void rotateCounterClockwise() {
         double position = indexerServo.getPosition();
-        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT);
+        if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
         }
-        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT) {
-            indexerServo.setPosition(POSITION_INDEXER_SERVO_TWO_BALL_OUTPUT);
+        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
+        }
+        else if ((Math.round(position*100.0))/100.0 == POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT) {
+            indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
         }
     }
 
     public int getIndexerSlotPosition() {
-        return getIndexerPosition() == POSITION_INDEXER_SERVO_ZERO_BALL_OUTPUT ? 0 : (getIndexerPosition() == POSITION_INDEXER_SERVO_ONE_BALL_OUTPUT ? 1 : 2);
+        return getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT ? 2 : (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT ? 1 : 0);
     }
 
+    public Boolean checkEmptySlot(){
+        telemetry.addLine("checkEmptySlot");
+        for(int i=0; i<=2; i++){
+            telemetry.addData("array", i);
+            telemetry.addData("color:", artifactColorArray[i]);
+            if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
+                nextEmptySlot = i;
+                telemetry.addData("slot empty", i);
+                return true;
+            }
+        }
+        telemetry.addLine("no empty slot");
+        return false;
+    }
+
+    public Boolean turnEmptySlotToIntake(){
+        telemetry.addLine("turnEmptySlotToIntake");
+        if(nextEmptySlot == 0){
+            telemetry.addLine("nextemptyslot 0");
+            if(getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE){
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+                telemetry.addLine("n");
+                return true;
+            }
+        } else if (nextEmptySlot == 1) {
+            if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE){
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+                return true;
+            }
+        } else if (nextEmptySlot == 2){
+            if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE){
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
 
 }
