@@ -6,4 +6,7 @@ All logger potentially have a problem where the timestamp gets messed up and bec
 the past or far in the future. This can be prevented by connecting to the control hub and
 deleting/renaming the folder called Roadrunner
 
+- Additional Notes: After you delete or rename previous 'Roadrunner' tuning data you need to restart
+the bot for a new directory to get created before you can run the Lateral or Angular Ramp loggers
+
 Who made mecanum motor direction debugger go the wrong way?
