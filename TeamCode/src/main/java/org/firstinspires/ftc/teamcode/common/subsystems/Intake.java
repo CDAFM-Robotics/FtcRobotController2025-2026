@@ -17,6 +17,8 @@ public class Intake {
 
     DcMotorEx intakeMotor;
 
+    private Boolean activeIntake = false;
+
     public class SetIntakeMotorPowerAction implements Action {
 
         private boolean initialized = false;
@@ -98,5 +100,17 @@ public class Intake {
         return intakeMotor.getPower();
     }
 
+    public void startActiveIntake(){
+        startIntake();
+        activeIntake = true;
+    }
 
+    public void stopActiveIntake(){
+        stopIntake();
+        activeIntake = false;
+    }
+
+    public Boolean isActive(){
+        return activeIntake;
+    }
 }
