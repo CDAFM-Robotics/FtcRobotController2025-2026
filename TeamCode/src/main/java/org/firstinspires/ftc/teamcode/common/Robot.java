@@ -365,7 +365,7 @@ public class Robot {
     public void resetIndexer() {
         switch (indexerResetState){
             case CHECK_ZERO:
-                if (timeSinceKick.milliseconds() > 1000 && timeSinceKickReset.milliseconds() > 500) {
+                if (launcher.getKickerPosition() = launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > 500) {
                     indexer.rotateToZeroIntakePosition();
                     timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.AT_ZERO;
