@@ -64,7 +64,7 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
                 robot.intakeWithIndexerTurn();
             }
             else {
-                    robot.getIntake().stopIntake();
+                robot.getIntake().stopIntake();
             }
 
             if (currentGamepad1.left_trigger != 0) {
@@ -73,27 +73,19 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
             else {
                 robot.getIntake().stopIntake();
             }
-            /*
 
-            // Indexer control
-
-            if (currentGamepad2.x && !previousGamepad2.x) {
-                robot.getIndexer().rotateClockwise();
+            if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0) {
+                robot.resetIndexerColorStart();
             }
 
-            if (currentGamepad2.y && !previousGamepad2.y) {
-                robot.getIndexer().rotateCounterClockwise();
-            }
-
-            */
+            if (currentGamepad2.left_trigger != 0)
+                robot.resetIndexer();
 
             telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
-
 
             // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
             //Launcher
-
 
             if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
@@ -102,21 +94,35 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
             if (currentGamepad2.a && !previousGamepad2.a) {
               robot.getLauncher().toggleLauncherPartialPower();
             }
-            /*
+
+            //launch a green ball
+            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+                robot.stratLaunchAGreenBall();
+            }
+
+            if (currentGamepad2.left_bumper) {
+                telemetry.addLine("left bumper pushed");
+                robot.launchAColorBall();
+            }
+
+            //launch a purple ball
+            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+                robot.stratLaunchAPurpleBall();
+            }
+
             if (currentGamepad2.right_bumper) {
-                robot.getLauncher().kickBall();
-            }
-            else {
-                robot.getLauncher().resetKicker();
+                telemetry.addLine("right bumper pushed");
+                robot.launchAColorBall();
             }
 
-            */
+            //launch all balls in the robot
+            if (currentGamepad2.right_trigger != 0) {
+                robot.shootAllBalls();
+            }
 
-            /*robot.runIndexer(currentGamepad2.left_bumper && !previousGamepad2.left_bumper && robot.getIntake().getIntakeMotorPower() >= 0,
-                currentGamepad2.right_bumper && !previousGamepad2.right_bumper && robot.getIntake().getIntakeMotorPower() >= 0,
-                currentGamepad2.right_trigger != 0 && previousGamepad1.right_trigger == 0 && robot.getIntake().getIntakeMotorPower() >= 0);
-*/
-
+            telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
+            telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
+            telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
 
             telemetry.update();
         }

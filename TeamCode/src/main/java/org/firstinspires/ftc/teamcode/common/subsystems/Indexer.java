@@ -25,7 +25,8 @@ public class Indexer {
     Servo indexerServo = null;
     private ElapsedTime timeSinceTurnIndex = new ElapsedTime();
     private int nextEmptySlot;
-
+    private int nextShootSlot;
+    private int nextPurpleSlot;
 
     NormalizedColorSensor colorSensor1Left = null;
     NormalizedColorSensor colorSensor1Right = null;
@@ -34,7 +35,7 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
-    Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
+    public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
@@ -209,12 +210,24 @@ public class Indexer {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
+    public void rotateToZeroIntakePosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+    }
+
     public void rotateToOnePosition() {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
+    public void rotateToOneIntakePosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+    }
+
     public void rotateToTwoPosition() {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
+    }
+
+    public void rotateToTwoIntakePosition() {
+        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
     }
 
     public void rotateClockwise() {
@@ -287,4 +300,97 @@ public class Indexer {
         return false;
     }
 
+    public Boolean haveABall(Robot.ArtifactColor ballColor) {
+        telemetry.addLine("haveABall");
+        telemetry.addData("color:", artifactColorArray[0]);
+        telemetry.addData("color:", artifactColorArray[1]);
+        telemetry.addData("color:", artifactColorArray[2]);
+        telemetry.addData("color:", ballColor);
+        telemetry.addData("nextShootSlot:", nextShootSlot);
+
+        for (int i=0; i<=2; i++){
+            if (artifactColorArray[i] == ballColor){
+                nextShootSlot = i;
+                telemetry.addData("nextShootSlot:", nextShootSlot);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean moveToOuttake() {
+        telemetry.addLine("moveToOuttake");
+        telemetry.addLine("haveABall");
+        telemetry.addData("color:", artifactColorArray[0]);
+        telemetry.addData("color:", artifactColorArray[1]);
+        telemetry.addData("color:", artifactColorArray[2]);
+        telemetry.addData("nextShootSlot:", nextShootSlot);
+
+        if (nextShootSlot==0) {
+            if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT) {
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
+                return true;
+            }
+        }
+        else if (nextShootSlot==1) {
+            if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT) {
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
+                return true;
+            }
+        }
+        else if (nextShootSlot==2) {
+            if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updateAfterShoot(){
+        // the ball has been shot in nextShootSlot
+        telemetry.addData("updateAfterShoot: nextshootslot", nextShootSlot);
+        artifactColorArray[nextShootSlot] = Robot.ArtifactColor.NONE;
+    }
+
+    public Boolean findABall(){
+        if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT){
+            //is there a ball at ZERO?
+            if (artifactColorArray[0] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 0;
+                return true;
+            } else if (artifactColorArray[1] != Robot.ArtifactColor.NONE){
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 2;
+                return true;
+            }
+        } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT){
+            //is there a ball at one?
+            if (artifactColorArray[1] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE){
+                nextShootSlot = 0;
+                return true;
+            } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 2;
+                return true;
+            }
+        } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+            //is there a ball at two?
+            if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 2;
+                return true;
+            } else if (artifactColorArray[1] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE) {
+                nextShootSlot = 0;
+                return true;
+            }
+        }
+        return false;
+    }
 }

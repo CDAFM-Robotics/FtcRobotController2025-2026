@@ -21,8 +21,11 @@ public class Robot {
     private Intake intake;
 
     private ElapsedTime timeSinceIndex = new ElapsedTime();
+    private ElapsedTime timeSinceKick = new ElapsedTime();
+    private ElapsedTime timeSinceKickReset  = new ElapsedTime();
 
     private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
+    private ArtifactColor ballColor = ArtifactColor.NONE;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -53,6 +56,28 @@ public class Robot {
         NONE,
         UNKNOWN
     }
+
+    public enum IndexerResetStates {
+        INIT,
+        CHECK_ZERO,
+        AT_ZERO,
+        CHECK_ONE,
+        AT_ONE,
+        CHECK_TWO,
+        AT_TWO
+    }
+
+    public enum LaunchBallStates {
+        IDLE,
+        INIT,
+        TURN_TO_LAUNCH,
+        KICK_BALL,
+        RESET_KICKER,
+        UPDATE_INDEXER
+    }
+
+    IndexerResetStates indexerResetState = IndexerResetStates.CHECK_ZERO;
+    LaunchBallStates launchState = LaunchBallStates.IDLE;
 
     public DriveBase getDriveBase() {
         return driveBase;
@@ -191,6 +216,189 @@ public class Robot {
                 telemetry.addLine("Robot:updateBallColor");
                 indexer.updateBallColors();
             }
+        }
+    }
+
+    public void stratLaunchAGreenBall(){
+        telemetry.addLine("stratLaunchAGreenBall");
+        ballColor = ArtifactColor.GREEN;
+        launchState = LaunchBallStates.INIT;
+    }
+
+    public void stratLaunchAPurpleBall(){
+        telemetry.addLine("stratLaunchAPupleBall");
+        ballColor = ArtifactColor.PURPLE;
+        launchState = LaunchBallStates.INIT;
+    }
+
+    public void launchAColorBall(){
+        telemetry.addData("launchAColorBall", ballColor);
+        telemetry.addData("color:", indexer.artifactColorArray[0]);
+        telemetry.addData("color:", indexer.artifactColorArray[1]);
+        telemetry.addData("color:", indexer.artifactColorArray[2]);
+
+        switch(launchState) {
+            case IDLE:
+                telemetry.addLine("launchAColorBall: IDLE");
+                break;
+            case INIT:
+                telemetry.addLine("launchAColorBall: INIT");
+                if (indexer.haveABall(ballColor) ) {
+                    if (timeSinceKickReset.milliseconds() > 500) {
+                        //If yes, turn it to launcher
+                        launchState = LaunchBallStates.TURN_TO_LAUNCH;
+                    } else {
+                        break;
+                    }
+                } else {
+                    //There is no ball in the color
+                    launchState = LaunchBallStates.IDLE;
+                    break;
+                }
+            case TURN_TO_LAUNCH:
+                telemetry.addLine("launchAColorBall: TURN_TO_LAUNCH");
+                if (indexer.moveToOuttake()) {
+                    timeSinceIndex.reset();
+                    launchState = LaunchBallStates.KICK_BALL;
+                    break;
+                } else {
+                    launchState = LaunchBallStates.KICK_BALL;
+                }
+            case KICK_BALL:
+                telemetry.addLine("launchAColorBall: KICK_BALL");
+                if (timeSinceIndex.milliseconds() > 800) {
+                    launcher.kickBall();
+                    timeSinceKick.reset();
+                    launchState = LaunchBallStates.RESET_KICKER;
+                    break;
+                } else {
+                    break;
+                }
+            case RESET_KICKER:
+                telemetry.addLine("launchAColorBall: RESET_KICKER");
+                if (timeSinceKick.milliseconds() > 500) {
+                    launcher.resetKicker();
+                    timeSinceKickReset.reset();
+                    launchState = LaunchBallStates.UPDATE_INDEXER;
+                } else {
+                    break;
+                }
+            case  UPDATE_INDEXER:
+                telemetry.addLine("launchAColorBall: UPDATE_INDEXER");
+                indexer.updateAfterShoot();
+                launchState = LaunchBallStates.IDLE;
+                break;
+            default:
+                throw new IllegalStateException("launchAColorBall Unexpected value: " + launchState);
+        }
+    }
+
+    public void shootAllBalls() {
+        telemetry.addLine("shootAllBalls");
+        telemetry.addData("color:", indexer.artifactColorArray[0]);
+        telemetry.addData("color:", indexer.artifactColorArray[1]);
+        telemetry.addData("color:", indexer.artifactColorArray[2]);
+
+        if(indexer.findABall()){
+            switch (launchState){
+                case IDLE:
+                    telemetry.addLine("shootAllBalls: IDLE");
+                    launchState = LaunchBallStates.INIT;
+                case INIT:
+                    telemetry.addLine("shootAllBalls: INIT");
+                    if (timeSinceKickReset.milliseconds() > 500) {
+                        //If yes, turn it to launcher
+                        launchState = LaunchBallStates.TURN_TO_LAUNCH;
+                    } else {
+                        break;
+                    }
+                case TURN_TO_LAUNCH:
+                    telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
+                    if (indexer.moveToOuttake()) {
+                        timeSinceIndex.reset();
+                        launchState = LaunchBallStates.KICK_BALL;
+                        break;
+                    } else {
+                        launchState = LaunchBallStates.KICK_BALL;
+                    }
+                case KICK_BALL:
+                    telemetry.addLine("shootAllBalls: KICK_BALL");
+                    if (timeSinceIndex.milliseconds() > 500) {
+                        launcher.kickBall();
+                        timeSinceKick.reset();
+                        launchState = LaunchBallStates.RESET_KICKER;
+                        break;
+                    } else {
+                        break;
+                    }
+                case RESET_KICKER:
+                    telemetry.addLine("shootAllBalls: RESET_KICKER");
+                    if (timeSinceKick.milliseconds() > 400) {
+                        launcher.resetKicker();
+                        timeSinceKickReset.reset();
+                        launchState = LaunchBallStates.UPDATE_INDEXER;
+                    } else {
+                        break;
+                    }
+                case  UPDATE_INDEXER:
+                    telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                    indexer.updateAfterShoot();
+                    launchState = LaunchBallStates.IDLE;
+                    break;
+                default:
+                    throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
+            }
+        }
+    }
+
+    public  void resetIndexerColorStart(){
+        indexerResetState = IndexerResetStates.CHECK_ZERO;
+    }
+
+    public void resetIndexer() {
+        switch (indexerResetState){
+            case CHECK_ZERO:
+                if (timeSinceKick.milliseconds() > 1000 && timeSinceKickReset.milliseconds() > 500) {
+                    indexer.rotateToZeroIntakePosition();
+                    timeSinceIndex.reset();
+                    indexerResetState = IndexerResetStates.AT_ZERO;
+                    break;
+                }else {
+                    break;
+                }
+            case AT_ZERO:
+                if (timeSinceIndex.milliseconds() > 800){
+                    indexer.updateBallColors();
+                    indexerResetState = IndexerResetStates.CHECK_ONE;
+                } else {
+                    break;
+                }
+            case CHECK_ONE:
+                indexer.rotateToOneIntakePosition();
+                timeSinceIndex.reset();
+                indexerResetState = IndexerResetStates.AT_ONE;
+                break;
+            case AT_ONE:
+                if (timeSinceIndex.milliseconds() > 800){
+                    indexer.updateBallColors();
+                    indexerResetState = IndexerResetStates.INIT;
+                } else {
+                    break;
+                }
+            case CHECK_TWO:
+                indexer.rotateToTwoIntakePosition();
+                timeSinceIndex.reset();
+                indexerResetState = IndexerResetStates.AT_TWO;
+                break;
+            case AT_TWO:
+                if (timeSinceIndex.milliseconds() > 800){
+                    indexer.updateBallColors();
+                    indexerResetState = IndexerResetStates.INIT;
+                } else {
+                    break;
+                }
+            default:
+                break;
         }
     }
 }
