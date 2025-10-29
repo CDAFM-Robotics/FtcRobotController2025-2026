@@ -238,4 +238,8 @@ public class Launcher {
     public double getLauncherVelocity() {
         return launcherMotor1.getVelocity();
     }
+
+    public Boolean isLauncherActive(){
+        return launcherActive;
+    }
 }
