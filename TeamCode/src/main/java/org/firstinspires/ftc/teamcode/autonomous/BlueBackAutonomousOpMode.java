@@ -65,12 +65,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
         Actions.runBlocking(otherActions[5].get());
 
-
-
-
         Actions.runBlocking(otherActions[8].get());
-
-
 
         if (motif[1] == Robot.ArtifactColor.GREEN) {
             Actions.runBlocking(otherActions[2].get());
@@ -95,6 +90,8 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
         else {
             Actions.runBlocking(otherActions[2].get());
         }
+
+
 
         Actions.runBlocking(otherActions[5].get());
 

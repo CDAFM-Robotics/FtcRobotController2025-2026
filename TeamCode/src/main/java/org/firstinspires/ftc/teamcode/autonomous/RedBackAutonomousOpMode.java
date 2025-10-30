@@ -57,13 +57,13 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             motif = new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
         }
 
-        /*
+
 
         if (motif[0] != Robot.ArtifactColor.GREEN) {
             Actions.runBlocking(otherActions[3].get());
         }
 
-         */
+
 
         // Go to the Launch Pose
 
@@ -74,17 +74,9 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         //Actions.runBlocking(launchInMotifOrder(motif));
 
-/*
-
-
         Actions.runBlocking(otherActions[5].get());
 
-
-
-
         Actions.runBlocking(otherActions[8].get());
-
-
 
         if (motif[1] == Robot.ArtifactColor.GREEN) {
             Actions.runBlocking(otherActions[2].get());
@@ -119,7 +111,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             otherActions[1].get()
         ));
 
- */
+
 
         /*
 
