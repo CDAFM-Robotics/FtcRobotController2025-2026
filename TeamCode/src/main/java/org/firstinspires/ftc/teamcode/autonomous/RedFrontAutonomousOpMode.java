@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
+import java.util.function.Supplier;
+
 @Autonomous(name = "Red Front Autonomous", group = "0competition")
 public class RedFrontAutonomousOpMode extends LinearOpMode {
     @Override
@@ -22,7 +24,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
         Action[] trajectories = autonomousTrajectoryBuilder.getRedCloseTrajectories();
 
-        Action[] otherActions = autonomousTrajectoryBuilder.getOtherActions();
+        Supplier<Action>[] otherActions = autonomousTrajectoryBuilder.getOtherActions();
 
         Robot.ArtifactColor[] motif = null;
 
@@ -39,17 +41,17 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
         }
 
         if (motif[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[2]);
+            Actions.runBlocking(otherActions[2].get());
         }
 
         // Go to the Launch Pose
 
         Actions.runBlocking(new ParallelAction(
             trajectories[0],
-            otherActions[0]
+            otherActions[0].get()
         ));
 
-        Actions.runBlocking(otherActions[5]);
+        Actions.runBlocking(otherActions[5].get());
 
         // Pickup first mark
 
@@ -61,7 +63,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
         Actions.runBlocking(new ParallelAction(
             trajectories[3],
-            otherActions[1]
+            otherActions[1].get()
         ));
 
     }

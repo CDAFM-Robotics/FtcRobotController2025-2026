@@ -41,8 +41,11 @@ public class Launcher {
 
         private boolean initialized = false;
 
+        private double velocity;
 
-        public SpinLauncherAction() {
+
+        public SpinLauncherAction(double velocity) {
+            this.velocity = velocity;
         }
 
         @Override
@@ -53,7 +56,7 @@ public class Launcher {
                 initialized = true;
             }
 
-            return false;
+            return launcherMotor1.getVelocity() + launcherMotor2.getVelocity() < velocity * 2;
         }
     }
 
@@ -99,17 +102,14 @@ public class Launcher {
         }
     }
 
-    public Action getSpinLauncherAction() {
-        return new ParallelAction(
-            new SpinLauncherAction(),
-            new SleepAction(1500)
-            );
+    public Action getSpinLauncherAction(double velocity) {
+        return new SpinLauncherAction(velocity);
     }
 
     public Action getRotateKickerAction(double position) {
         return new SequentialAction(
             new SetKickerPositionAction(position),
-            new SleepAction(1000)
+            new SleepAction(0.5)
         );
     }
 
@@ -147,24 +147,36 @@ public class Launcher {
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(3);
+        limelight.pipelineSwitch(7);
 
         limelight.start();
     }
+    /*
+        LIMELIGHT PIPELINES:        TYPE:               STATUS:
+            0: PURPLE               COLOR               USED
+            1: YELLOW               COLOR               OPEN FOR CONFIGURATION
+            2: BLUE                 COLOR               OPEN FOR CONFIGURATION
+            3: APRIL_TAG            AprilTag            OPEN FOR CONFIGURATION
+            4: MOTIF                AprilTag            USED
+            5: RED_GOAL             AprilTag            USED
+            6: BLUE_GOAL            AprilTag            USED
+            7: OBELISK              AprilTag            USED
+
+     */
 
     public Robot.ArtifactColor[] getMotifPattern() {
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                if (fr.getFiducialId() == 21) {
-                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
-                }
-                else if (fr.getFiducialId() == 22) {
-                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
-                }
-                else if (fr.getFiducialId() == 23) {
-                    return new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+            if (fiducialResults != null) {
+                for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                    if (fr.getFiducialId() == 21) {
+                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                    } else if (fr.getFiducialId() == 22) {
+                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                    } else if (fr.getFiducialId() == 23) {
+                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                    }
                 }
             }
         }
@@ -232,7 +244,6 @@ public class Launcher {
     public void setLauncherPower(double power) {
         launcherMotor2.setPower(power);
         launcherMotor1.setPower(power);
-        launcherActive = power != 0;
     }
 
     public double getLauncherVelocity() {

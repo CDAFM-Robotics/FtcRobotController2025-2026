@@ -74,7 +74,7 @@ public class Indexer {
     public Action getRotateIndexerAction(double position) {
         return new SequentialAction(
             new RotateIndexerAction(position),
-            new SleepAction(1000)
+            new SleepAction(0.5)
         );
     }
 
@@ -115,10 +115,7 @@ public class Indexer {
         //colorSensor3Left.setGain(8);
         //colorSensor3Right.setGain(8);
 
-        indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
-        telemetry.addData("color:", artifactColorArray[0]);
-        telemetry.addData("color:", artifactColorArray[1]);
-        telemetry.addData("color:", artifactColorArray[2]);
+        indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
 
 
     }
@@ -167,9 +164,9 @@ public class Indexer {
     }
 
     public void updateBallColors() {
-        telemetry.addData("color:", artifactColorArray[0]);
-        telemetry.addData("color:", artifactColorArray[1]);
-        telemetry.addData("color:", artifactColorArray[2]);
+        telemetry.addData("Color", artifactColorArray[0]);
+        telemetry.addData("Color", artifactColorArray[1]);
+        telemetry.addData("Color", artifactColorArray[2]);
         double position = getIndexerPosition();
 
         int i = -1;
@@ -184,7 +181,7 @@ public class Indexer {
             i = 2;
         }
         else {
-            telemetry.addLine("ERROR: updateBallCollors");
+            telemetry.addLine("ERROR: updateBallColors");
         }
         artifactColorArray[i] = getPredictedColor(
                 colorSensor1Left.getNormalizedColors(),
@@ -205,7 +202,7 @@ public class Indexer {
 
     public double getIndexerPosition() {
         double position = indexerServo.getPosition();
-        telemetry.addData("position getindexposition", position);
+        telemetry.addData("position get index position", position);
         return (double) Math.round(position * 100) / 100.00;
     }
 

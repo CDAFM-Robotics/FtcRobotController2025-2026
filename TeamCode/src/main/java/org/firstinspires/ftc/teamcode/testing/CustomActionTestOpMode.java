@@ -15,6 +15,28 @@ public class CustomActionTestOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, telemetry);
         waitForStart();
-        Actions.runBlocking(robot.getLauncher().getSpinLauncherAction());
+
+        /*
+
+        robot.getLauncher().startLauncher();
+        while (opModeIsActive()) {
+            robot.getLauncher().startLauncher();
+            telemetry.addData("Current Velocity", robot.getLauncher().getLauncherVelocity());
+            telemetry.update();
+        }
+
+         */
+
+        Actions.runBlocking(robot.getLauncher().getSpinLauncherAction(1600));
+        telemetry.addData("Status", "Done with Action");
+        telemetry.update();
+
+        robot.getLauncher().setLauncherPower(0);
+        sleep (1000);
+
+        Actions.runBlocking(robot.getLauncher().getSpinLauncherAction(1600));
+        telemetry.addData("Status", "Done with Action");
+        telemetry.update();
+        sleep(2000);
     }
 }

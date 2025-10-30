@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous(name = "Autonomous test thingy yay finally this took so long :)", group = "Testing")
+@Disabled
 public class AutonomousProgramTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

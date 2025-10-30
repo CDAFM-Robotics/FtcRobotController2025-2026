@@ -9,6 +9,8 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
+import java.util.function.Supplier;
+
 public class AutonomousActionBuilder {
 
     public Action redFarStartToFarLaunch;
@@ -39,18 +41,22 @@ public class AutonomousActionBuilder {
     public Action stopIntakeAction;
     public Action resetKickerAction;
 
-    public Pose2d redFarLaunchPose = new Pose2d(57.7, 12.5, Math.toRadians(255));
-    public Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(225));
+    public static Pose2d redFarLaunchPose = new Pose2d(50, 12.5, Math.toRadians(-110));
+    public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
 
-    public Pose2d blueFarLaunchPose = new Pose2d(57.7, -12.5, Math.toRadians(-75));
+    public Pose2d blueFarLaunchPose = new Pose2d(50, -12.5, Math.toRadians(-70));
     public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(5);
-    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(5);
+    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(30);
+    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
+
+    Robot robot;
 
     public AutonomousActionBuilder(MecanumDrive md, Robot robot) {
 
-        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(57.7, 12.5), Math.toRadians(180)))
+        this.robot = robot;
+
+        redFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)))
             .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
@@ -65,6 +71,7 @@ public class AutonomousActionBuilder {
         redFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
             .strafeTo(new Vector2d(47.5, 23.5), normalTranslationalVelConstraint)
             .build();
+
 
         redCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(-53)))
           .strafeToSplineHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
@@ -90,7 +97,8 @@ public class AutonomousActionBuilder {
             .strafeToConstantHeading(new Vector2d( -10, 30))
             .build();
 
-        blueFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, -11.5), Math.toRadians(180)))
+
+        blueFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, -11.75), Math.toRadians(-90)))
             .strafeToLinearHeading(blueFarLaunchPose.position, blueFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
@@ -105,6 +113,7 @@ public class AutonomousActionBuilder {
         blueFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
             .strafeTo(new Vector2d(47.5, -23.5), normalTranslationalVelConstraint)
             .build();
+
 
         blueCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(53)))
             .strafeToSplineHeading(blueCloseLaunchPose.position, blueCloseLaunchPose.heading, normalTranslationalVelConstraint)
@@ -133,7 +142,7 @@ public class AutonomousActionBuilder {
 
         // Non-driving actions
 
-        spinUpAction = robot.getLauncher().getSpinLauncherAction();
+        spinUpAction = robot.getLauncher().getSpinLauncherAction(1600);
         stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
 
         goToFirstBallAction = robot.getIndexer().getGoToFirstBallAction();
@@ -181,17 +190,17 @@ public class AutonomousActionBuilder {
         };
     }
 
-    public Action[] getOtherActions() {
-        return new Action[] {
-            spinUpAction,
-            stopSpinUpAction,
-            goToFirstBallAction,
-            goToSecondBallAction,
-            goToThirdBallAction,
-            launchBallAction,
-            startIntakeAction,
-            stopIntakeAction,
-            resetKickerAction,
+    public Supplier<Action>[] getOtherActions() {
+        return new Supplier[] {
+            () -> robot.getLauncher().getSpinLauncherAction(1600),
+            () -> robot.getLauncher().getStopLauncherAction(),
+            () -> robot.getIndexer().getGoToFirstBallAction(),
+            () -> robot.getIndexer().getGoToSecondBallAction(),
+            () -> robot.getIndexer().getGoToThirdBallAction(),
+            () -> robot.getLauncher().getKickBallAction(),
+            () -> robot.getIntake().getStartIntakeAction(),
+            () -> robot.getIntake().getStopIntakeAction(),
+            () -> robot.getLauncher().getResetKickerAction(),
         };
     }
 }
