@@ -45,11 +45,11 @@ public class Indexer {
     //public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
 
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
 
     public class RotateIndexerAction implements Action {
 
