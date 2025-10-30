@@ -118,6 +118,9 @@ public class Indexer {
         indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
 
 
+        telemetry.addData("color:", artifactColorArray[0]);
+        telemetry.addData("color:", artifactColorArray[1]);
+        telemetry.addData("color:", artifactColorArray[2]);
     }
 
     private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
@@ -214,24 +217,37 @@ public class Indexer {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    public void rotateToZeroIntakePosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
-    }
-
     public void rotateToOnePosition() {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
-    }
-
-    public void rotateToOneIntakePosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
     }
 
     public void rotateToTwoPosition() {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
-    public void rotateToTwoIntakePosition() {
-        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+    public Boolean rotateToZeroIntakePosition() {
+        if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
+            rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean rotateToOneIntakePosition() {
+        if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+            rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+            return true;
+        }
+        return false;
+    }
+
+
+    public Boolean rotateToTwoIntakePosition() {
+        if (getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
+            rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+            return true;
+        }
+        return false;
     }
 
     public void rotateClockwise() {
