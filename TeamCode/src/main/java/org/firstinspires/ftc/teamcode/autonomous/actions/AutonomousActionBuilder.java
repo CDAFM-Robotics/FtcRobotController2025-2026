@@ -40,6 +40,7 @@ public class AutonomousActionBuilder {
     public Action startIntakeAction;
     public Action stopIntakeAction;
     public Action resetKickerAction;
+    public Action aprilTagAction;
 
     public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-113));
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
@@ -154,6 +155,9 @@ public class AutonomousActionBuilder {
 
         startIntakeAction = robot.getIntake().getStartIntakeAction();
         stopIntakeAction = robot.getIntake().getStopIntakeAction();
+
+
+        aprilTagAction = robot.getLauncher().getAprilTagAction();
     }
 
     public Action[] getRedFarTrajectories() {
@@ -190,7 +194,7 @@ public class AutonomousActionBuilder {
         };
     }
 
-    public Supplier<Action>[] getOtherActions() {
+    public Supplier[] getOtherActions() {
         return new Supplier[] {
             () -> robot.getLauncher().getSpinLauncherAction(1600),
             () -> robot.getLauncher().getStopLauncherAction(),
@@ -201,6 +205,7 @@ public class AutonomousActionBuilder {
             () -> robot.getIntake().getStartIntakeAction(),
             () -> robot.getIntake().getStopIntakeAction(),
             () -> robot.getLauncher().getResetKickerAction(),
+            () -> robot.getLauncher().getAprilTagAction()
         };
     }
 }

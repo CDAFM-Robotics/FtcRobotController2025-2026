@@ -27,6 +27,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)));
         Robot robot = new Robot(hardwareMap, telemetry);
+        robot.getLauncher().setLimelightPipeline(7);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
         trajectories = autonomousTrajectoryBuilder.getRedFarTrajectories();

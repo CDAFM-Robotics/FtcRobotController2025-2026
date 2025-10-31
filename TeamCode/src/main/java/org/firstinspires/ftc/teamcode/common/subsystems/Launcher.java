@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -103,6 +102,45 @@ public class Launcher {
         }
     }
 
+    public class AprilTagAction implements Action {
+        private boolean initialized = false;
+
+        private Robot.ArtifactColor[] motifPattern;
+
+        public AprilTagAction(int pipeline) {
+            limelight.pipelineSwitch(pipeline);
+        }
+
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            LLResult result = limelight.getLatestResult();
+
+            if (result.isValid()) {
+                List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+                for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                    if (fr.getFiducialId() == 21) {
+                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                        return false;
+                    }
+                    else if (fr.getFiducialId() == 22) {
+                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                        return false;
+                    }
+                    else if (fr.getFiducialId() == 23) {
+                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public Robot.ArtifactColor[] getMotifPattern() {
+            return motifPattern;
+        }
+    }
+
     public Action getSpinLauncherAction(double velocity) {
         return new SpinLauncherAction(velocity);
     }
@@ -127,6 +165,9 @@ public class Launcher {
     }
     public Action getStopLauncherAction() {
         return getSetLauncherPowerAction(0);
+    }
+    public Action getAprilTagAction () {
+        return new AprilTagAction(7);
     }
 
     public Launcher(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -296,11 +337,11 @@ public class Launcher {
         double answer = 0;
         if(result.isValid()){
             if(Math.abs(result.getTx()) > 1.5){
-                if(result.getTx() < 0){
-                    answer = -0.15;
+                if(result.getTx() < 1){
+                    answer = -0.5;
                 }
-                if(result.getTx() > 0){
-                    answer = 0.15;
+                if(result.getTx() > 1){
+                    answer = 0.5;
                 }
             }
             else{
@@ -311,6 +352,10 @@ public class Launcher {
         return answer;
     }
 
+    public void setLimelightPipeline(int pipeline) {
+        limelight.pipelineSwitch(pipeline);
+    }
+
     public double getBlueAimingPower(){
         //limelight.pipelineSwitch(5);
         limelight.pipelineSwitch(6);
@@ -318,11 +363,11 @@ public class Launcher {
         double answer = 0;
         if(result.isValid()){
             if(Math.abs(result.getTx()) > 1.5){
-                if(result.getTx() < 0){
-                    answer = -0.15;
+                if(result.getTx() < 1){
+                    answer = -0.5;
                 }
-                if(result.getTx() > 0){
-                    answer = 0.15;
+                if(result.getTx() > 1){
+                    answer = 0.5;
                 }
             }
             else{

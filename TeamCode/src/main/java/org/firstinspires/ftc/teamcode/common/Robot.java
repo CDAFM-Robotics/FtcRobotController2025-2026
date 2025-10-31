@@ -365,9 +365,11 @@ public class Robot {
         }
     }
 
-    public  void resetIndexerColorStart(){
+    public void resetIndexerColorStart(){
         indexerResetState = IndexerResetStates.CHECK_INTAKE;
     }
+
+
 
     public void resetIndexer() {
         telemetry.addData("resetIndexer: state", indexerResetState);

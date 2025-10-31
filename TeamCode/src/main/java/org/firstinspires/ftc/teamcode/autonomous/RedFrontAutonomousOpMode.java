@@ -46,12 +46,48 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
         // Go to the Launch Pose
 
+
         Actions.runBlocking(new ParallelAction(
             trajectories[0],
             otherActions[0].get()
         ));
 
         Actions.runBlocking(otherActions[5].get());
+
+        Actions.runBlocking(otherActions[8].get());
+
+        if (motif[1] == Robot.ArtifactColor.GREEN) {
+            Actions.runBlocking(otherActions[2].get());
+        }
+        else if (motif[0] == Robot.ArtifactColor.GREEN) {
+            Actions.runBlocking(otherActions[3].get());
+        }
+        else {
+            Actions.runBlocking(otherActions[4].get());
+        }
+
+        Actions.runBlocking(otherActions[5].get());
+
+        Actions.runBlocking(otherActions[8].get());
+
+        if (motif[0] == Robot.ArtifactColor.GREEN) {
+            Actions.runBlocking(otherActions[4].get());
+        }
+        else if (motif[1] == Robot.ArtifactColor.GREEN) {
+            Actions.runBlocking(otherActions[4].get());
+        }
+        else {
+            Actions.runBlocking(otherActions[2].get());
+        }
+
+
+
+        Actions.runBlocking(otherActions[5].get());
+
+        Actions.runBlocking(new ParallelAction(
+            otherActions[8].get(),
+            otherActions[1].get()
+        ));
 
         // Pickup first mark
 
@@ -65,6 +101,8 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
             trajectories[3],
             otherActions[1].get()
         ));
+
+
 
     }
 }
