@@ -162,8 +162,12 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
+            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
+            robot.getHud().UpdateBallUI();
 
             telemetry.update();
+
         }
+
     }
 }

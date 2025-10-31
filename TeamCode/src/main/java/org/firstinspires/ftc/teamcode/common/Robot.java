@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveBase;
+import org.firstinspires.ftc.teamcode.common.subsystems.Hud;
 import org.firstinspires.ftc.teamcode.common.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
@@ -19,6 +20,7 @@ public class Robot {
     private Indexer indexer;
     private Launcher launcher;
     private Intake intake;
+    private Hud hud;
 
     private ElapsedTime timeSinceIndex = new ElapsedTime();
     private ElapsedTime timeSinceKick = new ElapsedTime();
@@ -48,6 +50,7 @@ public class Robot {
         this.indexer = new Indexer(this.hardwareMap, this.telemetry);
         this.launcher = new Launcher(this.hardwareMap, this.telemetry);
         this.intake = new Intake(this.hardwareMap, this.telemetry);
+        this.hud = new Hud(this.hardwareMap, this.telemetry);
         telemetry.update();
 
     }
@@ -94,6 +97,10 @@ public class Robot {
 
     public Intake getIntake() {
         return intake;
+    }
+
+    public Hud getHud() {
+        return hud;
     }
 
     public void runIndexer(boolean launchGreen, boolean launchPurple, boolean launchAll) {
