@@ -27,6 +27,7 @@ public class Launcher {
 
     DcMotorEx launcherMotor1;
     DcMotorEx launcherMotor2;
+    public double launchPower;
 
     private Limelight3A limelight;
 
@@ -227,23 +228,53 @@ public class Launcher {
     }
 
     public void startLauncher() {
-        setLauncherPower(1);
+        launchPower = 1;
+        setLauncherPower(launchPower);
+        launcherActive = true;
+    }
+
+    public void reduceLauncherPower() {
+        if (launchPower >= 0.1) {
+            launchPower -= 0.1;
+            launcherActive = true;
+        }
+        else{
+            launchPower = 0;
+            launcherActive = false;
+        }
+        setLauncherPower(launchPower);
+    }
+
+    public void increaseLauncherPower() {
+        if (launchPower <= 0.9) {
+            launchPower += 0.1;
+        }
+        else{
+            launchPower = 1;
+        }
+        setLauncherPower(launchPower);
         launcherActive = true;
     }
 
     public void startLauncherPartialPower() {
-        setLauncherPower(0.8);
+        launchPower = 0.8;
+        setLauncherPower(launchPower);
         launcherActive = true;
     }
 
     public void stopLauncher() {
-        setLauncherPower(0);
+        launchPower = 0;
+        setLauncherPower(launchPower);
         launcherActive = false;
     }
 
     public void setLauncherPower(double power) {
         launcherMotor2.setPower(power);
         launcherMotor1.setPower(power);
+    }
+
+    public double getLaunchPower(){
+        return launcherMotor1.getPower();
     }
 
     public double getLauncherVelocity() {

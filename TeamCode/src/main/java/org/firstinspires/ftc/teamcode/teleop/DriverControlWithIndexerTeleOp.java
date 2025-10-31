@@ -94,14 +94,14 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
 
             // Manual Indexer control.
             // TODO: Add checking the kicker position so the indexer will not hit the kicker
-
-            if (currentGamepad2.x && !previousGamepad2.x) {
+            // removed the manual indexer control after auto indexer control is implemented
+            /*if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getIndexer().rotateClockwise();
             }
 
             if (currentGamepad2.y && !previousGamepad2.y) {
                 robot.getIndexer().rotateCounterClockwise();
-            }
+            }*/
 
             // When indexer stuck or out of alignment, recover the color of the balls
             if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0){
@@ -121,6 +121,14 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
 
             if (currentGamepad2.a && !previousGamepad2.a) {
               robot.getLauncher().toggleLauncherPartialPower();
+            }
+
+            if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
+                robot.getLauncher().increaseLauncherPower();
+            }
+
+            if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
+                robot.getLauncher().reduceLauncherPower();
             }
 
             //launch a green ball
@@ -150,6 +158,7 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
 
             //TODO: update indicator lights
 
+            telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
