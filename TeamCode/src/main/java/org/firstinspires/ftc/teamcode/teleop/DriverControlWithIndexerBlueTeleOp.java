@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 
-@TeleOp(name = "Driver Control With Indexer Teleop", group = "0teleop")
-public class DriverControlWithIndexerTeleOp extends LinearOpMode {
+@TeleOp(name = "BLUE Driver Control With Indexer Teleop", group = "0teleop")
+public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -60,13 +60,13 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
                 telemetry.addLine("left_bumper pushed");
             }
 
-            if(currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
+            if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isTurning){
-                double power = robot.getLauncher().getRedAimingPower();
+                double power = robot.getLauncher().getBlueAimingPower();
                 telemetry.addData("aiming: motor power", power);
                 robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
-            else{
+            else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
                 isTurning = false;
             }
@@ -162,12 +162,8 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
-            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
-            robot.getHud().UpdateBallUI();
 
             telemetry.update();
-
         }
-
     }
 }

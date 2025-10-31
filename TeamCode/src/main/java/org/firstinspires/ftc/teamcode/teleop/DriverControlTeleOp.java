@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
-
-@TeleOp(name = "Driver Control Teleop", group = "0teleop")
+@Disabled
+@TeleOp(name = "Driver Control Teleop", group = "")
 public class DriverControlTeleOp extends LinearOpMode {
 
     @Override

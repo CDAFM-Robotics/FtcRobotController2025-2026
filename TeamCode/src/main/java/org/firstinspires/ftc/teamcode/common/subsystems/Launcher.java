@@ -148,7 +148,7 @@ public class Launcher {
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(5);
+        limelight.pipelineSwitch(0);
 
         limelight.start();
     }
@@ -291,6 +291,29 @@ public class Launcher {
 
     public double getRedAimingPower(){
         //limelight.pipelineSwitch(5);
+        limelight.pipelineSwitch(5);
+        LLResult result = limelight.getLatestResult();
+        double answer = 0;
+        if(result.isValid()){
+            if(Math.abs(result.getTx()) > 1.5){
+                if(result.getTx() < 0){
+                    answer = -0.15;
+                }
+                if(result.getTx() > 0){
+                    answer = 0.15;
+                }
+            }
+            else{
+                answer = 0;
+            }
+        }
+
+        return answer;
+    }
+
+    public double getBlueAimingPower(){
+        //limelight.pipelineSwitch(5);
+        limelight.pipelineSwitch(6);
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
