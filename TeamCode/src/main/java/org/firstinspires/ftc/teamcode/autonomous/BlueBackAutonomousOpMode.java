@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public class BlueBackAutonomousOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, -11.75), Math.toRadians(-90)));
         Robot robot = new Robot(hardwareMap, telemetry);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
@@ -44,8 +44,6 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
         //start always with G in launcher
 
-
-
         if (motif == null) {
             motif = new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
         }
@@ -61,7 +59,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             otherActions[0].get()
         ));
 
-
+        sleep(500);
 
         Actions.runBlocking(otherActions[5].get());
 
