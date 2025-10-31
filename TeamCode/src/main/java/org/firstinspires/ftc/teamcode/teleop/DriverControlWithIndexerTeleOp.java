@@ -75,10 +75,11 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
 
 
             // Active Intake
-            if (currentGamepad1.right_trigger != 0.0) {
+            if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
                 telemetry.addLine("right trigger");
                 robot.getIntake().startIntake();
-                robot.intakeWithIndexerTurn();
+                if (currentGamepad1.right_trigger != 0.0)
+                    robot.intakeWithIndexerTurn();
             }
             else {
                 robot.getIntake().stopIntake();
@@ -102,9 +103,8 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
                 robot.getIndexer().rotateCounterClockwise();
             }
 
-
             // When indexer stuck or out of alignment, recover the color of the balls
-            if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0) {
+            if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0){
                 robot.resetIndexerColorStart();
             }
 
@@ -112,8 +112,6 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
                 robot.resetIndexer();
 
             telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
-
-            // TODO We need to make it so when we are picking up, there is an empty slot but when shooting, there is a ball in the indexer ready to shoot.
 
             //Launcher
 
@@ -145,12 +143,12 @@ public class DriverControlWithIndexerTeleOp extends LinearOpMode {
                 robot.launchAColorBall();
             }
 
-
-
             //launch all balls in the robot
             if (currentGamepad2.right_trigger != 0) {
                 robot.shootAllBalls();
             }
+
+            //TODO: update indicator lights
 
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);

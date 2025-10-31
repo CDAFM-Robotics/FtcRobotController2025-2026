@@ -281,8 +281,9 @@ public class Indexer {
     }
 
     public Boolean checkEmptySlot(){
+        //TODO: can change the order and start with the current intake slot
         telemetry.addLine("checkEmptySlot");
-        for(int i=0; i<=2; i++){
+        for(int i=2; i>=0; i--){
             telemetry.addData("array", i);
             telemetry.addData("color:", artifactColorArray[i]);
             if(artifactColorArray[i] == Robot.ArtifactColor.NONE){

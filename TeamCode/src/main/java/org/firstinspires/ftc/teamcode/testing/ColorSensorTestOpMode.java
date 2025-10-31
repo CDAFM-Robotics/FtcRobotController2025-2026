@@ -35,8 +35,8 @@ public class ColorSensorTestOpMode extends LinearOpMode {
 
         float gain = 8;
 
-        colorSensor1 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1");
-        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor2");
+        colorSensor1 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Left");
+        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Right");
 
         waitForStart();
 

@@ -218,7 +218,7 @@ public class Launcher {
     }
 
     public void toggleLauncherPartialPower() {
-        if (launcherMotor1.getPower() != 0.5) {
+        if (((double) Math.round(launcherMotor1.getPower()*100)/100) != 0.8) {
             startLauncherPartialPower();
         }
         else {

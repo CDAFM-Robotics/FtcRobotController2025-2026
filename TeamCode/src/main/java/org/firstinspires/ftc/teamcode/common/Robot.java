@@ -35,6 +35,8 @@ public class Robot {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         timeSinceIndex.startTime();
+        timeSinceKick.startTime();
+        timeSinceKickReset.startTime();
 
         initializeSubsystems();
     }
@@ -59,12 +61,11 @@ public class Robot {
 
     public enum IndexerResetStates {
         INIT,
-        CHECK_ZERO,
-        AT_ZERO,
-        CHECK_ONE,
-        AT_ONE,
-        CHECK_TWO,
-        AT_TWO
+        CHECK_INTAKE,
+        CHECK_0TO1,
+        CHECK_1TO2,
+        CHECK_2TO1,
+        CHECK_LAST
     }
 
     public enum LaunchBallStates {
@@ -76,7 +77,7 @@ public class Robot {
         UPDATE_INDEXER
     }
 
-    IndexerResetStates indexerResetState = IndexerResetStates.CHECK_ZERO;
+    IndexerResetStates indexerResetState = IndexerResetStates.INIT;
     LaunchBallStates launchState = LaunchBallStates.IDLE;
 
     public DriveBase getDriveBase() {
@@ -210,9 +211,8 @@ public class Robot {
             telemetry.addLine("Robot: found empty slot");
             if(indexer.turnEmptySlotToIntake() ) {
                 timeSinceIndex.reset();
-
             }
-            if ( timeSinceIndex.milliseconds() > 500 ) {
+            if ( timeSinceIndex.milliseconds() > 550 ) {
                 telemetry.addLine("Robot:updateBallColor");
                 indexer.updateBallColors();
             }
@@ -359,56 +359,69 @@ public class Robot {
     }
 
     public  void resetIndexerColorStart(){
-        indexerResetState = IndexerResetStates.CHECK_ZERO;
+        indexerResetState = IndexerResetStates.CHECK_INTAKE;
     }
 
     public void resetIndexer() {
+        telemetry.addData("resetIndexer: state", indexerResetState);
         switch (indexerResetState){
-            case CHECK_ZERO:
+            case INIT:
+                break;
+            case CHECK_INTAKE:
                 if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > 500) {
-                    if (indexer.rotateToZeroIntakePosition()) {
-                        timeSinceIndex.reset();
+                    indexer.updateBallColors();
+                    double position = indexer.getIndexerPosition();
+                    if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
+                        indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+                        indexerResetState = IndexerResetStates.CHECK_0TO1;
+                    } else if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE){
+                        indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+                        indexerResetState = IndexerResetStates.CHECK_1TO2;
+                    } else{
+                        indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+                        indexerResetState = IndexerResetStates.CHECK_2TO1;
                     }
-                    indexerResetState = IndexerResetStates.AT_ZERO;
-                    break;
-                }else {
-                    break;
-                }
-            case AT_ZERO:
-                if (timeSinceIndex.milliseconds() > 800){
-                    indexer.updateBallColors();
-                    indexerResetState = IndexerResetStates.CHECK_ONE;
-                } else {
-                    break;
-                }
-            case CHECK_ONE:
-                if (indexer.rotateToOneIntakePosition()) {
                     timeSinceIndex.reset();
                 }
-                indexerResetState = IndexerResetStates.AT_ONE;
                 break;
-            case AT_ONE:
-                if (timeSinceIndex.milliseconds() > 500){
+            case CHECK_0TO1:
+                if (timeSinceIndex.milliseconds() > 550) {
                     indexer.updateBallColors();
-                    indexerResetState = IndexerResetStates.INIT;
-                } else {
-                    break;
-                }
-            case CHECK_TWO:
-                if(indexer.rotateToTwoIntakePosition()) {
+                    indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
                     timeSinceIndex.reset();
+                    indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
-                indexerResetState = IndexerResetStates.AT_TWO;
                 break;
-            case AT_TWO:
-                if (timeSinceIndex.milliseconds() > 500){
+            case CHECK_1TO2:
+                if (timeSinceIndex.milliseconds() > 550) {
+                    indexer.updateBallColors();
+                    indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+                    timeSinceIndex.reset();
+                    indexerResetState = IndexerResetStates.CHECK_LAST;
+                }
+                break;
+            case CHECK_2TO1:
+                if (timeSinceIndex.milliseconds() > 550) {
+                    indexer.updateBallColors();
+                    indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+                    timeSinceIndex.reset();
+                    indexerResetState = IndexerResetStates.CHECK_LAST;
+                }
+                break;
+            case CHECK_LAST:
+                if (timeSinceIndex.milliseconds() > 800) {
                     indexer.updateBallColors();
                     indexerResetState = IndexerResetStates.INIT;
-                } else {
-                    break;
                 }
+                break;
             default:
                 break;
         }
+    }
+
+    public void robotStopIntake(){
+        // This line cause intake color mistakes. To be investigated
+        // indexer.updateBallColors();
+        intake.stopIntake();
     }
 }
