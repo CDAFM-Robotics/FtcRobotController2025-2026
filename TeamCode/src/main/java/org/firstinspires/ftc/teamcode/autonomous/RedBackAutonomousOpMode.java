@@ -72,6 +72,8 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             otherActions[0].get()
         ));
 
+        sleep(500);
+
         //Actions.runBlocking(launchInMotifOrder(motif));
 
         Actions.runBlocking(otherActions[5].get());

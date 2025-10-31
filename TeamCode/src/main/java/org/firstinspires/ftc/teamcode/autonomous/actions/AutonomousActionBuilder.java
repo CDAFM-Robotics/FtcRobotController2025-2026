@@ -44,10 +44,10 @@ public class AutonomousActionBuilder {
     public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-113));
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
 
-    public Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-67));
+    public Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
     public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(30);
+    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(15);
     public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
 
     Robot robot;
@@ -110,7 +110,7 @@ public class AutonomousActionBuilder {
             .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(15), normalTranslationalVelConstraint)
             .build();
 
-        blueFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
+        blueFarLaunchToLeaveLaunchZone = md.actionBuilder(blueFarLaunchPose)
             .strafeTo(new Vector2d(47.5, -23.5), normalTranslationalVelConstraint)
             .build();
 
