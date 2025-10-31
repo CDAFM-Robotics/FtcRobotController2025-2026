@@ -212,7 +212,7 @@ public class Robot {
                 timeSinceIndex.reset();
 
             }
-            if ( timeSinceIndex.milliseconds() > 800 ) {
+            if ( timeSinceIndex.milliseconds() > 500 ) {
                 telemetry.addLine("Robot:updateBallColor");
                 indexer.updateBallColors();
             }
@@ -366,8 +366,9 @@ public class Robot {
         switch (indexerResetState){
             case CHECK_ZERO:
                 if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > 500) {
-                    indexer.rotateToZeroIntakePosition();
-                    timeSinceIndex.reset();
+                    if (indexer.rotateToZeroIntakePosition()) {
+                        timeSinceIndex.reset();
+                    }
                     indexerResetState = IndexerResetStates.AT_ZERO;
                     break;
                 }else {
@@ -381,24 +382,26 @@ public class Robot {
                     break;
                 }
             case CHECK_ONE:
-                indexer.rotateToOneIntakePosition();
-                timeSinceIndex.reset();
+                if (indexer.rotateToOneIntakePosition()) {
+                    timeSinceIndex.reset();
+                }
                 indexerResetState = IndexerResetStates.AT_ONE;
                 break;
             case AT_ONE:
-                if (timeSinceIndex.milliseconds() > 800){
+                if (timeSinceIndex.milliseconds() > 500){
                     indexer.updateBallColors();
                     indexerResetState = IndexerResetStates.INIT;
                 } else {
                     break;
                 }
             case CHECK_TWO:
-                indexer.rotateToTwoIntakePosition();
-                timeSinceIndex.reset();
+                if(indexer.rotateToTwoIntakePosition()) {
+                    timeSinceIndex.reset();
+                }
                 indexerResetState = IndexerResetStates.AT_TWO;
                 break;
             case AT_TWO:
-                if (timeSinceIndex.milliseconds() > 800){
+                if (timeSinceIndex.milliseconds() > 500){
                     indexer.updateBallColors();
                     indexerResetState = IndexerResetStates.INIT;
                 } else {
