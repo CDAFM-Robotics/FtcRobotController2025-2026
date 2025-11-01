@@ -43,16 +43,23 @@ public class Launcher {
 
         private double velocity;
 
+        private double power;
 
         public SpinLauncherAction(double velocity) {
             this.velocity = velocity;
+            this.power = 1;
+        }
+
+        public SpinLauncherAction(double velocity, double power) {
+            this.velocity = velocity;
+            this.power = power;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
-                launcherMotor1.setPower(1);
-                launcherMotor2.setPower(1);
+                launcherMotor1.setPower(power);
+                launcherMotor2.setPower(power);
                 initialized = true;
             }
 
@@ -145,6 +152,10 @@ public class Launcher {
         return new SpinLauncherAction(velocity);
     }
 
+    public Action getSpinLauncherAction(double velocity, double power) {
+        return new SpinLauncherAction(velocity, power);
+    }
+
     public Action getRotateKickerAction(double position) {
         return new SequentialAction(
             new SetKickerPositionAction(position),
@@ -163,9 +174,11 @@ public class Launcher {
     public Action getSetLauncherPowerAction(double power) {
         return new SetLauncherPowerAction(power);
     }
+
     public Action getStopLauncherAction() {
         return getSetLauncherPowerAction(0);
     }
+
     public Action getAprilTagAction () {
         return new AprilTagAction(7);
     }
@@ -336,12 +349,13 @@ public class Launcher {
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
-            if(Math.abs(result.getTx()) > 1.5){
+            if(Math.abs(result.getTx()) > 3){
                 if(result.getTx() < 1){
-                    answer = -0.5;
+                    answer = -0.2;
                 }
+
                 if(result.getTx() > 1){
-                    answer = 0.5;
+                    answer = 0.2;
                 }
             }
             else{
@@ -362,12 +376,12 @@ public class Launcher {
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
-            if(Math.abs(result.getTx()) > 1.5){
+            if(Math.abs(result.getTx()) > 3){
                 if(result.getTx() < 1){
-                    answer = -0.5;
+                    answer = -0.2;
                 }
                 if(result.getTx() > 1){
-                    answer = 0.5;
+                    answer = 0.2;
                 }
             }
             else{

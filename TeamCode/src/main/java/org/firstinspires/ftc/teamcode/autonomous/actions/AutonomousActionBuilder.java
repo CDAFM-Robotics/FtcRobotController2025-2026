@@ -17,7 +17,8 @@ public class AutonomousActionBuilder {
     public Action redFarLaunchPickupThirdMark;
     public Action redFarLaunchToLeaveLaunchZone;
 
-    public Action redCloseStartToCloseLaunch;
+    public Action redCloseStartToAprilTagRead;
+    public Action redAprilTagReadToCloseLaunch;
     public Action redCloseLaunchPickupFirstMark;
     public Action redCloseLaunchPickupSecondMark;
     public Action redCloseLaunchToLeaveLaunchZone;
@@ -26,7 +27,8 @@ public class AutonomousActionBuilder {
     public Action blueFarLaunchPickupThirdMark;
     public Action blueFarLaunchToLeaveLaunchZone;
 
-    public Action blueCloseStartToCloseLaunch;
+    public Action blueCloseStartToAprilTagRead;
+    public Action blueAprilTagReadToCloseLaunch;
     public Action blueCloseLaunchPickupFirstMark;
     public Action blueCloseLaunchPickupSecondMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
@@ -46,7 +48,7 @@ public class AutonomousActionBuilder {
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
 
     public Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
-    public Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
+    public Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
 
     public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(15);
     public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
@@ -74,9 +76,14 @@ public class AutonomousActionBuilder {
             .build();
 
 
-        redCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(-53)))
-          .strafeToSplineHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
-          .build();
+
+        redCloseStartToAprilTagRead = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(37)))
+            .strafeToSplineHeading(new Vector2d(-35, 35), Math.toRadians(-45), normalTranslationalVelConstraint)
+            .build();
+
+        redAprilTagReadToCloseLaunch = md.actionBuilder(new Pose2d(new Vector2d(-35, 35), Math.toRadians(-45)))
+            .strafeToSplineHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
+            .build();
 
         redCloseLaunchPickupFirstMark = md.actionBuilder(redCloseLaunchPose)
             .setTangent(Math.toRadians(0))
@@ -116,28 +123,32 @@ public class AutonomousActionBuilder {
             .build();
 
 
-        blueCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(53)))
+        blueCloseStartToAprilTagRead = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(143)))
+            .strafeToSplineHeading(new Vector2d(-35, -35), Math.toRadians(-135), normalTranslationalVelConstraint)
+            .build();
+
+        blueAprilTagReadToCloseLaunch = md.actionBuilder(new Pose2d(new Vector2d(-35, -35), Math.toRadians(-135)))
             .strafeToSplineHeading(blueCloseLaunchPose.position, blueCloseLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
         blueCloseLaunchPickupFirstMark = md.actionBuilder(blueCloseLaunchPose)
             .setTangent(Math.toRadians(0))
-            .splineToSplineHeading(new Pose2d(new Vector2d(-11.5, 26), Math.toRadians(90)), Math.toRadians(90), normalTranslationalVelConstraint)
-            .strafeToConstantHeading(new Vector2d(-11.5, 46), slowTranslationalVelConstraint)
-            .setTangent(Math.toRadians(-90))
-            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(-135), normalTranslationalVelConstraint)
+            .splineToSplineHeading(new Pose2d(new Vector2d(-11.5, -26), Math.toRadians(-90)), Math.toRadians(-90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(new Vector2d(-11.5, -46), slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(90))
+            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(135), normalTranslationalVelConstraint)
             .build();
 
         blueCloseLaunchPickupSecondMark = md.actionBuilder(blueCloseLaunchPose)
-            .setTangent(Math.toRadians(10))
-            .splineToSplineHeading(new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90)), Math.toRadians(90), normalTranslationalVelConstraint)
-            .strafeToConstantHeading(new Vector2d(11.5, 46), slowTranslationalVelConstraint)
-            .setTangent(Math.toRadians(-135))
-            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(-135), normalTranslationalVelConstraint)
+            .setTangent(Math.toRadians(-10))
+            .splineToSplineHeading(new Pose2d(new Vector2d(11.5, -30), Math.toRadians(-90)), Math.toRadians(-90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(new Vector2d(11.5, -46), slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(135))
+            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(135), normalTranslationalVelConstraint)
             .build();
 
         blueCloseLaunchToLeaveLaunchZone = md.actionBuilder(blueCloseLaunchPose)
-            .strafeToConstantHeading(new Vector2d( -10, 30))
+            .strafeToConstantHeading(new Vector2d( -10, -30))
             .build();
 
 
@@ -170,7 +181,8 @@ public class AutonomousActionBuilder {
 
     public Action[] getRedCloseTrajectories() {
         return new Action[] {
-            redCloseStartToCloseLaunch,
+            redCloseStartToAprilTagRead,
+            redAprilTagReadToCloseLaunch,
             redCloseLaunchPickupFirstMark,
             redCloseLaunchPickupSecondMark,
             redCloseLaunchToLeaveLaunchZone
@@ -187,7 +199,8 @@ public class AutonomousActionBuilder {
 
     public Action[] getBlueCloseTrajectories() {
         return new Action[] {
-            blueCloseStartToCloseLaunch,
+            blueCloseStartToAprilTagRead,
+            blueAprilTagReadToCloseLaunch,
             blueCloseLaunchPickupFirstMark,
             blueCloseLaunchPickupSecondMark,
             blueCloseLaunchToLeaveLaunchZone
@@ -205,7 +218,8 @@ public class AutonomousActionBuilder {
             () -> robot.getIntake().getStartIntakeAction(),
             () -> robot.getIntake().getStopIntakeAction(),
             () -> robot.getLauncher().getResetKickerAction(),
-            () -> robot.getLauncher().getAprilTagAction()
+            () -> robot.getLauncher().getAprilTagAction(),
+            () -> robot.getLauncher().getSpinLauncherAction(1200, 0.75)
         };
     }
 }
