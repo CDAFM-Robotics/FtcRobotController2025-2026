@@ -156,8 +156,6 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-            //TODO: update indicator lights
-
             telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
@@ -166,8 +164,6 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             robot.getHud().UpdateBallUI();
 
             telemetry.update();
-
         }
-
     }
 }

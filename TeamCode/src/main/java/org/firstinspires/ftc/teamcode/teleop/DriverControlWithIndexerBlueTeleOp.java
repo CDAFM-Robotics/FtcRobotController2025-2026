@@ -47,6 +47,10 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 fieldCentric = !fieldCentric;
             }
 
+            if (currentGamepad1.back && !previousGamepad1.back){
+                fieldCentric = !fieldCentric;
+            }
+
             if (currentGamepad1.start && !previousGamepad1.start){
                 robot.getDriveBase().resetIMU();
             }
@@ -156,12 +160,12 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-            //TODO: update indicator lights
-
             telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
+            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
+            robot.getHud().UpdateBallUI();
 
             telemetry.update();
         }

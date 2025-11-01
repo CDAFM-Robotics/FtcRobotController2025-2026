@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +9,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.roadrunner.PinpointLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 public class DriveBase {
 
@@ -20,7 +22,11 @@ public class DriveBase {
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
 
-    private IMU imu;
+    // private IMU imu;
+
+    GoBildaPinpointDriver pinpoint;
+    private Pose2D pos;
+
 
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -45,34 +51,70 @@ public class DriveBase {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        imu = hardwareMap.get(IMU.class, "imu");
+        // imu = hardwareMap.get(IMU.class, "imu");
 
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-            RevHubOrientationOnRobot.UsbFacingDirection.UP
-        ));
+        // Get a reference to the sensor
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        imu.initialize(parameters);
-        imu.resetYaw();
+
+
+        // Configure the sensor
+        configurePinpoint();
+
+        // Set the location of the robot - this should be the place you are starting the robot from
+        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0));
+
+
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//            RevHubOrientationOnRobot.UsbFacingDirection.UP
+//        )
+//        );
+
+       // imu.initialize(parameters);
+       //  imu.resetYaw();
     }
 
     public void resetIMU(){
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
-        )
-        );
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                RevHubOrientationOnRobot.UsbFacingDirection.UP
+//        )
+//        );
+//
+//        imu.initialize(parameters);
+//        imu.resetYaw();
 
-        imu.initialize(parameters);
-        imu.resetYaw();
+        resetPinpointIMU();
 
     }
 
+    public void resetPinpointIMU()
+    {
+        pinpoint.resetPosAndIMU();
+    }
+
+    public void configurePinpoint(){
+
+        pinpoint.setOffsets(-116.0, -156.0, DistanceUnit.MM); //Tuned for Archimedes 1.5 31Oct25
+
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+        pinpoint.resetPosAndIMU();
+    }
+
     public void setMotorPowers(double x, double y, double rx, double speed, boolean fieldCentric) {
+        pinpoint.update();
+        pos = pinpoint.getPosition();
+
 
         double heading;
         if (fieldCentric) {
-            heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            // heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            heading = -pos.getHeading(AngleUnit.RADIANS);
         }
         else {
             heading = 0;
@@ -96,7 +138,8 @@ public class DriveBase {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
-        telemetry.addData("Heading", heading);
+        telemetry.addData("Pinpoint", "Heading %.2f, Pos %.2f", heading, pos.getX(DistanceUnit.MM));
+        telemetry.addData("fieldCentric",fieldCentric);
         telemetry.addData("powers", "front left: %.2f, front right: %.2f, back left: %.2f, back right: %.2f", frontLeftPower *speed*100, frontRightPower *speed*100, backLeftPower *speed*100, backRightPower *speed*100);
     }
 
