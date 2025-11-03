@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -62,9 +62,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
 
 
-        if (motif[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get());
-        }
+
 
 
 
@@ -79,66 +77,82 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         //Actions.runBlocking(launchInMotifOrder(motif));
 
-        Actions.runBlocking(otherActions[5].get());
-
-        Actions.runBlocking(otherActions[8].get());
-
-        if (motif[1] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[2].get());
-        }
-        else if (motif[0] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get());
-        }
-        else {
-            Actions.runBlocking(otherActions[4].get());
-        }
-
-        Actions.runBlocking(otherActions[5].get());
-
-        Actions.runBlocking(otherActions[8].get());
-
-        if (motif[0] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[4].get());
-        }
-        else if (motif[1] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[4].get());
-        }
-        else {
-            Actions.runBlocking(otherActions[2].get());
-        }
+        launchInMotifOrder(motif, 0);
 
 
 
-        Actions.runBlocking(otherActions[5].get());
+//        if (motif[0] != Robot.ArtifactColor.GREEN) {
+//            Actions.runBlocking(otherActions[3].get());
+//        }
+//
+//        Actions.runBlocking(otherActions[5].get());
+//
+//        Actions.runBlocking(otherActions[8].get());
+//
+//        if (motif[1] == Robot.ArtifactColor.GREEN) {
+//            Actions.runBlocking(otherActions[2].get());
+//        }
+//        else if (motif[0] == Robot.ArtifactColor.GREEN) {
+//            Actions.runBlocking(otherActions[3].get());
+//        }
+//        else {
+//            Actions.runBlocking(otherActions[4].get());
+//        }
+//
+//        Actions.runBlocking(otherActions[5].get());
+//
+//        Actions.runBlocking(otherActions[8].get());
+//
+//        if (motif[0] == Robot.ArtifactColor.GREEN) {
+//            Actions.runBlocking(otherActions[4].get());
+//        }
+//        else if (motif[1] == Robot.ArtifactColor.GREEN) {
+//            Actions.runBlocking(otherActions[4].get());
+//        }
+//        else {
+//            Actions.runBlocking(otherActions[2].get());
+//        }
+//
+//        Actions.runBlocking(otherActions[5].get());
+//
+//        Actions.runBlocking(new ParallelAction(
+//            otherActions[8].get(),
+//            otherActions[1].get()
+//        ));
 
-        Actions.runBlocking(new ParallelAction(
-            otherActions[8].get(),
-            otherActions[1].get()
-        ));
 
 
 
-        /*
+
+
 
         // Pickup first mark
 
         Actions.runBlocking(new SequentialAction(
             new ParallelAction(
                 trajectories[1],
-                otherActions[6].get()
-            ),
-            new ParallelAction(
-                otherActions[7].get()
-                otherActions[0].get()
+                otherActions[2].get(),
+                new SequentialAction(
+                    new SleepAction(0.4),
+                    otherActions[6].get(),
+                    otherActions[10].get(),
+                    otherActions[3].get(),
+                    otherActions[10].get(),
+                    otherActions[4].get(),
+                    otherActions[10].get(),
+                    otherActions[0].get(),
+                    otherActions[7].get()
+                )
             )
         ));
 
 
 
-*/
-
-
         sleep(1000);
+
+        launchInMotifOrder(motif, 0);
+
+        sleep(500);
 
         // LEave
 
@@ -150,58 +164,29 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
     }
 
-    public Action launchInMotifOrder(Robot.ArtifactColor[] motifPattern) {
-        /*
+    public Action launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
 
-        if (motifPattern[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get());
-        }
-
+        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 0 ? 3 : 2].get());
         Actions.runBlocking(otherActions[5].get());
-
         Actions.runBlocking(otherActions[8].get());
-
-        if (motifPattern[1] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[2].get());
-        }
-        else if (motifPattern[0] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get());
-        }
-        else {
-            Actions.runBlocking(otherActions[4].get());
-        }
-
+        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation == 0 ? 3 : 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get()));
         Actions.runBlocking(otherActions[5].get());
-
         Actions.runBlocking(otherActions[8].get());
-
-        if (motifPattern[0] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[4].get());
-        }
-        else if (motifPattern[1] == Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[4].get());
-        }
-        else {
-            Actions.runBlocking(otherActions[2].get());
-        }
-
+        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get());
         Actions.runBlocking(otherActions[5].get());
-
         Actions.runBlocking(new ParallelAction(
-            otherActions[8].get(),
-            otherActions[1].get()
+            otherActions[1].get(),
+            otherActions[8].get()
         ));
 
-         */
-
         return new SequentialAction(
-            motifPattern[0] != Robot.ArtifactColor.GREEN ? otherActions[3].get() : new NullAction(),
+            motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 0 ? 3 : 2].get(),
             otherActions[5].get(),
             otherActions[8].get(),
-            motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[3].get() : otherActions[4].get()),
+            motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation == 0 ? 3 : 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get()),
             otherActions[5].get(),
             otherActions[8].get(),
-            motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[2].get() : otherActions[4].get(),
+            motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get(),
             otherActions[5].get(),
             new ParallelAction(
                 otherActions[1].get(),

@@ -63,6 +63,8 @@ public class Launcher {
                 initialized = true;
             }
 
+            // TODO: 11/2/2025 ADD FAIL-SAFE FOR MOTOR ENCODERS BEING UNPLUGGED 
+
             return launcherMotor1.getVelocity() + launcherMotor2.getVelocity() < velocity * 2;
         }
     }
