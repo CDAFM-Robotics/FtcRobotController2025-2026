@@ -21,8 +21,13 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
         // axon_position_V interpolates between 0-3.3V based on real position in range
         // x = pos / 3.3 * 360
 
+        telemetry.setMsTransmissionInterval(50);
+
         double position = 0;
         double mpos = 0;
+
+        double voltageOffset = 0.228;
+        double voltageScaler = 27/0.2815; // 27 degrees / 0.2815 on average change b/t every number
 
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -46,12 +51,34 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
                 position -= 0.1;
             }
 
-//            if (currentGamepad1.x && !previosGamepad1.x) {
-//
-//            }
+            /*
+
+            pos     deg     voltage
+
+            0.0     0       0.228
+            0.1     27      0.509
+            0.2     54      0.794
+            0.3     81      1.070
+            0.4     108     1.355
+            0.5     135     1.634
+            0.6     162     1.918
+            0.7     189     2.201
+            0.8     216     2.481
+            0.9     243     2.760
+            1.0     270     3.043
+
+
+
+
+
+
+
+             */
+
+
 
             robot.getIndexer().rotateToPosition(position);
-            mpos = axon_position_V.getVoltage()/3.3 * 270 - 18 ;
+            mpos = (axon_position_V.getVoltage() - voltageOffset) * voltageScaler;
             telemetry.addData("set position", position * 270);
             telemetry.addData("measured position", mpos);
             telemetry.addData("Voltage: ", axon_position_V.getVoltage());
