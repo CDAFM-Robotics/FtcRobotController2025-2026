@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
-@Disabled
-@TeleOp(name = "Driver Control Teleop", group = "")
+
+@TeleOp(name = "Driver Control Teleop", group = "zArchived")
 public class DriverControlTeleOp extends LinearOpMode {
 
     @Override
