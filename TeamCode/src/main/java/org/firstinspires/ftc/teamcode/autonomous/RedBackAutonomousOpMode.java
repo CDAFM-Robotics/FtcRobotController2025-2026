@@ -50,6 +50,8 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         waitForStart();
 
+
+
         //start always with G in launcher
 
 

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
@@ -16,16 +17,30 @@ public class CustomActionTestOpMode extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, telemetry);
         waitForStart();
 
-        /*
+        double power = 0;
 
-        robot.getLauncher().startLauncher();
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad previousGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
+
+
+
         while (opModeIsActive()) {
-            robot.getLauncher().startLauncher();
+
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
+
+            power += currentGamepad2.dpad_up && !previousGamepad2.dpad_up ? 0.1 : (currentGamepad2.dpad_down && !previousGamepad2.dpad_down ? -0.1 : 0);
+
+            robot.getLauncher().setLauncherPower(power);
             telemetry.addData("Current Velocity", robot.getLauncher().getLauncherVelocity());
             telemetry.update();
         }
 
-         */
+         /*
 
         Actions.runBlocking(robot.getLauncher().getSpinLauncherAction(1600));
         telemetry.addData("Status", "Done with Action");
@@ -38,5 +53,7 @@ public class CustomActionTestOpMode extends LinearOpMode {
         telemetry.addData("Status", "Done with Action");
         telemetry.update();
         sleep(2000);
+
+          */
     }
 }

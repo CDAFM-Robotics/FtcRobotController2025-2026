@@ -372,6 +372,12 @@ public class Robot {
 
 
     public void resetIndexer() {
+
+        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+            launcher.resetKicker();
+            timeSinceKickReset.reset();
+        }
+
         telemetry.addData("resetIndexer: state", indexerResetState);
         switch (indexerResetState){
             case INIT:
@@ -383,10 +389,12 @@ public class Robot {
                     if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
                         indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
                         indexerResetState = IndexerResetStates.CHECK_0TO1;
-                    } else if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE){
+                    }
+                    else if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE){
                         indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
                         indexerResetState = IndexerResetStates.CHECK_1TO2;
-                    } else{
+                    }
+                    else {
                         indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
                         indexerResetState = IndexerResetStates.CHECK_2TO1;
                     }
