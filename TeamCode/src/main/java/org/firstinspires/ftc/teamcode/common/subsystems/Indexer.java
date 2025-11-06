@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -36,6 +37,8 @@ public class Indexer {
     NormalizedColorSensor colorSensor3Left = null;
     NormalizedColorSensor colorSensor3Right = null;
 
+    AnalogInput indexerServoVoltage = null;
+
     public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
     //public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
@@ -51,6 +54,9 @@ public class Indexer {
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
+
+    public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;
+    public final double AXON_SERVO_VOLTAGE_SCALER = 0.1/0.2815;
 
     public class RotateIndexerAction implements Action {
 
@@ -123,6 +129,8 @@ public class Indexer {
         //colorSensor2Right.setGain(8);
         //colorSensor3Left.setGain(8);
         //colorSensor3Right.setGain(8);
+
+        indexerServoVoltage = hardwareMap.get(AnalogInput.class, "analog0");
 
         indexerServo.setPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
 
@@ -379,7 +387,7 @@ public class Indexer {
 
     public void updateAfterShoot(){
         // the ball has been shot in nextShootSlot
-        telemetry.addData("updateAfterShoot: nextshootslot", nextShootSlot);
+        telemetry.addData("updateAfterShoot: next shoot slot", nextShootSlot);
         artifactColorArray[nextShootSlot] = Robot.ArtifactColor.NONE;
     }
 
@@ -422,5 +430,9 @@ public class Indexer {
             }
         }
         return false;
+    }
+
+    public double getAxonServoPosition() {
+        return (indexerServoVoltage.getVoltage() - AXON_SERVO_VOLTAGE_OFFSET) * AXON_SERVO_VOLTAGE_SCALER;
     }
 }
