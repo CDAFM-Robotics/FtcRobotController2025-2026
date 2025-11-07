@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
 public class Indexer {
@@ -74,15 +76,13 @@ public class Indexer {
                 indexerServo.setPosition(position);
                 initialized = true;
             }
-            return false;
+
+            return !getIndexerServoAtPosition(position, 0.02);
         }
     }
 
     public Action getRotateIndexerAction(double position) {
-        return new SequentialAction(
-            new RotateIndexerAction(position),
-            new SleepAction(0.5)
-        );
+        return new RotateIndexerAction(position);
     }
 
     public Action getGoToFirstBallAction() {
@@ -97,12 +97,15 @@ public class Indexer {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
-    public Action getWaitUntilBallInIndexerAction() {
-        return new WaitUntilAction(() -> getPredictedColor(
+    public Action getWaitUntilBallInIndexerAction(double timeout) {
+        return new RunTimeoutAction(
+            new WaitUntilAction(() -> getPredictedColor(
             colorSensor1Left.getNormalizedColors(),
             colorSensor1Right.getNormalizedColors(),
             ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-            ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != Robot.ArtifactColor.NONE);
+            ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != Robot.ArtifactColor.NONE),
+            timeout
+            );
     }
 
 
@@ -434,5 +437,9 @@ public class Indexer {
 
     public double getAxonServoPosition() {
         return (indexerServoVoltage.getVoltage() - AXON_SERVO_VOLTAGE_OFFSET) * AXON_SERVO_VOLTAGE_SCALER;
+    }
+
+    public boolean getIndexerServoAtPosition(double position, double accuracy) {
+        return Math.abs(getAxonServoPosition() - position) < accuracy;
     }
 }

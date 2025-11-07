@@ -30,7 +30,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
         robot.getLauncher().setLimelightPipeline(7);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
-        trajectories = autonomousTrajectoryBuilder.getRedFarTrajectories();
+        trajectories = autonomousTrajectoryBuilder.getBlueFarTrajectories();
 
         otherActions = autonomousTrajectoryBuilder.getOtherActions();
 
@@ -69,9 +69,14 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
         // Go to the Launch Pose
 
         Actions.runBlocking(new ParallelAction(
-            trajectories[0],
+            new SequentialAction(
+                new SleepAction(0.5),
+                trajectories[0]
+            ),
             otherActions[0].get()
         ));
+
+
 
         sleep(500);
 
@@ -137,9 +142,9 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                     otherActions[6].get(),
                     otherActions[10].get(),
                     otherActions[3].get(),
-                    otherActions[10].get(),
+                    otherActions[11].get(),
                     otherActions[4].get(),
-                    otherActions[10].get(),
+                    otherActions[11].get(),
                     otherActions[0].get(),
                     otherActions[7].get()
                 )
@@ -150,7 +155,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         sleep(1000);
 
-        launchInMotifOrder(motif, 0);
+        launchInMotifOrder(motif, 2);
 
         sleep(500);
 
@@ -193,5 +198,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                 otherActions[8].get()
             )
         );
+
+
     }
 }

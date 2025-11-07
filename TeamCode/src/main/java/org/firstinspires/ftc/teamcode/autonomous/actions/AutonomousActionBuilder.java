@@ -50,17 +50,17 @@ public class AutonomousActionBuilder {
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
     public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
     public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 46), Math.toRadians(90));
-    public static Pose2d redThirdMarkStart = new Pose2d(36, 23.5, Math.toRadians(90));
-    public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 61), Math.toRadians(90));
+    public static Pose2d redThirdMarkStart = new Pose2d(36, 20, Math.toRadians(90));
+    public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(90));
 
     public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
     public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
-    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, 26), Math.toRadians(90));
-    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
-    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
-    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, 46), Math.toRadians(90));
-    public static Pose2d blueThirdMarkStart = new Pose2d(36, 23.5, Math.toRadians(90));
-    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, 53), Math.toRadians(90));
+    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, 20), Math.toRadians(-90));
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, 20), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, 57), Math.toRadians(-90));
+    public static Pose2d blueThirdMarkStart = new Pose2d(36, 20, Math.toRadians(-90));
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(-90));
 
     public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(30);
     public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
@@ -231,7 +231,8 @@ public class AutonomousActionBuilder {
             () -> robot.getIntake().getStopIntakeAction(),
             () -> robot.getLauncher().getResetKickerAction(),
             () -> robot.getLauncher().getSpinLauncherAction(1500, 0.85),
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction()
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)
         };
     }
 }
