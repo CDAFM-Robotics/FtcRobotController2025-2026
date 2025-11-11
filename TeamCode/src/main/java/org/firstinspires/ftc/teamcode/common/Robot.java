@@ -213,15 +213,23 @@ public class Robot {
 
      // Auto-Indexing for intake
      public void intakeWithIndexerTurn(){
-         telemetry.addLine("intakeWithIndexerTurn");
-        if (indexer.checkEmptySlot()){
-            telemetry.addLine("Robot: found empty slot");
-            if(indexer.turnEmptySlotToIntake() ) {
-                timeSinceIndex.reset();
-            }
-            if ( timeSinceIndex.milliseconds() > 550 ) {
-                telemetry.addLine("Robot:updateBallColor");
-                indexer.updateBallColors();
+        telemetry.addLine("intakeWithIndexerTurn");
+        //check to see if kicker is up. If yes, move it down.
+        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+            launcher.resetKicker();
+            timeSinceKickReset.reset();
+        }
+        else if(launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT
+                && timeSinceKickReset.milliseconds() > 500) {
+            if (indexer.checkEmptySlot()){
+                telemetry.addLine("Robot: found empty slot");
+                if(indexer.turnEmptySlotToIntake()) {
+                    timeSinceIndex.reset();
+                }
+                if ( timeSinceIndex.milliseconds() > 550 ) {
+                    telemetry.addLine("Robot:updateBallColor");
+                    indexer.updateBallColors();
+                }
             }
         }
     }
@@ -232,6 +240,10 @@ public class Robot {
             ballColor = ArtifactColor.GREEN;
             launchState = LaunchBallStates.INIT;
         }
+        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+            launcher.resetKicker();
+            timeSinceKickReset.reset();
+        }
     }
 
     public void stratLaunchAPurpleBall(){
@@ -239,6 +251,10 @@ public class Robot {
             telemetry.addLine("stratLaunchAPupleBall");
             ballColor = ArtifactColor.PURPLE;
             launchState = LaunchBallStates.INIT;
+        }
+        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+            launcher.resetKicker();
+            timeSinceKickReset.reset();
         }
     }
 
@@ -317,6 +333,10 @@ public class Robot {
                     case IDLE:
                         telemetry.addLine("shootAllBalls: IDLE");
                         launchState = LaunchBallStates.INIT;
+                        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+                            launcher.resetKicker();
+                            timeSinceKickReset.reset();
+                        }
                     case INIT:
                         telemetry.addLine("shootAllBalls: INIT");
                         if (timeSinceKickReset.milliseconds() > 500) {
@@ -346,7 +366,7 @@ public class Robot {
                         }
                     case RESET_KICKER:
                         telemetry.addLine("shootAllBalls: RESET_KICKER");
-                        if (timeSinceKick.milliseconds() > 400) {
+                        if (timeSinceKick.milliseconds() > 500) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
                             launchState = LaunchBallStates.UPDATE_INDEXER;

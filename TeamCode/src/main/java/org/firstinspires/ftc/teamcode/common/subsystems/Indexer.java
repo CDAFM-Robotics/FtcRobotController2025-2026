@@ -322,7 +322,6 @@ public class Indexer {
             telemetry.addLine("nextemptyslot 0");
             if(getIndexerPosition() != POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE){
                 rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
-                telemetry.addLine("n");
                 return true;
             }
         } else if (nextEmptySlot == 1) {
@@ -335,8 +334,6 @@ public class Indexer {
                 rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
                 return true;
             }
-        } else {
-            return false;
         }
         return false;
     }
