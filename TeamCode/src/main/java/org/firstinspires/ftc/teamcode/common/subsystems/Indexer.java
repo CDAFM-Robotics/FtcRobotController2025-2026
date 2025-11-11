@@ -479,6 +479,6 @@ public class Indexer {
     }
 
     public boolean indexerFinishedTurning() {
-
+        return false;
     }
 }
