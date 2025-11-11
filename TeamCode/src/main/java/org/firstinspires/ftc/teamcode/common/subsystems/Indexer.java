@@ -187,9 +187,9 @@ public class Indexer {
     }
 
     public void updateBallColors() {
-        telemetry.addData("Color", artifactColorArray[0]);
-        telemetry.addData("Color", artifactColorArray[1]);
-        telemetry.addData("Color", artifactColorArray[2]);
+        telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
+        telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
+        telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
         double position = getIndexerPosition();
 
         int i = -1;
@@ -301,9 +301,8 @@ public class Indexer {
     }
 
     public Boolean checkEmptySlot(){
-        //TODO: can change the order and start with the current intake slot
         telemetry.addLine("checkEmptySlot");
-        for(int i=2; i>=0; i--){
+        /*for(int i=2; i>=0; i--){
             telemetry.addData("array", i);
             telemetry.addData("color:", artifactColorArray[i]);
             if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
@@ -311,7 +310,46 @@ public class Indexer {
                 telemetry.addData("slot empty", i);
                 return true;
             }
+        }*/
+
+        //Check for empty slot according to current position
+        if(getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
+            for(int i=0; i<=2; i++){
+                telemetry.addData("array", i);
+                telemetry.addData("color:", artifactColorArray[i]);
+                if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
+                    nextEmptySlot = i;
+                    telemetry.addData("slot empty", i);
+                    return true;
+                }
+            }
         }
+        else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+            for(int i=0; i<=2; i++){
+                int j;
+                if (i==2) j=0;
+                else j = i+1;
+                telemetry.addData("array", j);
+                telemetry.addData("color:", artifactColorArray[j]);
+                if(artifactColorArray[j] == Robot.ArtifactColor.NONE){
+                    nextEmptySlot = j;
+                    telemetry.addData("slot empty", j);
+                    return true;
+                }
+            }
+        }
+        else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
+            for(int i=2; i>=0; i--){
+                telemetry.addData("array", i);
+                telemetry.addData("color:", artifactColorArray[i]);
+                if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
+                    nextEmptySlot = i;
+                    telemetry.addData("slot empty", i);
+                    return true;
+                }
+            }
+        }
+
         telemetry.addLine("no empty slot");
         return false;
     }
@@ -438,5 +476,9 @@ public class Indexer {
 
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
         return Math.abs(getAxonServoPosition() - position) < accuracy;
+    }
+
+    public boolean indexerFinishedTurning() {
+
     }
 }

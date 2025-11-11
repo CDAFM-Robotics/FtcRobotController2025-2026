@@ -226,7 +226,8 @@ public class Robot {
                 if(indexer.turnEmptySlotToIntake()) {
                     timeSinceIndex.reset();
                 }
-                if ( timeSinceIndex.milliseconds() > 550 ) {
+                //if ( timeSinceIndex.milliseconds() > 550 ) {
+                if (indexerFinishedTurning()) {
                     telemetry.addLine("Robot:updateBallColor");
                     indexer.updateBallColors();
                 }
