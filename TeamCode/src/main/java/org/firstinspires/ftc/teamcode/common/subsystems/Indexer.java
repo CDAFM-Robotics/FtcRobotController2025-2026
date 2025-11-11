@@ -477,8 +477,4 @@ public class Indexer {
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
         return Math.abs(getAxonServoPosition() - position) < accuracy;
     }
-
-    public boolean indexerFinishedTurning() {
-        return false;
-    }
 }
