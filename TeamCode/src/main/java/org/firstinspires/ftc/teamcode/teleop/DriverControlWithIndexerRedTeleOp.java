@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 
@@ -71,24 +72,25 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 isTurning = false;
             }
 
-            telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
+            //telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
 
 
             // Active Intake
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
-                telemetry.addLine("right trigger");
+                //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
                 robot.getIntake().startIntake();
                 if (currentGamepad1.right_trigger != 0.0)
                     robot.intakeWithIndexerTurn();
             }
-            else {
+            else if ((currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0)
+                    || (currentGamepad2.left_trigger == 0.0 && previousGamepad2.left_trigger != 0)){
                 robot.getIntake().stopIntake();
             }
 
             if (currentGamepad1.left_trigger != 0) {
                 robot.getIntake().reverseIntake();
             }
-            else {
+            else if (currentGamepad1.left_trigger == 0 && previousGamepad1.left_trigger != 0){
                 robot.getIntake().stopIntake();
             }
 
@@ -111,7 +113,8 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             if (currentGamepad2.left_trigger != 0)
                 robot.resetIndexer();
 
-            telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
+            // TODO this line of code generates a call every 6-8ms
+            // telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
 
             //Launcher
 
@@ -137,7 +140,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.left_bumper) {
-                telemetry.addLine("left bumper pushed");
+                // telemetry.addLine("left bumper pushed");
                 robot.launchAColorBall();
             }
 
@@ -147,7 +150,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_bumper) {
-                telemetry.addLine("right bumper pushed");
+                //telemetry.addLine("right bumper pushed");
                 robot.launchAColorBall();
             }
 
@@ -156,12 +159,18 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-            telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
+            //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
             robot.getHud().UpdateBallUI();
+
+            // TODO Add timing Log at end of loop
+//            RobotLog.d("c0: %s c1: %s c2: %s",
+//                    robot.getIndexer().artifactColorArray[0],
+//                    robot.getIndexer().artifactColorArray[1],
+//                    robot.getIndexer().artifactColorArray[2]);
 
             telemetry.update();
         }

@@ -138,9 +138,9 @@ public class DriveBase {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
-        telemetry.addData("Pinpoint", "Heading %.2f, Pos %.2f", heading, pos.getX(DistanceUnit.MM));
-        telemetry.addData("fieldCentric",fieldCentric);
-        telemetry.addData("powers", "front left: %.2f, front right: %.2f, back left: %.2f, back right: %.2f", frontLeftPower *speed*100, frontRightPower *speed*100, backLeftPower *speed*100, backRightPower *speed*100);
+        //telemetry.addData("Pinpoint", "Heading %.2f, Pos %.2f", heading, pos.getX(DistanceUnit.MM));
+        //telemetry.addData("fieldCentric",fieldCentric);
+        //telemetry.addData("powers", "front left: %.2f, front right: %.2f, back left: %.2f, back right: %.2f", frontLeftPower *speed*100, frontRightPower *speed*100, backLeftPower *speed*100, backRightPower *speed*100);
     }
 
     public void setIndividualMotorPowers(double frontLeftPower, double frontRightPower, double backRightPower, double backLeftPower) {
@@ -149,5 +149,4 @@ public class DriveBase {
         backRightMotor.setPower(backRightPower);
         backLeftMotor.setPower(backLeftPower);
     }
-
 }

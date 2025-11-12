@@ -112,7 +112,7 @@ public class Robot {
         }
 
         // Auto-Indexing for intake
-        /*if (intake.getIntakeMotorPower() > 0.01 && timeSinceIndex.milliseconds() >= 500) {
+        if (intake.getIntakeMotorPower() > 0.01 && indexer.indexerFinishedTurning()) {
             if (ballColors[currentIntakePosition] == ArtifactColor.GREEN || ballColors[currentIntakePosition] == ArtifactColor.PURPLE) {
                 if (ballColors[0] == ArtifactColor.NONE) {
                     indexer.rotateToOnePosition();
@@ -127,7 +127,7 @@ public class Robot {
                     timeSinceIndex.reset();
                 }
             }
-        }*/
+        }
 
         if (launchAll) {
             if (ballColors[0] != null) {
@@ -155,7 +155,7 @@ public class Robot {
 
         if (!queuedLaunches.isEmpty()) {
             if (queuedLaunches.element() == ArtifactColor.GREEN) {
-                if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && timeSinceIndex.milliseconds() > 500) {
+                if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && indexer.indexerFinishedTurning()) {
                     if (ballColors[0] == ArtifactColor.GREEN) {
                         indexer.rotateToZeroPosition();
                         timeSinceIndex.reset();
@@ -168,13 +168,13 @@ public class Robot {
                         indexer.rotateToTwoPosition();
                         timeSinceIndex.reset();
                     }
-                } else if (timeSinceIndex.milliseconds() > 500) {
+                } else if (indexer.indexerFinishedTurning()) {
                     launcher.kickBall();
                 }
             }
 
             if (queuedLaunches.element() == ArtifactColor.PURPLE) {
-                if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && timeSinceIndex.milliseconds() > 500) {
+                if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && indexer.indexerFinishedTurning()) {
                     if (ballColors[0] == ArtifactColor.PURPLE) {
                         indexer.rotateToZeroPosition();
                         timeSinceIndex.reset();
@@ -187,14 +187,14 @@ public class Robot {
                         indexer.rotateToTwoPosition();
                         timeSinceIndex.reset();
                     }
-                } else if (timeSinceIndex.milliseconds() > 500) {
+                } else if (indexer.indexerFinishedTurning()) {
                     launcher.kickBall();
                     timeSinceIndex.reset();
                 }
             }
 
 
-            if (timeSinceIndex.milliseconds() > 500 && launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+            if (indexer.indexerFinishedTurning() && launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                 launcher.resetKicker();
                 timeSinceIndex.reset();
             }
@@ -213,7 +213,7 @@ public class Robot {
 
      // Auto-Indexing for intake
      public void intakeWithIndexerTurn(){
-        telemetry.addLine("intakeWithIndexerTurn");
+        //telemetry.addLine("intakeWithIndexerTurn");
         //check to see if kicker is up. If yes, move it down.
         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
             launcher.resetKicker();
@@ -222,12 +222,14 @@ public class Robot {
         else if(launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT
                 && timeSinceKickReset.milliseconds() > 500) {
             if (indexer.checkEmptySlot()){
-                telemetry.addLine("Robot: found empty slot");
+                //telemetry.addLine("Robot: found empty slot");
                 if(indexer.turnEmptySlotToIntake()) {
                     timeSinceIndex.reset();
                 }
-                if ( timeSinceIndex.milliseconds() > 550 ) {
-                    telemetry.addLine("Robot:updateBallColor");
+                // replace waiting for timer with Axon servo position checking
+                // if ( timeSinceIndex.milliseconds() > 550 ) {
+                if (indexer.indexerFinishedTurning()) {
+                    //telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
                     indexer.updateBallColors();
                 }
             }
@@ -236,7 +238,7 @@ public class Robot {
 
     public void stratLaunchAGreenBall(){
         if(launcher.isLauncherActive()) {
-            telemetry.addLine("stratLaunchAGreenBall");
+            //telemetry.addLine("stratLaunchAGreenBall");
             ballColor = ArtifactColor.GREEN;
             launchState = LaunchBallStates.INIT;
         }
@@ -248,7 +250,7 @@ public class Robot {
 
     public void stratLaunchAPurpleBall(){
         if(launcher.isLauncherActive()) {
-            telemetry.addLine("stratLaunchAPupleBall");
+            //telemetry.addLine("stratLaunchAPupleBall");
             ballColor = ArtifactColor.PURPLE;
             launchState = LaunchBallStates.INIT;
         }
@@ -260,17 +262,17 @@ public class Robot {
 
     public void launchAColorBall(){
 
-            telemetry.addData("launchAColorBall", ballColor);
-            telemetry.addData("color:", indexer.artifactColorArray[0]);
-            telemetry.addData("color:", indexer.artifactColorArray[1]);
-            telemetry.addData("color:", indexer.artifactColorArray[2]);
+            //telemetry.addData("launchAColorBall", ballColor);
+            //telemetry.addData("color:", indexer.artifactColorArray[0]);
+            //telemetry.addData("color:", indexer.artifactColorArray[1]);
+            //telemetry.addData("color:", indexer.artifactColorArray[2]);
 
             switch (launchState) {
                 case IDLE:
-                    telemetry.addLine("launchAColorBall: IDLE");
+                    //telemetry.addLine("launchAColorBall: IDLE");
                     break;
                 case INIT:
-                    telemetry.addLine("launchAColorBall: INIT");
+                    //telemetry.addLine("launchAColorBall: INIT");
                     if (indexer.haveABall(ballColor)) {
                         if (timeSinceKickReset.milliseconds() > 500) {
                             //If yes, turn it to launcher
@@ -284,7 +286,7 @@ public class Robot {
                         break;
                     }
                 case TURN_TO_LAUNCH:
-                    telemetry.addLine("launchAColorBall: TURN_TO_LAUNCH");
+                    //telemetry.addLine("launchAColorBall: TURN_TO_LAUNCH");
                     if (indexer.moveToOuttake()) {
                         timeSinceIndex.reset();
                         launchState = LaunchBallStates.KICK_BALL;
@@ -293,8 +295,8 @@ public class Robot {
                         launchState = LaunchBallStates.KICK_BALL;
                     }
                 case KICK_BALL:
-                    telemetry.addLine("launchAColorBall: KICK_BALL");
-                    if (timeSinceIndex.milliseconds() > 800) {
+                    //telemetry.addLine("launchAColorBall: KICK_BALL");
+                    if (indexer.indexerFinishedTurning()) {
                         launcher.kickBall();
                         timeSinceKick.reset();
                         launchState = LaunchBallStates.RESET_KICKER;
@@ -303,7 +305,7 @@ public class Robot {
                         break;
                     }
                 case RESET_KICKER:
-                    telemetry.addLine("launchAColorBall: RESET_KICKER");
+                    //telemetry.addLine("launchAColorBall: RESET_KICKER");
                     if (timeSinceKick.milliseconds() > 500) {
                         launcher.resetKicker();
                         timeSinceKickReset.reset();
@@ -312,7 +314,7 @@ public class Robot {
                         break;
                     }
                 case UPDATE_INDEXER:
-                    telemetry.addLine("launchAColorBall: UPDATE_INDEXER");
+                    //telemetry.addLine("launchAColorBall: UPDATE_INDEXER");
                     indexer.updateAfterShoot();
                     launchState = LaunchBallStates.IDLE;
                     break;
@@ -323,22 +325,22 @@ public class Robot {
 
     public void shootAllBalls() {
         if(launcher.isLauncherActive()) {
-            telemetry.addLine("shootAllBalls");
-            telemetry.addData("color:", indexer.artifactColorArray[0]);
-            telemetry.addData("color:", indexer.artifactColorArray[1]);
-            telemetry.addData("color:", indexer.artifactColorArray[2]);
+            //telemetry.addLine("shootAllBalls");
+            //telemetry.addData("color:", indexer.artifactColorArray[0]);
+            //telemetry.addData("color:", indexer.artifactColorArray[1]);
+            //telemetry.addData("color:", indexer.artifactColorArray[2]);
 
             if (indexer.findABall()) {
                 switch (launchState) {
                     case IDLE:
-                        telemetry.addLine("shootAllBalls: IDLE");
+                        //telemetry.addLine("shootAllBalls: IDLE");
                         launchState = LaunchBallStates.INIT;
                         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
                         }
                     case INIT:
-                        telemetry.addLine("shootAllBalls: INIT");
+                        //telemetry.addLine("shootAllBalls: INIT");
                         if (timeSinceKickReset.milliseconds() > 500) {
                             //If yes, turn it to launcher
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
@@ -346,7 +348,7 @@ public class Robot {
                             break;
                         }
                     case TURN_TO_LAUNCH:
-                        telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
+                        //telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
                         if (indexer.moveToOuttake()) {
                             timeSinceIndex.reset();
                             launchState = LaunchBallStates.KICK_BALL;
@@ -355,8 +357,8 @@ public class Robot {
                             launchState = LaunchBallStates.KICK_BALL;
                         }
                     case KICK_BALL:
-                        telemetry.addLine("shootAllBalls: KICK_BALL");
-                        if (timeSinceIndex.milliseconds() > 500) {
+                        //telemetry.addLine("shootAllBalls: KICK_BALL");
+                        if (indexer.indexerFinishedTurning()) {
                             launcher.kickBall();
                             timeSinceKick.reset();
                             launchState = LaunchBallStates.RESET_KICKER;
@@ -365,7 +367,7 @@ public class Robot {
                             break;
                         }
                     case RESET_KICKER:
-                        telemetry.addLine("shootAllBalls: RESET_KICKER");
+                        //telemetry.addLine("shootAllBalls: RESET_KICKER");
                         if (timeSinceKick.milliseconds() > 500) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
@@ -374,7 +376,7 @@ public class Robot {
                             break;
                         }
                     case UPDATE_INDEXER:
-                        telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                        //telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
                         indexer.updateAfterShoot();
                         launchState = LaunchBallStates.IDLE;
                         break;
@@ -389,16 +391,14 @@ public class Robot {
         indexerResetState = IndexerResetStates.CHECK_INTAKE;
     }
 
-
-
     public void resetIndexer() {
+        telemetry.addData("resetIndexer: state", indexerResetState);
 
         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
             launcher.resetKicker();
             timeSinceKickReset.reset();
         }
 
-        telemetry.addData("resetIndexer: state", indexerResetState);
         switch (indexerResetState){
             case INIT:
                 break;
@@ -422,7 +422,7 @@ public class Robot {
                 }
                 break;
             case CHECK_0TO1:
-                if (timeSinceIndex.milliseconds() > 550) {
+                if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
                     timeSinceIndex.reset();
@@ -430,7 +430,7 @@ public class Robot {
                 }
                 break;
             case CHECK_1TO2:
-                if (timeSinceIndex.milliseconds() > 550) {
+                if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
                     timeSinceIndex.reset();
@@ -438,7 +438,7 @@ public class Robot {
                 }
                 break;
             case CHECK_2TO1:
-                if (timeSinceIndex.milliseconds() > 550) {
+                if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
                     timeSinceIndex.reset();
@@ -446,7 +446,7 @@ public class Robot {
                 }
                 break;
             case CHECK_LAST:
-                if (timeSinceIndex.milliseconds() > 800) {
+                if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexerResetState = IndexerResetStates.INIT;
                 }
