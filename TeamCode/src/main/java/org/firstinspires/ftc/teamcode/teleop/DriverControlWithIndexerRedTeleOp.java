@@ -72,8 +72,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 isTurning = false;
             }
 
-            //telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
-
+            telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
 
             // Active Intake
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
@@ -140,7 +139,6 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.left_bumper) {
-                // telemetry.addLine("left bumper pushed");
                 robot.launchAColorBall();
             }
 
@@ -150,7 +148,6 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_bumper) {
-                //telemetry.addLine("right bumper pushed");
                 robot.launchAColorBall();
             }
 
@@ -159,10 +156,12 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-            //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
+            telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
+
+            // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
             robot.getHud().UpdateBallUI();
 
