@@ -101,7 +101,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
         /*
 
-        // Pickup first mark
+        // Pickup third mark
 
         Actions.runBlocking(new SequentialAction(
             new ParallelAction(

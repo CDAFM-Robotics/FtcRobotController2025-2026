@@ -47,10 +47,6 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 fieldCentric = !fieldCentric;
             }
 
-            if (currentGamepad1.back && !previousGamepad1.back){
-                fieldCentric = !fieldCentric;
-            }
-
             if (currentGamepad1.start && !previousGamepad1.start){
                 robot.getDriveBase().resetIMU();
             }
