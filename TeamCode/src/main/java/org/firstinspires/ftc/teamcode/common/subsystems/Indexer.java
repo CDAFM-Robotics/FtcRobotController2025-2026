@@ -186,6 +186,7 @@ public class Indexer {
 
     public void updateBallColors() {
         telemetry.addLine("updateBallColors() start");
+        //RobotLog.d("Indexer: updateBallColors() start");
         //telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
         //telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
         //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);

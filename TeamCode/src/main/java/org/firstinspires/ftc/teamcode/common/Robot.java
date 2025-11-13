@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveBase;
@@ -31,6 +32,8 @@ public class Robot {
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
+
+    public final int WAIT_TIME_KICKER = 350;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
@@ -215,21 +218,22 @@ public class Robot {
      public void intakeWithIndexerTurn(){
         //telemetry.addLine("intakeWithIndexerTurn");
         //check to see if kicker is up. If yes, move it down.
-        if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+         double kickerPosition = launcher.getKickerPosition();
+        if (kickerPosition == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
             launcher.resetKicker();
             timeSinceKickReset.reset();
         }
-        else if(launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT
-                && timeSinceKickReset.milliseconds() > 500) {
+        else if(kickerPosition == launcher.POSITION_KICKER_SERVO_INIT
+                && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
             if (indexer.checkEmptySlot()){
-                //telemetry.addLine("Robot: found empty slot");
-                if(indexer.turnEmptySlotToIntake()) {
-                    timeSinceIndex.reset();
-                }
+                telemetry.addLine("Robot: found empty slot");
+                RobotLog.d("RRobot: found empty slot");
+                indexer.turnEmptySlotToIntake();
                 // replace waiting for timer with Axon servo position checking
                 // if ( timeSinceIndex.milliseconds() > 550 ) {
                 if (indexer.indexerFinishedTurning()) {
-                    //telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
+                    telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
+                    RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
                     indexer.updateBallColors();
                 }
             }
@@ -274,7 +278,7 @@ public class Robot {
                 case INIT:
                     //telemetry.addLine("launchAColorBall: INIT");
                     if (indexer.haveABall(ballColor)) {
-                        if (timeSinceKickReset.milliseconds() > 500) {
+                        if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                             //If yes, turn it to launcher
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
                         } else {
@@ -306,7 +310,7 @@ public class Robot {
                     }
                 case RESET_KICKER:
                     //telemetry.addLine("launchAColorBall: RESET_KICKER");
-                    if (timeSinceKick.milliseconds() > 500) {
+                    if (timeSinceKick.milliseconds() > WAIT_TIME_KICKER) {
                         launcher.resetKicker();
                         timeSinceKickReset.reset();
                         launchState = LaunchBallStates.UPDATE_INDEXER;
@@ -341,7 +345,7 @@ public class Robot {
                         }
                     case INIT:
                         //telemetry.addLine("shootAllBalls: INIT");
-                        if (timeSinceKickReset.milliseconds() > 500) {
+                        if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                             //If yes, turn it to launcher
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
                         } else {
@@ -350,7 +354,7 @@ public class Robot {
                     case TURN_TO_LAUNCH:
                         //telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
                         if (indexer.moveToOuttake()) {
-                            timeSinceIndex.reset();
+                            //timeSinceIndex.reset();
                             launchState = LaunchBallStates.KICK_BALL;
                             break;
                         } else {
@@ -368,7 +372,7 @@ public class Robot {
                         }
                     case RESET_KICKER:
                         //telemetry.addLine("shootAllBalls: RESET_KICKER");
-                        if (timeSinceKick.milliseconds() > 500) {
+                        if (timeSinceKick.milliseconds() > WAIT_TIME_KICKER) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
                             launchState = LaunchBallStates.UPDATE_INDEXER;
