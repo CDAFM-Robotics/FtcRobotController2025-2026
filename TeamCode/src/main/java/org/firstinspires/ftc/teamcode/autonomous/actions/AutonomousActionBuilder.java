@@ -55,12 +55,12 @@ public class AutonomousActionBuilder {
 
     public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
     public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
-    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, 20), Math.toRadians(-90));
-    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(-90));
-    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, 20), Math.toRadians(-90));
-    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, 57), Math.toRadians(-90));
-    public static Pose2d blueThirdMarkStart = new Pose2d(36, 20, Math.toRadians(-90));
-    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(-90));
+    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -20), Math.toRadians(-90)); // TODO added minus to y (to prevent travel to red side)
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -57), Math.toRadians(-90)); // TODO added minus to y
+    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, -20), Math.toRadians(-90));  // TODO made (-y) change UNTESTED
+    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -57), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
+    public static Pose2d blueThirdMarkStart = new Pose2d(new Vector2d(36, -20), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
 
     public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(30);
     public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
@@ -136,7 +136,7 @@ public class AutonomousActionBuilder {
 
 
         blueCloseStartToAprilTagRead = md.actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(143)))
-            .strafeToSplineHeading(new Vector2d(-35, -35), Math.toRadians(-135), normalTranslationalVelConstraint)
+            .strafeToSplineHeading(new Vector2d(-35, -35), Math.toRadians(-135), normalTranslationalVelConstraint)  // TODO april tag view angle may need tweak
             .build();
 
         blueAprilTagReadToCloseLaunch = md.actionBuilder(new Pose2d(new Vector2d(-35, -35), Math.toRadians(-135)))
@@ -219,12 +219,13 @@ public class AutonomousActionBuilder {
         };
     }
 
+
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),                // 0
-            () -> robot.getLauncher().getStopLauncherAction(),                          // 1
-            () -> robot.getIndexer().getGoToFirstBallAction(),                          // 2
-            () -> robot.getIndexer().getGoToSecondBallAction(),                         // 3
+            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),    // 0
+            () -> robot.getLauncher().getStopLauncherAction(),                            // 1
+            () -> robot.getIndexer().getGoToFirstBallAction(),                            // 2
+            () -> robot.getIndexer().getGoToSecondBallAction(),                           // 3
             () -> robot.getIndexer().getGoToThirdBallAction(),                          // 4
             () -> robot.getLauncher().getKickBallAction(),                              // 5
             () -> robot.getIntake().getStartIntakeAction(),                             // 6
