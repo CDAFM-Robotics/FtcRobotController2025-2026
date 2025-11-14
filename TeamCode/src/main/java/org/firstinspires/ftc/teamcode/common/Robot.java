@@ -82,6 +82,28 @@ public class Robot {
         RESET_KICKER,
         UPDATE_INDEXER
     }
+    /*
+        LIMELIGHT PIPELINES:        TYPE:               STATUS:
+            0: PURPLE               COLOR               USED
+            1: YELLOW               COLOR               OPEN FOR CONFIGURATION
+            2: BLUE                 COLOR               OPEN FOR CONFIGURATION
+            3: APRIL_TAG            AprilTag            OPEN FOR CONFIGURATION
+            4: MOTIF                AprilTag            USED
+            5: RED_GOAL             AprilTag            USED
+            6: BLUE_GOAL            AprilTag            USED
+            7: OBELISK              AprilTag            USED
+
+     */
+    public enum LLPipelines {
+        PURPLE,
+        YELLOW,
+        BLUE,
+        APRIL_TAG,
+        MOTIF,
+        RED_GOAL,
+        BLUE_GOAL,
+        OBELISK
+    }
 
     IndexerResetStates indexerResetState = IndexerResetStates.INIT;
     LaunchBallStates launchState = LaunchBallStates.IDLE;

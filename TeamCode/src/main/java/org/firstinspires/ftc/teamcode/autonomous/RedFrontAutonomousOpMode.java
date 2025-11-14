@@ -29,7 +29,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(37)));
         Robot robot = new Robot(hardwareMap, telemetry);
-        robot.getLauncher().setLimelightPipeline(7);
+        robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
         trajectories = autonomousTrajectoryBuilder.getRedCloseTrajectories();

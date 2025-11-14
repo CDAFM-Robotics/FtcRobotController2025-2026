@@ -51,12 +51,9 @@ public class DriveBase {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // imu = hardwareMap.get(IMU.class, "imu");
 
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-
-
 
         // Configure the sensor
         configurePinpoint();
@@ -64,26 +61,9 @@ public class DriveBase {
         // Set the location of the robot - this should be the place you are starting the robot from
         pinpoint.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0));
 
-
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//            RevHubOrientationOnRobot.UsbFacingDirection.UP
-//        )
-//        );
-
-       // imu.initialize(parameters);
-       //  imu.resetYaw();
     }
 
     public void resetIMU(){
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//                RevHubOrientationOnRobot.UsbFacingDirection.UP
-//        )
-//        );
-//
-//        imu.initialize(parameters);
-//        imu.resetYaw();
 
         resetPinpointIMU();
 

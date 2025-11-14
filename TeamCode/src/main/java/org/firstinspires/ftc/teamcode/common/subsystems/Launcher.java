@@ -31,11 +31,14 @@ public class Launcher {
     private Limelight3A limelight;
 
     Servo kickerServo;
-
-    // TODO: 10/8/2025 DETERMINE CONSTANTS EMPIRICALLY
     
     public final double POSITION_KICKER_SERVO_KICK_BALL = 0.88;
     public final double POSITION_KICKER_SERVO_INIT = 0.6;
+
+    public final double LAUNCH_POWER_FAR = 0.85;
+    public final double LAUNCH_POWER_NEAR= 0.75;
+    public final double LAUNCH_POWER_FULL= 1.0;
+    public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
 
     public class SpinLauncherAction implements Action {
 
@@ -221,6 +224,7 @@ public class Launcher {
 
      */
 
+
     public Robot.ArtifactColor[] getMotifPattern() {
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
@@ -284,7 +288,7 @@ public class Launcher {
     }
 
     public void startLauncher() {
-        launchPower = 1;
+        launchPower = LAUNCH_POWER_FAR;
         setLauncherPower(launchPower);
         launcherActive = true;
     }
@@ -302,8 +306,10 @@ public class Launcher {
     }
 
     public void increaseLauncherPower() {
-        if (launchPower <= 0.9) {
+        if (launchPower < LAUNCH_POWER_FULL) {
             launchPower += 0.1;
+            if (launchPower > LAUNCH_POWER_FULL)
+                launchPower=LAUNCH_POWER_FULL;
         }
         else{
             launchPower = 1;
@@ -313,7 +319,7 @@ public class Launcher {
     }
 
     public void startLauncherPartialPower() {
-        launchPower = 0.8;
+        launchPower = LAUNCH_POWER_NEAR;
         setLauncherPower(launchPower);
         launcherActive = true;
     }
@@ -346,8 +352,7 @@ public class Launcher {
     }
 
     public double getRedAimingPower(){
-        //limelight.pipelineSwitch(5);
-        limelight.pipelineSwitch(5);
+        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
@@ -373,8 +378,7 @@ public class Launcher {
     }
 
     public double getBlueAimingPower(){
-        //limelight.pipelineSwitch(5);
-        limelight.pipelineSwitch(6);
+        limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
