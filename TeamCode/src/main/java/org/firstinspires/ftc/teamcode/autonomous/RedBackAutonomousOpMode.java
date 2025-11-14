@@ -30,7 +30,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
         robot.getLauncher().setLimelightPipeline(7);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
-        trajectories = autonomousTrajectoryBuilder.getBlueFarTrajectories();
+        trajectories = autonomousTrajectoryBuilder.getRedFarTrajectories();
 
         otherActions = autonomousTrajectoryBuilder.getOtherActions();
 
