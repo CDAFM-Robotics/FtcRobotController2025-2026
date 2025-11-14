@@ -46,9 +46,9 @@ public class AutonomousActionBuilder {
 
     public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-113));
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
-    public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 26), Math.toRadians(90));
+    public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 20), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
-    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
+    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 20), Math.toRadians(90));
     public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 46), Math.toRadians(90));
     public static Pose2d redThirdMarkStart = new Pose2d(36, 20, Math.toRadians(90));
     public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(90));
@@ -90,16 +90,16 @@ public class AutonomousActionBuilder {
 
 
         redCloseStartToAprilTagRead = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(37)))
-            .strafeToSplineHeading(new Vector2d(-35, 35), Math.toRadians(-45), normalTranslationalVelConstraint)
+            .strafeToLinearHeading(new Vector2d(-35, 35), Math.toRadians(-45), normalTranslationalVelConstraint)
             .build();
 
         redAprilTagReadToCloseLaunch = md.actionBuilder(new Pose2d(new Vector2d(-35, 35), Math.toRadians(-45)))
-            .strafeToSplineHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
+            .strafeToLinearHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
 
         redCloseLaunchPickupFirstMark = md.actionBuilder(redCloseLaunchPose)
             .setTangent(Math.toRadians(0))
-            .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .splineToLinearHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
             .strafeToConstantHeading(redFirstMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
             .splineToSplineHeading(redCloseLaunchPose, Math.toRadians(-135), normalTranslationalVelConstraint)
@@ -221,18 +221,18 @@ public class AutonomousActionBuilder {
 
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 1),
-            () -> robot.getLauncher().getStopLauncherAction(),
-            () -> robot.getIndexer().getGoToFirstBallAction(),
-            () -> robot.getIndexer().getGoToSecondBallAction(),
-            () -> robot.getIndexer().getGoToThirdBallAction(),
-            () -> robot.getLauncher().getKickBallAction(),
-            () -> robot.getIntake().getStartIntakeAction(),
-            () -> robot.getIntake().getStopIntakeAction(),
-            () -> robot.getLauncher().getResetKickerAction(),
-            () -> robot.getLauncher().getSpinLauncherAction(1500, 0.85),
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)
+            () -> robot.getLauncher().getSpinLauncherAction(1650, 0.85),                 // 0
+            () -> robot.getLauncher().getStopLauncherAction(),                          // 1
+            () -> robot.getIndexer().getGoToFirstBallAction(),                          // 2
+            () -> robot.getIndexer().getGoToSecondBallAction(),                         // 3
+            () -> robot.getIndexer().getGoToThirdBallAction(),                          // 4
+            () -> robot.getLauncher().getKickBallAction(),                              // 5
+            () -> robot.getIntake().getStartIntakeAction(),                             // 6
+            () -> robot.getIntake().getStopIntakeAction(),                              // 7
+            () -> robot.getLauncher().getResetKickerAction(),                           // 8
+            () -> robot.getLauncher().getSpinLauncherAction(1650, 0.75),                // 9
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),                // 10
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)               // 11
         };
     }
 }

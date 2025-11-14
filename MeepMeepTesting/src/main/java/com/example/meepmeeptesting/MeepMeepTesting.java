@@ -11,11 +11,23 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting{
 
-    public static Pose2d redFarLaunchPose = new Pose2d(57.7, 12.5, Math.toRadians(255));
-    public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(225));
+    public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-113));
+    public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
+    public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 26), Math.toRadians(90));
+    public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
+    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
+    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 46), Math.toRadians(90));
+    public static Pose2d redThirdMarkStart = new Pose2d(36, 23.5, Math.toRadians(90));
+    public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 53), Math.toRadians(90));
 
-    public static Pose2d blueFarLaunchPose = new Pose2d(57.7, -12.5, Math.toRadians(-75));
-    public static Pose2d blueCloseLaunchPose = new Pose2d(new Vector2d(-20, -20), Math.toRadians(-45));
+    public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
+    public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
+    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -26), Math.toRadians(-90));
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -46), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, -30), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -46), Math.toRadians(-90));
+    public static Pose2d blueThirdMarkStart = new Pose2d(36, -23.5, Math.toRadians(-90));
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -53), Math.toRadians(-90));
 
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(50);
@@ -32,8 +44,8 @@ public class MeepMeepTesting{
             .build();
 
         myBot.runAction(myBot.getDrive()
-            .actionBuilder(new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180)))
-            .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
+            .actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(37)))
+            .strafeToLinearHeading(new Vector2d(-35, 35), Math.toRadians(-45), normalTranslationalVelConstraint)
             .build()
         );
 

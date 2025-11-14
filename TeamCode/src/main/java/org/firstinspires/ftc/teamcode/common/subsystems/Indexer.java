@@ -100,12 +100,14 @@ public class Indexer {
 
     public Action getWaitUntilBallInIndexerAction(double timeout) {
         return new RunTimeoutAction(
-            new WaitUntilAction(() -> getPredictedColor(
-            colorSensor1Left.getNormalizedColors(),
-            colorSensor1Right.getNormalizedColors(),
-            ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-            ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != Robot.ArtifactColor.NONE),
-            timeout
+            new WaitUntilAction(
+                () -> getPredictedColor(
+                colorSensor1Left.getNormalizedColors(),
+                colorSensor1Right.getNormalizedColors(),
+                ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
+                ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != Robot.ArtifactColor.NONE),
+
+                timeout
             );
     }
 
@@ -503,9 +505,6 @@ public class Indexer {
     }
 
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
-        //telemetry.addLine("getIndexerServoAtPosition start");
-        //telemetry.addData("getIndexerServoAtPosition", getAxonServoPosition());
-        //telemetry.addData("getIndexerServoAtPosition", (getAxonServoPosition() - position));
         return Math.abs(getAxonServoPosition() - position) < accuracy;
     }
 
