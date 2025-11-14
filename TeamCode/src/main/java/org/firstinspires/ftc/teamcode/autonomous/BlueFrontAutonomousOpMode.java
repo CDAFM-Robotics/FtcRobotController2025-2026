@@ -17,6 +17,11 @@ import java.util.function.Supplier;
 
 @Autonomous(name = "Blue Front Autonomous", group = "0competition")
 public class BlueFrontAutonomousOpMode extends LinearOpMode {
+
+    Action[] trajectories;
+
+    Supplier<Action>[] otherActions;
+
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
@@ -24,9 +29,9 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         robot.getLauncher().setLimelightPipeline(7);
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
 
-        Action[] trajectories = autonomousTrajectoryBuilder.getBlueCloseTrajectories();
+        trajectories = autonomousTrajectoryBuilder.getBlueCloseTrajectories();
 
-        Supplier<Action>[] otherActions = autonomousTrajectoryBuilder.getOtherActions();
+        otherActions = autonomousTrajectoryBuilder.getOtherActions();
 
         Robot.ArtifactColor[] motif = null;
 
@@ -36,14 +41,14 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
         // Go to the Launch Pose
 
-        Launcher.AprilTagAction aprilTagAction = (Launcher.AprilTagAction) otherActions[9].get();
+        // Launcher.AprilTagAction aprilTagAction = (Launcher.AprilTagAction) otherActions[9].get();
 
 
         Actions.runBlocking(new ParallelAction(
             trajectories[0]
         ));
 
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 1000; i++) {
             motif = robot.getLauncher().getMotifPattern();
 
             if (motif == null) {
@@ -54,6 +59,8 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             }
             telemetry.update();
         }
+
+        sleep(1000);
 
 
         if (motif == null) {
@@ -70,6 +77,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         ));
 
         sleep(500);
+
 
         Actions.runBlocking(otherActions[5].get());
 

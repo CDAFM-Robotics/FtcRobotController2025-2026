@@ -44,7 +44,7 @@ public class AutonomousActionBuilder {
     public Action resetKickerAction;
     public Action aprilTagAction;
 
-    public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-113));
+    public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-114)); // TODO 14nov25 -113
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
     public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 20), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
@@ -221,7 +221,7 @@ public class AutonomousActionBuilder {
 
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1650, 0.85),                 // 0
+            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),                // 0
             () -> robot.getLauncher().getStopLauncherAction(),                          // 1
             () -> robot.getIndexer().getGoToFirstBallAction(),                          // 2
             () -> robot.getIndexer().getGoToSecondBallAction(),                         // 3
@@ -230,7 +230,7 @@ public class AutonomousActionBuilder {
             () -> robot.getIntake().getStartIntakeAction(),                             // 6
             () -> robot.getIntake().getStopIntakeAction(),                              // 7
             () -> robot.getLauncher().getResetKickerAction(),                           // 8
-            () -> robot.getLauncher().getSpinLauncherAction(1650, 0.75),                // 9
+            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.70),                // 9
             () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),                // 10
             () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)               // 11
         };
