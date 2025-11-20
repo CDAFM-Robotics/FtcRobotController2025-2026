@@ -55,8 +55,8 @@ public class AutonomousActionBuilder {
 
     public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
     public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
-    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -20), Math.toRadians(-90)); // TODO added minus to y (to prevent travel to red side)
-    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -57), Math.toRadians(-90)); // TODO added minus to y
+    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -20), Math.toRadians(90));
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -46), Math.toRadians(90)); // TODO added minus to y
     public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, -20), Math.toRadians(-90));  // TODO made (-y) change UNTESTED
     public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -57), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
     public static Pose2d blueThirdMarkStart = new Pose2d(new Vector2d(36, -20), Math.toRadians(-90)); // TODO made (-y) change UNTESTED

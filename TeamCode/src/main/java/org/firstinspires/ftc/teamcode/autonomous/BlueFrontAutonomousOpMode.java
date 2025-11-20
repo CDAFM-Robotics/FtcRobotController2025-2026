@@ -27,7 +27,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(37)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
@@ -68,7 +68,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         }
 
         if (motif[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get()); // 3 = GotoSecondBallAction
+            Actions.runBlocking(otherActions[3].get());
         }
 
         Actions.runBlocking(new ParallelAction(
@@ -80,55 +80,22 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
         launchInMotifOrder(motif, 1);
 
-
-//        Actions.runBlocking(otherActions[5].get());
-//
-//        Actions.runBlocking(otherActions[8].get());
-//
-//        if (motif[1] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(otherActions[2].get());
-//        } else if (motif[0] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(otherActions[3].get());
-//        } else {
-//            Actions.runBlocking(otherActions[4].get());
-//        }
-//
-//        Actions.runBlocking(otherActions[5].get());
-//
-//        Actions.runBlocking(otherActions[8].get());
-//
-//        if (motif[0] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(otherActions[4].get());
-//        } else if (motif[1] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(otherActions[4].get());
-//        } else {
-//            Actions.runBlocking(otherActions[2].get());
-//        }
-//
-//
-//        Actions.runBlocking(otherActions[5].get());
-//
-//        Actions.runBlocking(new ParallelAction(
-//                otherActions[8].get(),
-//                otherActions[1].get()
-//        ));
-
         // Pickup first mark
 
         Actions.runBlocking(new SequentialAction(
             new ParallelAction(
-                trajectories[2],        // closeLaunchPickupFirstMark
-                otherActions[2].get(),  // gotoFirstBall
+                trajectories[2],
+                otherActions[2].get(),
                 new SequentialAction(
                     new SleepAction(0.6),
-                    otherActions[6].get(),  // StartIntake
-                    otherActions[10].get(), // WaitballInIndexer (4s)
-                    otherActions[3].get(),  // gotoSecondBall
-                    otherActions[10].get(), // WaitBallInIndexer (4s)
-                    otherActions[4].get(),  // gotoThirdBall
-                    otherActions[10].get(), // WaitBallInIndexer (4s)
-                    otherActions[9].get(),  // SpinUpLauncher close shot
-                    otherActions[7].get()   // Stop Intake
+                    otherActions[6].get(),
+                    otherActions[10].get(),
+                    otherActions[3].get(),
+                    otherActions[10].get(),
+                    otherActions[4].get(),
+                    otherActions[10].get(),
+                    otherActions[9].get(),
+                    otherActions[7].get()
                 )
             )
         ));
