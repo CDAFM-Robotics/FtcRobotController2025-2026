@@ -92,11 +92,11 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             // TODO: Add checking the kicker position so the indexer will not hit the kicker
             // FIXME: The previous TODO is not able to be done since the kicker servo is not an axon servo
             // removed the manual indexer control after auto indexer control is implemented
-            /*if (currentGamepad2.square && !previousGamepad2.square) {
+            /*if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getIndexer().rotateClockwise();
             }
 
-            if (currentGamepad2.triangle && !previousGamepad2.triangle) {
+            if (currentGamepad2.y && !previousGamepad2.y) {
                 robot.getIndexer().rotateCounterClockwise();
             }*/
 
@@ -113,20 +113,20 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             //Launcher
 
-            if (currentGamepad2.circle && !previousGamepad2.circle) {
+            if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
             }
 
-            if (currentGamepad2.cross && !previousGamepad2.cross) {
+            if (currentGamepad2.a && !previousGamepad2.a) {
               robot.getLauncher().toggleLauncherPartialPower();
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().changeLauncherPower(0.05);
+                robot.getLauncher().changeLauncherPower(0.1);
             }
 
             if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().changeLauncherPower(-0.05);
+                robot.getLauncher().changeLauncherPower(-0.1);
             }
 
             //launch a green ball
