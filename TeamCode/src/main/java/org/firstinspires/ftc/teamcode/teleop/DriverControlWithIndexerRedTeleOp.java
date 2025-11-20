@@ -44,11 +44,11 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            if (currentGamepad1.share && !previousGamepad1.share){
+            if (currentGamepad1.back && !previousGamepad1.back){
                 fieldCentric = !fieldCentric;
             }
 
-            if (currentGamepad1.options && !previousGamepad1.options){
+            if (currentGamepad1.start && !previousGamepad1.start){
                 robot.getDriveBase().resetIMU();
             }
 
@@ -56,13 +56,20 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            if (currentGamepad2.y) {
+            if(currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+                isTurning = true;
+                telemetry.addLine("left_bumper pushed");
+            }
+
+            if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
+                    && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isTurning){
                 double power = robot.getLauncher().getRedAimingPower();
                 telemetry.addData("aiming: motor power", power);
                 robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
             else {
-                robot.getDriveBase().setMotorPowers(currentGamepad1.left_stick_x, -currentGamepad1.left_stick_y, currentGamepad1.right_stick_x, driveSpeed, fieldCentric);
+                robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
+                isTurning = false;
             }
 
             telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
