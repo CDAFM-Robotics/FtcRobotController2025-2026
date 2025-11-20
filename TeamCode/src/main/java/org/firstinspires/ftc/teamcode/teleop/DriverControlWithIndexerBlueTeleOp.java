@@ -44,11 +44,11 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            if (currentGamepad1.back && !previousGamepad1.back){
+            if (currentGamepad1.share && !previousGamepad1.share){
                 fieldCentric = !fieldCentric;
             }
 
-            if (currentGamepad1.start && !previousGamepad1.start){
+            if (currentGamepad1.options && !previousGamepad1.options){
                 robot.getDriveBase().resetIMU();
             }
 
@@ -56,20 +56,15 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            if(currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
-                isTurning = true;
-                telemetry.addLine("left_bumper pushed");
-            }
 
-            if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
-                    && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isTurning){
+
+            if (currentGamepad2.y){
                 double power = robot.getLauncher().getBlueAimingPower();
                 telemetry.addData("aiming: motor power", power);
                 robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
             else {
-                robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
-                isTurning = false;
+                robot.getDriveBase().setMotorPowers(currentGamepad1.left_stick_x, -currentGamepad1.left_stick_y, currentGamepad1.right_stick_x, driveSpeed, fieldCentric);
             }
 
             telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
@@ -95,12 +90,13 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             // Manual Indexer control.
             // TODO: Add checking the kicker position so the indexer will not hit the kicker
+            // FIXME: The previous TODO is not able to be done since the kicker servo is not an axon servo
             // removed the manual indexer control after auto indexer control is implemented
-            /*if (currentGamepad2.x && !previousGamepad2.x) {
+            /*if (currentGamepad2.square && !previousGamepad2.square) {
                 robot.getIndexer().rotateClockwise();
             }
 
-            if (currentGamepad2.y && !previousGamepad2.y) {
+            if (currentGamepad2.triangle && !previousGamepad2.triangle) {
                 robot.getIndexer().rotateCounterClockwise();
             }*/
 
@@ -117,20 +113,20 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             //Launcher
 
-            if (currentGamepad2.b && !previousGamepad2.b) {
+            if (currentGamepad2.circle && !previousGamepad2.circle) {
                 robot.getLauncher().toggleLauncher();
             }
 
-            if (currentGamepad2.a && !previousGamepad2.a) {
+            if (currentGamepad2.cross && !previousGamepad2.cross) {
               robot.getLauncher().toggleLauncherPartialPower();
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().increaseLauncherPower();
+                robot.getLauncher().changeLauncherPower(0.05);
             }
 
             if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().reduceLauncherPower();
+                robot.getLauncher().changeLauncherPower(-0.05);
             }
 
             //launch a green ball
