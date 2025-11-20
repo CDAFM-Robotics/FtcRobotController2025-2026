@@ -411,4 +411,19 @@ public class Launcher {
 
         return answer;
     }
+
+    public double getRedGoalDistance(){
+        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        LLResult llresult = limelight.getLatestResult();
+        double distance = 0;
+        if(llresult.isValid()){
+            distance = 448/Math.tan(Math.toRadians(llresult.getTy()));
+        }
+        else{
+                distance = 0;
+        }
+
+        return distance;
+    }
+
 }

@@ -73,7 +73,8 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
-
+            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
+            telemetry.addData("Distance to AprilTag", robot.getLauncher().getRedGoalDistance());
             // Active Intake
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
@@ -157,6 +158,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
+            telemetry.addData("launcher active:", robot.getLauncher().isLauncherActive());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
