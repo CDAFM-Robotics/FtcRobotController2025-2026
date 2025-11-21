@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -201,6 +202,8 @@ public class Launcher {
 
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
 
