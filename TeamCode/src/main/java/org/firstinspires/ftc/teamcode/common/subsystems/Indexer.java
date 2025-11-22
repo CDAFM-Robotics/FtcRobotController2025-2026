@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -86,15 +83,15 @@ public class Indexer {
         return new RotateIndexerAction(position);
     }
 
-    public Action getGoToFirstBallAction() {
+    public Action getGoToZeroBallAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    public Action getGoToSecondBallAction() {
+    public Action getGoToOneBallAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
-    public Action getGoToThirdBallAction() {
+    public Action getGoToTwoBallAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
