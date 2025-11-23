@@ -37,7 +37,7 @@ public class Launcher {
     public final double POSITION_KICKER_SERVO_KICK_BALL = 0.88;
     public final double POSITION_KICKER_SERVO_INIT = 0.6;
 
-    public final double LAUNCH_POWER_FAR = 0.85;
+    public final double LAUNCH_POWER_FAR = 0.9;
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
@@ -303,6 +303,18 @@ public class Launcher {
         launcherVelocity = LAUNCH_VELOCITY_FAR;
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
+    }
+
+    public void reduceLauncherPower() {
+        if (launchPower >= 0.1) {
+            launchPower -= 0.1;
+            launcherActive = true;
+        }
+        else{
+            launchPower = 0;
+            launcherActive = false;
+        }
+        setLauncherPower(launchPower);
     }
 
     public void increaseLauncherPower() {

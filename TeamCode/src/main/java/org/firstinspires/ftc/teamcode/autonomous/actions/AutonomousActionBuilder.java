@@ -15,6 +15,8 @@ public class AutonomousActionBuilder {
 
     public Action redFarStartToFarLaunch;
     public Action redFarLaunchPickupThirdMark;
+    public Action redFarLaunchPickupSecondMark;
+    public Action redFarLaunchPickupFirstMark;
     public Action redFarLaunchToLeaveLaunchZone;
 
     public Action redCloseStartToAprilTagRead;
@@ -25,6 +27,8 @@ public class AutonomousActionBuilder {
 
     public Action blueFarStartToFarLaunch;
     public Action blueFarLaunchPickupThirdMark;
+    public Action blueFarLaunchPickupSecondMark;
+    public Action blueFarLaunchPickupFirstMark;
     public Action blueFarLaunchToLeaveLaunchZone;
 
     public Action blueCloseStartToAprilTagRead;
@@ -62,8 +66,8 @@ public class AutonomousActionBuilder {
     public static Pose2d blueThirdMarkStart = new Pose2d(new Vector2d(36, -20), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
     public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(30);
-    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(10);
+    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
+    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(30);
 
     Robot robot;
 
@@ -82,6 +86,22 @@ public class AutonomousActionBuilder {
           .setTangent(Math.toRadians(-90))
           .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
           .build();
+
+        redFarLaunchPickupSecondMark = md.actionBuilder(redFarLaunchPose)
+            .setTangent(Math.toRadians(165))
+            .splineToSplineHeading(redSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(redSecondMarkEnd.position, slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(-90))
+            .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .build();
+
+        redFarLaunchPickupFirstMark = md.actionBuilder(redFarLaunchPose)
+            .setTangent(Math.toRadians(165))
+            .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(redFirstMarkEnd.position, slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(-90))
+            .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .build();
 
         redFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
             .strafeTo(new Vector2d(47.5, 23.5), normalTranslationalVelConstraint)
@@ -130,6 +150,22 @@ public class AutonomousActionBuilder {
             .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(15), normalTranslationalVelConstraint)
             .build();
 
+        blueFarLaunchPickupSecondMark = md.actionBuilder(blueFarLaunchPose)
+            .setTangent(Math.toRadians(165))
+            .splineToSplineHeading(blueSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(blueSecondMarkEnd.position, slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(-90))
+            .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .build();
+
+        blueFarLaunchPickupFirstMark = md.actionBuilder(blueFarLaunchPose)
+            .setTangent(Math.toRadians(165))
+            .splineToSplineHeading(blueFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .strafeToConstantHeading(blueFirstMarkEnd.position, slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(-90))
+            .splineToSplineHeading(blueFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .build();
+
         blueFarLaunchToLeaveLaunchZone = md.actionBuilder(blueFarLaunchPose)
             .strafeTo(new Vector2d(47.5, -23.5), normalTranslationalVelConstraint)
             .build();
@@ -169,9 +205,9 @@ public class AutonomousActionBuilder {
         spinUpAction = robot.getLauncher().getSpinLauncherAction(1600);
         stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
 
-        goToFirstBallAction = robot.getIndexer().getGoToFirstBallAction();
-        goToSecondBallAction = robot.getIndexer().getGoToSecondBallAction();
-        goToThirdBallAction = robot.getIndexer().getGoToThirdBallAction();
+        goToFirstBallAction = robot.getIndexer().getGoToZeroBallAction();
+        goToSecondBallAction = robot.getIndexer().getGoToOneBallAction();
+        goToThirdBallAction = robot.getIndexer().getGoToTwoBallAction();
 
         launchBallAction = robot.getLauncher().getKickBallAction();
         resetKickerAction = robot.getLauncher().getResetKickerAction();
@@ -187,6 +223,8 @@ public class AutonomousActionBuilder {
         return new Action[] {
             redFarStartToFarLaunch,
             redFarLaunchPickupThirdMark,
+            redFarLaunchPickupSecondMark,
+            redFarLaunchPickupFirstMark,
             redFarLaunchToLeaveLaunchZone
         };
     }
@@ -205,6 +243,8 @@ public class AutonomousActionBuilder {
         return new Action[] {
             blueFarStartToFarLaunch,
             blueFarLaunchPickupThirdMark,
+            blueFarLaunchPickupSecondMark,
+            blueFarLaunchPickupFirstMark,
             blueFarLaunchToLeaveLaunchZone
         };
     }
@@ -222,18 +262,54 @@ public class AutonomousActionBuilder {
 
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),    // 0
-            () -> robot.getLauncher().getStopLauncherAction(),                            // 1
-            () -> robot.getIndexer().getGoToFirstBallAction(),                            // 2
-            () -> robot.getIndexer().getGoToSecondBallAction(),                           // 3
-            () -> robot.getIndexer().getGoToThirdBallAction(),                          // 4
-            () -> robot.getLauncher().getKickBallAction(),                              // 5
-            () -> robot.getIntake().getStartIntakeAction(),                             // 6
-            () -> robot.getIntake().getStopIntakeAction(),                              // 7
-            () -> robot.getLauncher().getResetKickerAction(),                           // 8
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.70),                // 9
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),                // 10
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)               // 11
+            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),
+            () -> robot.getLauncher().getStopLauncherAction(),
+            () -> robot.getIndexer().getGoToZeroBallAction(),
+            () -> robot.getIndexer().getGoToOneBallAction(),
+            () -> robot.getIndexer().getGoToTwoBallAction(),
+            () -> robot.getLauncher().getKickBallAction(),
+            () -> robot.getIntake().getStartIntakeAction(),
+            () -> robot.getIntake().getStopIntakeAction(),
+            () -> robot.getLauncher().getResetKickerAction(),
+            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.70),
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),
+            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)
         };
+    }
+
+    public Action getSpinLauncherFar() {
+        return robot.getLauncher().getSpinLauncherAction(1600, 0.82);
+    }
+
+    public Action getSpinLauncherClose() {
+        return robot.getLauncher().getSpinLauncherAction(1600, 0.70);
+    }
+
+    public Action getStopLauncher() {
+        return robot.getLauncher().getStopLauncherAction();
+    }
+
+    public Action getIndexAction(int indexPos) {
+        return indexPos == 0 ? robot.getIndexer().getGoToZeroBallAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBallAction() : robot.getIndexer().getGoToTwoBallAction());
+    }
+
+    public Action getKickBall() {
+        return robot.getLauncher().getKickBallAction();
+    }
+
+    public Action getResetKicker() {
+        return robot.getLauncher().getResetKickerAction();
+    }
+
+    public Action getStartIntake() {
+        return robot.getIntake().getStartIntakeAction();
+    }
+
+    public Action getStopIntake() {
+        return robot.getIntake().getStopIntakeAction();
+    }
+
+    public Action getWaitUntilBallInIndexer(double timeout) {
+        return robot.getIndexer().getWaitUntilBallInIndexerAction(timeout);
     }
 }
