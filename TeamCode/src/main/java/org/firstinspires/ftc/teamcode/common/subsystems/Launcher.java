@@ -28,6 +28,7 @@ public class Launcher {
     DcMotorEx launcherMotor1;
     DcMotorEx launcherMotor2;
     public double launchPower;
+    double launcherVelocity;
 
     private Limelight3A limelight;
 
@@ -36,10 +37,15 @@ public class Launcher {
     public final double POSITION_KICKER_SERVO_KICK_BALL = 0.88;
     public final double POSITION_KICKER_SERVO_INIT = 0.6;
 
-    public final double LAUNCH_POWER_FAR = 1.0;
+    public final double LAUNCH_POWER_FAR = 0.85;
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
+    public final double LAUNCH_VELOCITY_FAR =1800;
+    public final double LAUNCH_VELOCITY_NEAR= 1500;
+    public final double LAUNCH_VELOCITY_FULL= 3000;
+    public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
+    public final double LIMELIGHT_OFFSET = -1.1;
 
     public class SpinLauncherAction implements Action {
 
@@ -291,21 +297,12 @@ public class Launcher {
     }
 
     public void startLauncher() {
-        launchPower = LAUNCH_POWER_FAR;
-        setLauncherPower(launchPower);
+        //launchPower = LAUNCH_POWER_FAR;
+        //setLauncherPower(launchPower);
+        //start launcher with velocity
+        launcherVelocity = LAUNCH_VELOCITY_FAR;
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
-    }
-
-    public void reduceLauncherPower() {
-        if (launchPower >= 0.1) {
-            launchPower -= 0.1;
-            launcherActive = true;
-        }
-        else{
-            launchPower = 0;
-            launcherActive = false;
-        }
-        setLauncherPower(launchPower);
     }
 
     public void increaseLauncherPower() {
@@ -336,8 +333,11 @@ public class Launcher {
     }
 
     public void startLauncherPartialPower() {
-        launchPower = LAUNCH_POWER_NEAR;
-        setLauncherPower(launchPower);
+        //launchPower = LAUNCH_POWER_NEAR;
+        //setLauncherPower(launchPower);
+        //start launcher with velocity
+        launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
 
@@ -374,12 +374,11 @@ public class Launcher {
         double answer = 0;
         if(result.isValid()){
             if(Math.abs(result.getTx()) > 3){
-                if(result.getTx() < 1){
-                    answer = -0.2;
+                if(result.getTx() < 0){
+                    answer = -0.17;
                 }
-
-                if(result.getTx() > 1){
-                    answer = 0.2;
+                else if(result.getTx() > 0){
+                    answer = 0.17;
                 }
             }
             else{
@@ -388,6 +387,18 @@ public class Launcher {
         }
 
         return answer;
+    }
+
+    public Boolean shouldAim(){
+        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        LLResult result = limelight.getLatestResult();
+        if(result.isValid()){
+            if(Math.abs(result.getTx()) > 3){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setLimelightPipeline(int pipeline) {
@@ -420,7 +431,7 @@ public class Launcher {
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
         if(llresult.isValid()){
-            distance = 448/Math.tan(Math.toRadians(llresult.getTy()));
+            distance = 448/Math.tan(Math.toRadians(llresult.getTy()+LIMELIGHT_OFFSET));
         }
         else{
                 distance = 0;
@@ -428,5 +439,25 @@ public class Launcher {
 
         return distance;
     }
+
+    public void setLauncherVelocity(double velocity) {
+        launcherMotor2.setVelocity(velocity);
+        launcherMotor1.setVelocity(velocity);
+    }
+
+    public void changeLauncherVelocity(double change) {
+        launcherVelocity += change;
+
+        if (launcherVelocity > LAUNCH_VELOCITY_FULL) {
+            launcherVelocity = LAUNCH_VELOCITY_FULL;
+        }
+        else if (launcherVelocity < 0.0) {
+            launcherVelocity = 0.0;
+        }
+
+        setLauncherVelocity(launcherVelocity);
+        launcherActive = (launcherVelocity != 0.0);
+    }
+
 
 }

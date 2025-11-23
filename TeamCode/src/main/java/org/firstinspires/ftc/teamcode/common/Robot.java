@@ -259,6 +259,10 @@ public class Robot {
                     indexer.updateBallColors();
                 }
             }
+            else {
+                //no empty slot, turn on the shooter at lowest shooting speed
+                //launcher.startLauncherWithVelocity(1550);
+            }
         }
     }
 

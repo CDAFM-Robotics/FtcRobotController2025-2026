@@ -127,11 +127,11 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().changeLauncherPower(0.1);
+                robot.getLauncher().changeLauncherVelocity(50);
             }
 
             if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().changeLauncherPower(-0.1);
+                robot.getLauncher().changeLauncherVelocity(-50);
             }
 
             //launch a green ball
