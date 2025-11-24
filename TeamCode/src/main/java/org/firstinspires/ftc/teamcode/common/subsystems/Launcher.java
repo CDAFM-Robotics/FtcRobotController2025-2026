@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.Robot;
 
 import java.util.List;
 
+@Config
 public class Launcher {
 
     HardwareMap hardwareMap;
@@ -46,6 +48,10 @@ public class Launcher {
     public final double LAUNCH_VELOCITY_FULL= 3000;
     public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = -1.1;
+
+    public static double aimKp = 0.02;
+    public static double powerStatic = 0.0;
+    public static double aimErrorTolerance = 2;
 
     public class SpinLauncherAction implements Action {
 
@@ -405,7 +411,7 @@ public class Launcher {
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         LLResult result = limelight.getLatestResult();
         if(result.isValid()){
-            if(Math.abs(result.getTx()) > 3){
+            if(Math.abs(result.getTx()) > aimErrorTolerance){
                 return true;
             }
         }
@@ -436,6 +442,31 @@ public class Launcher {
         }
 
         return answer;
+    }
+
+    public double setRedAimPowerPID () {
+        setLimelightPipeline(Robot.LLPipelines.RED_GOAL.ordinal());
+        return getAimPowerPID();
+    }
+
+    public double getBlueAimPowerPID () {
+        setLimelightPipeline(Robot.LLPipelines.BLUE_GOAL.ordinal());
+        return getAimPowerPID();
+    }
+
+    public double getAimPowerPID() {
+        LLResult result = limelight.getLatestResult();
+        double power = 0;
+        if(result.isValid()){
+            double currentX = result.getTx();
+            if (currentX < 0) {
+                power = -(powerStatic + aimKp * Math.abs(currentX));
+            }
+            else {
+                power = powerStatic + aimKp * Math.abs(currentX);
+            }
+        }
+        return power;
     }
 
     public double getRedGoalDistance(){
