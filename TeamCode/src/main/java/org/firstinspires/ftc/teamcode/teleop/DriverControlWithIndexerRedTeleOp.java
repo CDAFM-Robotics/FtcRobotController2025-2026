@@ -56,7 +56,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-            if(currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+            if(currentGamepad2.y && !previousGamepad2.y){
                 isAiming = true;
 
             }
@@ -65,15 +65,9 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                //if (robot.getLauncher().shouldAim()) {
                     double power = robot.getLauncher().setRedAimPowerPID();
                     telemetry.addData("aiming: motor power", power);
                     robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
-
-                //}
-                //else {
-                    //isAiming = false;
-                //}
             }
             else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
@@ -174,6 +168,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
+            robot.getHud().setAimIndicator(isAiming);
             robot.getHud().UpdateBallUI();
 
             // TODO Add timing Log at end of loop
