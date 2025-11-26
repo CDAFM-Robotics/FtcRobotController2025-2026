@@ -24,17 +24,19 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     Supplier<Action>[] otherActions;
 
+    AutonomousActionBuilder autonomousActionBuilder;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(37)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
-        AutonomousActionBuilder autonomousTrajectoryBuilder = new AutonomousActionBuilder(md, robot);
+        autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 
-        trajectories = autonomousTrajectoryBuilder.getBlueCloseTrajectories();
+        trajectories = autonomousActionBuilder.getBlueCloseTrajectories();
 
-        otherActions = autonomousTrajectoryBuilder.getOtherActions();
+        otherActions = autonomousActionBuilder.getOtherActions();
 
         Robot.ArtifactColor[] motif = null;
 
@@ -68,12 +70,12 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         }
 
         if (motif[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(otherActions[3].get());
+            Actions.runBlocking(autonomousActionBuilder.getIndexAction(1));
         }
 
         Actions.runBlocking(new ParallelAction(
             trajectories[1],
-            otherActions[9].get()
+            autonomousActionBuilder.getSpinLauncherClose()
         ));
 
         sleep(500);
@@ -85,17 +87,17 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         Actions.runBlocking(new SequentialAction(
             new ParallelAction(
                 trajectories[2],
-                otherActions[2].get(),
+                autonomousActionBuilder.getIndexAction(2),
                 new SequentialAction(
                     new SleepAction(0.6),
-                    otherActions[6].get(),
-                    otherActions[10].get(),
-                    otherActions[3].get(),
-                    otherActions[10].get(),
-                    otherActions[4].get(),
-                    otherActions[10].get(),
-                    otherActions[9].get(),
-                    otherActions[7].get()
+                    autonomousActionBuilder.getStartIntake(),
+                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                    autonomousActionBuilder.getIndexAction(1),
+                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                    autonomousActionBuilder.getIndexAction(2),
+                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                    autonomousActionBuilder.getSpinLauncherClose(),
+                    autonomousActionBuilder.getStopIntake()
                 )
             )
         ));
@@ -112,37 +114,37 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
         Actions.runBlocking(new ParallelAction(
             trajectories[4],
-            otherActions[1].get()
+            autonomousActionBuilder.getStopLauncher()
         ));
     }
 
     public Action launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
 
-        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 0 ? 3 : 2].get());
-        Actions.runBlocking(otherActions[5].get());
-        Actions.runBlocking(otherActions[8].get());
-        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation == 0 ? 3 : 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get()));
-        Actions.runBlocking(otherActions[5].get());
-        Actions.runBlocking(otherActions[8].get());
-        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get());
-        Actions.runBlocking(otherActions[5].get());
+        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0));
+        Actions.runBlocking(autonomousActionBuilder.getKickBall());
+        Actions.runBlocking(autonomousActionBuilder.getResetKicker());
+        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2)));
+        Actions.runBlocking(autonomousActionBuilder.getKickBall());
+        Actions.runBlocking(autonomousActionBuilder.getResetKicker());
+        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2));
+        Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(new ParallelAction(
-            otherActions[1].get(),
-            otherActions[8].get()
+            autonomousActionBuilder.getStopLauncher(),
+            autonomousActionBuilder.getResetKicker()
         ));
 
         return new SequentialAction(
             motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 0 ? 3 : 2].get(),
-            otherActions[5].get(),
-            otherActions[8].get(),
+            autonomousActionBuilder.getKickBall(),
+            autonomousActionBuilder.getResetKicker(),
             motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation == 0 ? 3 : 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get()),
-            otherActions[5].get(),
-            otherActions[8].get(),
+            autonomousActionBuilder.getKickBall(),
+            autonomousActionBuilder.getResetKicker(),
             motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get(),
-            otherActions[5].get(),
+            autonomousActionBuilder.getKickBall(),
             new ParallelAction(
                 otherActions[1].get(),
-                otherActions[8].get()
+                autonomousActionBuilder.getResetKicker()
             )
         );
 
