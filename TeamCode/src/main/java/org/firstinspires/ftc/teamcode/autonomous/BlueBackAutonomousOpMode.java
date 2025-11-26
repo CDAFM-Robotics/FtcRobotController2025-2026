@@ -68,16 +68,16 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
-            if ((currentGamepad1.dpad_up && !previousGamepad1.dpad_up) || (currentGamepad2.dpad_up && !previousGamepad2.dpad_up)) {
+            if ((currentGamepad1.dpad_down && !previousGamepad1.dpad_down) || (currentGamepad2.dpad_down && !previousGamepad2.dpad_down)) {
                 selectedRow++;
-                if (selectedRow > 100) {
+                if (selectedRow > 3) {
                     selectedRow = 0;
                 }
             }
-            if ((currentGamepad1.dpad_down && !previousGamepad1.dpad_down) || (currentGamepad2.dpad_down && !previousGamepad2.dpad_down)) {
+            if ((currentGamepad1.dpad_up && !previousGamepad1.dpad_up) || (currentGamepad2.dpad_up && !previousGamepad2.dpad_up)) {
                 selectedRow--;
                 if (selectedRow < 0) {
-                    selectedRow = 100;
+                    selectedRow = 3;
                 }
             }
 
@@ -121,28 +121,28 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("> Delay", delay);
             }
             else {
-                telemetry.addData("  Delay", delay);
+                telemetry.addData("   Delay", delay);
             }
 
             if (selectedRow == 1) {
                 telemetry.addData("> Pickup Third Mark", thirdMark);
             }
             else {
-                telemetry.addData("  Pickup Third Mark", thirdMark);
+                telemetry.addData("   Pickup Third Mark", thirdMark);
             }
 
             if (selectedRow == 2) {
                 telemetry.addData("> Pickup Second Mark", secondMark);
             }
             else {
-                telemetry.addData("  Pickup Second Mark", secondMark);
+                telemetry.addData("   Pickup Second Mark", secondMark);
             }
 
             if (selectedRow == 3) {
                 telemetry.addData("> Pickup First Mark", firstMark);
             }
             else {
-                telemetry.addData("  Pickup First Mark", firstMark);
+                telemetry.addData("   Pickup First Mark", firstMark);
             }
 
 
