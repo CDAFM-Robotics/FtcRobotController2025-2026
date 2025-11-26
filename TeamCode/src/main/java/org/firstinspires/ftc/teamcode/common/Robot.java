@@ -26,6 +26,7 @@ public class Robot {
     private ElapsedTime timeSinceIndex = new ElapsedTime();
     private ElapsedTime timeSinceKick = new ElapsedTime();
     private ElapsedTime timeSinceKickReset  = new ElapsedTime();
+    private ElapsedTime initializedIndexerTimer  = new ElapsedTime();
 
     private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
     private ArtifactColor ballColor = ArtifactColor.NONE;
@@ -54,6 +55,11 @@ public class Robot {
         this.launcher = new Launcher(this.hardwareMap, this.telemetry);
         this.intake = new Intake(this.hardwareMap, this.telemetry);
         this.hud = new Hud(this.hardwareMap, this.telemetry);
+        initializedIndexerTimer.reset();
+        resetIndexerColorStart();
+        while (initializedIndexerTimer.milliseconds() < 1800) {
+            resetIndexer();
+        }
         telemetry.update();
 
     }
@@ -258,6 +264,10 @@ public class Robot {
                     RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
                     indexer.updateBallColors();
                 }
+            }
+            else {
+                //no empty slot, turn on the shooter at lowest shooting speed
+                //launcher.startLauncherWithVelocity(1550);
             }
         }
     }

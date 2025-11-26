@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.Robot;
 
 import java.util.List;
 
+@Config
 public class Launcher {
 
     HardwareMap hardwareMap;
@@ -28,6 +30,7 @@ public class Launcher {
     DcMotorEx launcherMotor1;
     DcMotorEx launcherMotor2;
     public double launchPower;
+    double launcherVelocity;
 
     private Limelight3A limelight;
 
@@ -40,6 +43,15 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
+    public final double LAUNCH_VELOCITY_FAR =1800;
+    public final double LAUNCH_VELOCITY_NEAR= 1500;
+    public final double LAUNCH_VELOCITY_FULL= 3000;
+    public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
+    public final double LIMELIGHT_OFFSET = -1.1;
+
+    public static double aimKp = 0.02;
+    public static double powerStatic = 0.0;
+    public static double aimErrorTolerance = 2;
 
     public class SpinLauncherAction implements Action {
 
@@ -291,8 +303,11 @@ public class Launcher {
     }
 
     public void startLauncher() {
-        launchPower = LAUNCH_POWER_FAR;
-        setLauncherPower(launchPower);
+        //launchPower = LAUNCH_POWER_FAR;
+        //setLauncherPower(launchPower);
+        //start launcher with velocity
+        launcherVelocity = LAUNCH_VELOCITY_FAR;
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
 
@@ -336,8 +351,11 @@ public class Launcher {
     }
 
     public void startLauncherPartialPower() {
-        launchPower = LAUNCH_POWER_NEAR;
-        setLauncherPower(launchPower);
+        //launchPower = LAUNCH_POWER_NEAR;
+        //setLauncherPower(launchPower);
+        //start launcher with velocity
+        launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
 
@@ -374,12 +392,11 @@ public class Launcher {
         double answer = 0;
         if(result.isValid()){
             if(Math.abs(result.getTx()) > 3){
-                if(result.getTx() < 1){
-                    answer = -0.2;
+                if(result.getTx() < 0){
+                    answer = -0.17;
                 }
-
-                if(result.getTx() > 1){
-                    answer = 0.2;
+                else if(result.getTx() > 0){
+                    answer = 0.17;
                 }
             }
             else{
@@ -388,6 +405,18 @@ public class Launcher {
         }
 
         return answer;
+    }
+
+    public Boolean shouldAim(){
+        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        LLResult result = limelight.getLatestResult();
+        if(result.isValid()){
+            if(Math.abs(result.getTx()) > aimErrorTolerance){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setLimelightPipeline(int pipeline) {
@@ -415,12 +444,37 @@ public class Launcher {
         return answer;
     }
 
+    public double setRedAimPowerPID () {
+        setLimelightPipeline(Robot.LLPipelines.RED_GOAL.ordinal());
+        return getAimPowerPID();
+    }
+
+    public double getBlueAimPowerPID () {
+        setLimelightPipeline(Robot.LLPipelines.BLUE_GOAL.ordinal());
+        return getAimPowerPID();
+    }
+
+    public double getAimPowerPID() {
+        LLResult result = limelight.getLatestResult();
+        double power = 0;
+        if(result.isValid()){
+            double currentX = result.getTx();
+            if (currentX < 0) {
+                power = -(powerStatic + aimKp * Math.abs(currentX));
+            }
+            else {
+                power = powerStatic + aimKp * Math.abs(currentX);
+            }
+        }
+        return power;
+    }
+
     public double getRedGoalDistance(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
         if(llresult.isValid()){
-            distance = 448/Math.tan(Math.toRadians(llresult.getTy()));
+            distance = 448/Math.tan(Math.toRadians(llresult.getTy()+LIMELIGHT_OFFSET));
         }
         else{
                 distance = 0;
@@ -428,5 +482,25 @@ public class Launcher {
 
         return distance;
     }
+
+    public void setLauncherVelocity(double velocity) {
+        launcherMotor2.setVelocity(velocity);
+        launcherMotor1.setVelocity(velocity);
+    }
+
+    public void changeLauncherVelocity(double change) {
+        launcherVelocity += change;
+
+        if (launcherVelocity > LAUNCH_VELOCITY_FULL) {
+            launcherVelocity = LAUNCH_VELOCITY_FULL;
+        }
+        else if (launcherVelocity < 0.0) {
+            launcherVelocity = 0.0;
+        }
+
+        setLauncherVelocity(launcherVelocity);
+        launcherActive = (launcherVelocity != 0.0);
+    }
+
 
 }
