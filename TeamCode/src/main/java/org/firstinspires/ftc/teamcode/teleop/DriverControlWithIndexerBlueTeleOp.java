@@ -28,6 +28,14 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
         ElapsedTime timeSinceLastIncident = new ElapsedTime();
 
+        ElapsedTime initializedIndexerTimer  = new ElapsedTime();
+
+        initializedIndexerTimer.reset();
+        robot.resetIndexerColorStart();
+        while (initializedIndexerTimer.milliseconds() < 1800) {
+            robot.resetIndexer();
+        }
+
         waitForStart();
 
         while (opModeIsActive()){

@@ -27,6 +27,13 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
         Gamepad previousGamepad2 = new Gamepad();
 
         ElapsedTime timeSinceLastIncident = new ElapsedTime();
+        ElapsedTime initializedIndexerTimer  = new ElapsedTime();
+
+        initializedIndexerTimer.reset();
+        robot.resetIndexerColorStart();
+        while (initializedIndexerTimer.milliseconds() < 1800) {
+            robot.resetIndexer();
+        }
 
         waitForStart();
 

@@ -75,7 +75,8 @@ public class Indexer {
                 initialized = true;
             }
 
-            return !getIndexerServoAtPosition(position, 0.02);
+            return !getIndexerServoAtPosition(position, 0.05);
+
         }
     }
 
@@ -134,10 +135,6 @@ public class Indexer {
         indexerServoVoltage = hardwareMap.get(AnalogInput.class, "analog0");
 
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
-
-        telemetry.addData("color:", artifactColorArray[0]);
-        telemetry.addData("color:", artifactColorArray[1]);
-        telemetry.addData("color:", artifactColorArray[2]);
     }
 
     private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {

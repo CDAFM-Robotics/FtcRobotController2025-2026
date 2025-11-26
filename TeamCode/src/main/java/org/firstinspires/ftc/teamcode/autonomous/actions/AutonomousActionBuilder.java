@@ -262,7 +262,7 @@ public class AutonomousActionBuilder {
 
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.82),
+            () -> robot.getLauncher().getSpinLauncherAction(1400),
             () -> robot.getLauncher().getStopLauncherAction(),
             () -> robot.getIndexer().getGoToZeroBallAction(),
             () -> robot.getIndexer().getGoToOneBallAction(),
@@ -271,18 +271,18 @@ public class AutonomousActionBuilder {
             () -> robot.getIntake().getStartIntakeAction(),
             () -> robot.getIntake().getStopIntakeAction(),
             () -> robot.getLauncher().getResetKickerAction(),
-            () -> robot.getLauncher().getSpinLauncherAction(1600, 0.70),
+            () -> robot.getLauncher().getSpinLauncherAction(1300),
             () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),
             () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)
         };
     }
 
     public Action getSpinLauncherFar() {
-        return robot.getLauncher().getSpinLauncherAction(1600, 0.82);
+        return robot.getLauncher().getSpinLauncherAction(1300);
     }
 
     public Action getSpinLauncherClose() {
-        return robot.getLauncher().getSpinLauncherAction(1600, 0.70);
+        return robot.getLauncher().getSpinLauncherAction(1100);
     }
 
     public Action getStopLauncher() {

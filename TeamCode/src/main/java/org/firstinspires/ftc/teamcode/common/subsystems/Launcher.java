@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -43,8 +44,8 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR =1800;
-    public final double LAUNCH_VELOCITY_NEAR= 1500;
+    public final double LAUNCH_VELOCITY_FAR = 1400;
+    public final double LAUNCH_VELOCITY_NEAR= 1300;
     public final double LAUNCH_VELOCITY_FULL= 3000;
     public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = -1.1;
@@ -59,29 +60,27 @@ public class Launcher {
 
         private double velocity;
 
-        private double power;
-
         public SpinLauncherAction(double velocity) {
             this.velocity = velocity;
-            this.power = 1;
-        }
-
-        public SpinLauncherAction(double velocity, double power) {
-            this.velocity = velocity;
-            this.power = power;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
-                launcherMotor1.setPower(power);
-                launcherMotor2.setPower(power);
+                launcherMotor1.setVelocity(velocity);
+                launcherMotor2.setVelocity(velocity);
                 initialized = true;
             }
 
-            // TODO: 11/2/2025 ADD FAIL-SAFE FOR MOTOR ENCODERS BEING UNPLUGGED 
+            // TODO: 11/2/2025 ADD FAIL-SAFE FOR MOTOR ENCODERS BEING UNPLUGGED
 
-            return launcherMotor1.getVelocity() + launcherMotor2.getVelocity() < velocity * 2;
+            double measured_velocity_1 =  launcherMotor1.getVelocity();
+            double measured_velocity_2 =  launcherMotor2.getVelocity();
+            double mvel_tot = measured_velocity_1 + measured_velocity_2;
+            if (measured_velocity_1 != 0.0) {
+                RobotLog.d("m0: %f", measured_velocity_1);
+            }
+            return mvel_tot  < ((velocity * 2) - 40);
         }
     }
 
@@ -168,10 +167,6 @@ public class Launcher {
 
     public Action getSpinLauncherAction(double velocity) {
         return new SpinLauncherAction(velocity);
-    }
-
-    public Action getSpinLauncherAction(double velocity, double power) {
-        return new SpinLauncherAction(velocity, power);
     }
 
     public Action getRotateKickerAction(double position) {
