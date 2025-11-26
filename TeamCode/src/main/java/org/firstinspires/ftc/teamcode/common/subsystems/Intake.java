@@ -18,7 +18,7 @@ public class Intake {
     DcMotorEx intakeMotor;
 
     private Boolean activeIntake = false;
-    public final double INTAKE_POWER = 0.9;
+    public final double INTAKE_POWER = 1.0;
 
 
     public class SetIntakeMotorPowerAction implements Action {

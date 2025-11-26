@@ -502,13 +502,14 @@ public class Indexer {
     }
 
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
-        return Math.abs(getAxonServoPosition() - position) < accuracy;
+        double indexerposition = getAxonServoPosition();
+        return Math.abs(indexerposition - position) < accuracy;
     }
 
     public boolean indexerFinishedTurning() {
         //telemetry.addData("indexerFinishedTurning start", targetIdexerPosition);
         //TODO: 0.02 is used to start with. Is 0.02 the best value to use here?
-        if (getIndexerServoAtPosition(targetIdexerPosition, 0.02))
+        if (getIndexerServoAtPosition(targetIdexerPosition, 0.05))
             return true;
         else
             return false;
