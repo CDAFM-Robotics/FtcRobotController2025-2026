@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -73,14 +72,18 @@ public class Launcher {
             }
 
             // TODO: 11/2/2025 ADD FAIL-SAFE FOR MOTOR ENCODERS BEING UNPLUGGED
+            // TODO: maybe... if motor1 or 2 velocity = setpoint AND opposite motor ~0.0
+            // TODO: THEN assume enc broken: shoot anyway, and FLASH BALL 1 or 2 red to notify
 
-            double measured_velocity_1 =  launcherMotor1.getVelocity();
-            double measured_velocity_2 =  launcherMotor2.getVelocity();
-            double mvel_tot = measured_velocity_1 + measured_velocity_2;
-            if (measured_velocity_1 != 0.0) {
-                RobotLog.d("m0: %f", measured_velocity_1);
-            }
-            return mvel_tot  < ((velocity * 2) - 40);
+            // Add some Debugging Helpers
+            double measuredVelocity1 =  launcherMotor1.getVelocity();
+            double measuredVelocity2 =  launcherMotor2.getVelocity();
+            double measuredVelocityTotal = measuredVelocity1 + measuredVelocity2;
+            // Logging
+//            if (measuredVelocity1 != 0.0 || measuredVelocity2 != 0.0) {
+//                RobotLog.d("m1: %.2f m2: %.2f", measuredVelocity1, measuredVelocity2);
+//            }
+            return (measuredVelocityTotal < ((velocity * 2) - 40));
         }
     }
 
