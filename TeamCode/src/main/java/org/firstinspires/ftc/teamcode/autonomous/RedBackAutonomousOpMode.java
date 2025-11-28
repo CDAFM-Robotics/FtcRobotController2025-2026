@@ -44,7 +44,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
         int selectedRow = 0;
         double delay = 0;
 
-        boolean firstMark = true;
+        boolean firstMark = false;
         boolean secondMark = true;
         boolean thirdMark = true;
 
@@ -146,12 +146,6 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             }
 
 
-
-
-
-
-
-
             telemetry.update();
 
 
@@ -180,67 +174,15 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
         // Go to the Launch Pose
 
         Actions.runBlocking(new ParallelAction(
-            new SequentialAction(
-                new SleepAction(0.5),
-                trajectories[0]
-            ),
+            trajectories[0],
             autonomousActionBuilder.getSpinLauncherFar()
         ));
 
 
 
-        sleep(500);
-
         //Actions.runBlocking(launchInMotifOrder(motif));
 
         launchInMotifOrder(motif, 0);
-
-
-
-//        if (motif[0] != Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(1));
-//        }
-//
-//        Actions.runBlocking(autonomousActionBuilder.getKickBall());
-//
-//        Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-//
-//        if (motif[1] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(0));
-//        }
-//        else if (motif[0] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(1));
-//        }
-//        else {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(2));
-//        }
-//
-//        Actions.runBlocking(autonomousActionBuilder.getKickBall());
-//
-//        Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-//
-//        if (motif[0] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(2));
-//        }
-//        else if (motif[1] == Robot.ArtifactColor.GREEN) {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(2));
-//        }
-//        else {
-//            Actions.runBlocking(autonomousActionBuilder.getIndexAction(0));
-//        }
-//
-//        Actions.runBlocking(autonomousActionBuilder.getKickBall());
-//
-//        Actions.runBlocking(new ParallelAction(
-//            autonomousActionBuilder.getResetKicker(),
-//            autonomousTrajectoryBuilder.getStopLauncher()
-//        ));
-
-
-
-
-
-
 
         // Pickup third mark
 
@@ -251,7 +193,6 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                     trajectories[1],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -265,11 +206,8 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
             ));
 
 
-            sleep(1000);
 
             launchInMotifOrder(motif, 2);
-
-            sleep(500);
         }
 
         if (secondMark) {
@@ -279,7 +217,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                     trajectories[2],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
+                        new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -292,11 +230,9 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                 )
             ));
 
-            sleep(1000);
 
-            launchInMotifOrder(motif, 1);
+            launchInMotifOrder(motif, 0);
 
-            sleep(500);
         }
 
         if (firstMark) {
@@ -305,7 +241,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                     trajectories[3],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
+                        new SleepAction(1.0),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -318,11 +254,9 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
                 )
             ));
 
-            sleep(1000);
 
-            launchInMotifOrder(motif, 3);
+            launchInMotifOrder(motif, 1);
 
-            sleep(500);
         }
 
         // LEave

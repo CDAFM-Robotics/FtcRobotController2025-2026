@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -80,10 +81,10 @@ public class Launcher {
             double measuredVelocity2 =  launcherMotor2.getVelocity();
             double measuredVelocityTotal = measuredVelocity1 + measuredVelocity2;
             // Logging
-//            if (measuredVelocity1 != 0.0 || measuredVelocity2 != 0.0) {
-//                RobotLog.d("m1: %.2f m2: %.2f", measuredVelocity1, measuredVelocity2);
-//            }
-            return (measuredVelocityTotal < ((velocity * 2) - 40));
+            if (measuredVelocity1 != 0.0 || measuredVelocity2 != 0.0) {
+                RobotLog.d("m1: %f m2: %f", measuredVelocity1, measuredVelocity2);
+            }
+            return measuredVelocityTotal < velocity * 2;
         }
     }
 
@@ -169,13 +170,16 @@ public class Launcher {
     }
 
     public Action getSpinLauncherAction(double velocity) {
-        return new SpinLauncherAction(velocity);
+        return new SequentialAction(
+            new SpinLauncherAction(velocity),
+            new SleepAction(1)
+        );
     }
 
     public Action getRotateKickerAction(double position) {
         return new SequentialAction(
             new SetKickerPositionAction(position),
-            new SleepAction(0.5)
+            new SleepAction(0.3)
         );
     }
 

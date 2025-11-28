@@ -1,7 +1,16 @@
 package org.firstinspires.ftc.teamcode.autonomous.actions;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Arclength;
+import com.acmerobotics.roadrunner.CompositeAccelConstraint;
+import com.acmerobotics.roadrunner.MinMax;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
@@ -37,24 +46,13 @@ public class AutonomousActionBuilder {
     public Action blueCloseLaunchPickupSecondMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
 
-    public Action spinUpAction;
-    public Action stopSpinUpAction;
-    public Action goToFirstBallAction;
-    public Action goToSecondBallAction;
-    public Action goToThirdBallAction;
-    public Action launchBallAction;
-    public Action startIntakeAction;
-    public Action stopIntakeAction;
-    public Action resetKickerAction;
-    public Action aprilTagAction;
-
-    public static Pose2d redFarLaunchPose = new Pose2d(47, 11.5, Math.toRadians(-114)); // TODO 14nov25 -113
+    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-112)); // TODO 14nov25 -113
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
-    public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 20), Math.toRadians(90));
-    public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 46), Math.toRadians(90));
-    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 20), Math.toRadians(90));
-    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 46), Math.toRadians(90));
-    public static Pose2d redThirdMarkStart = new Pose2d(36, 20, Math.toRadians(90));
+    public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 30), Math.toRadians(90));
+    public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(90));
+    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
+    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 62), Math.toRadians(90));
+    public static Pose2d redThirdMarkStart = new Pose2d(36, 30, Math.toRadians(90));
     public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(90));
 
     public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
@@ -66,8 +64,10 @@ public class AutonomousActionBuilder {
     public static Pose2d blueThirdMarkStart = new Pose2d(new Vector2d(36, -20), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
     public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
 
-    public VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
-    public VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(30);
+    public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
+    public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(20);
+
+    public AccelConstraint normalAccelConstraint = new ProfileAccelConstraint(-10, 20);
 
     Robot robot;
 
@@ -88,7 +88,7 @@ public class AutonomousActionBuilder {
           .build();
 
         redFarLaunchPickupSecondMark = md.actionBuilder(redFarLaunchPose)
-            .setTangent(Math.toRadians(165))
+            .setTangent(Math.toRadians(180))
             .splineToSplineHeading(redSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
             .strafeToConstantHeading(redSecondMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
@@ -96,7 +96,7 @@ public class AutonomousActionBuilder {
             .build();
 
         redFarLaunchPickupFirstMark = md.actionBuilder(redFarLaunchPose)
-            .setTangent(Math.toRadians(165))
+            .setTangent(Math.toRadians(180))
             .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
             .strafeToConstantHeading(redFirstMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
@@ -198,25 +198,6 @@ public class AutonomousActionBuilder {
         blueCloseLaunchToLeaveLaunchZone = md.actionBuilder(blueCloseLaunchPose)
             .strafeToConstantHeading(new Vector2d( -10, -30))
             .build();
-
-
-        // Non-driving actions
-
-        spinUpAction = robot.getLauncher().getSpinLauncherAction(1600);
-        stopSpinUpAction = robot.getLauncher().getStopLauncherAction();
-
-        goToFirstBallAction = robot.getIndexer().getGoToZeroBallAction();
-        goToSecondBallAction = robot.getIndexer().getGoToOneBallAction();
-        goToThirdBallAction = robot.getIndexer().getGoToTwoBallAction();
-
-        launchBallAction = robot.getLauncher().getKickBallAction();
-        resetKickerAction = robot.getLauncher().getResetKickerAction();
-
-        startIntakeAction = robot.getIntake().getStartIntakeAction();
-        stopIntakeAction = robot.getIntake().getStopIntakeAction();
-
-
-        aprilTagAction = robot.getLauncher().getAprilTagAction();
     }
 
     public Action[] getRedFarTrajectories() {
@@ -262,7 +243,7 @@ public class AutonomousActionBuilder {
 
     public Supplier[] getOtherActions() {
         return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1400),
+            () -> robot.getLauncher().getSpinLauncherAction(1380),
             () -> robot.getLauncher().getStopLauncherAction(),
             () -> robot.getIndexer().getGoToZeroBallAction(),
             () -> robot.getIndexer().getGoToOneBallAction(),
@@ -278,7 +259,7 @@ public class AutonomousActionBuilder {
     }
 
     public Action getSpinLauncherFar() {
-        return robot.getLauncher().getSpinLauncherAction(1300);
+        return robot.getLauncher().getSpinLauncherAction(1340);
     }
 
     public Action getSpinLauncherClose() {
