@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
@@ -28,7 +29,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
@@ -44,7 +45,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
         int selectedRow = 0;
         double delay = 0;
 
-        boolean firstMark = true;
+        boolean firstMark = false;
         boolean secondMark = true;
         boolean thirdMark = true;
 
@@ -81,7 +82,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                 }
             }
 
-            if ((currentGamepad1.dpad_left && !previousGamepad1.dpad_left) || (currentGamepad2.dpad_left && !previousGamepad2.dpad_left)) {
+            if ((currentGamepad1.dpad_right && !previousGamepad1.dpad_right) || (currentGamepad2.dpad_right && !previousGamepad2.dpad_right)) {
                 if (selectedRow == 0) {
                     delay += 0.5;
                     if (delay > 30) {
@@ -99,7 +100,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                 }
             }
 
-            if ((currentGamepad1.dpad_right && !previousGamepad1.dpad_right) || (currentGamepad2.dpad_right && !previousGamepad2.dpad_right)) {
+            if ((currentGamepad1.dpad_left && !previousGamepad1.dpad_left) || (currentGamepad2.dpad_left && !previousGamepad2.dpad_left)) {
                 if (selectedRow == 0) {
                     delay -= 0.5;
                     if (delay < 0) {
@@ -121,35 +122,29 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("> Delay", delay);
             }
             else {
-                telemetry.addData("   Delay", delay);
+                telemetry.addData("  Delay", delay);
             }
 
             if (selectedRow == 1) {
                 telemetry.addData("> Pickup Third Mark", thirdMark);
             }
             else {
-                telemetry.addData("   Pickup Third Mark", thirdMark);
+                telemetry.addData("  Pickup Third Mark", thirdMark);
             }
 
             if (selectedRow == 2) {
                 telemetry.addData("> Pickup Second Mark", secondMark);
             }
             else {
-                telemetry.addData("   Pickup Second Mark", secondMark);
+                telemetry.addData("  Pickup Second Mark", secondMark);
             }
 
             if (selectedRow == 3) {
                 telemetry.addData("> Pickup First Mark", firstMark);
             }
             else {
-                telemetry.addData("   Pickup First Mark", firstMark);
+                telemetry.addData("  Pickup First Mark", firstMark);
             }
-
-
-
-
-
-
 
 
             telemetry.update();
@@ -167,20 +162,27 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             motif = new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
         }
 
-        Actions.runBlocking(new ParallelAction(
-            new SequentialAction(
-                new SleepAction(0.5),
-                trajectories[0]
+
+
+
+
+
+
+        // Go to the Launch Pose
+
+        Actions.runBlocking(new SequentialAction(
+            new ParallelAction(
+                trajectories[0],
+                autonomousActionBuilder.getSpinLauncherFar()
             ),
-            autonomousActionBuilder.getSpinLauncherFar()
+            new SleepAction(0.5)
         ));
 
-
-
-        sleep(500);
+        //Actions.runBlocking(launchInMotifOrder(motif));
 
         launchInMotifOrder(motif, 0);
 
+        // Pickup third mark
 
         if (thirdMark) {
 
@@ -189,7 +191,6 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     trajectories[1],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -201,6 +202,9 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     )
                 )
             ));
+
+
+
             launchInMotifOrder(motif, 2);
         }
 
@@ -211,7 +215,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     trajectories[2],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
+                        new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -223,7 +227,10 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     )
                 )
             ));
-            launchInMotifOrder(motif, 1);
+
+
+            launchInMotifOrder(motif, 0);
+
         }
 
         if (firstMark) {
@@ -232,7 +239,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     trajectories[3],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.4),
+                        new SleepAction(1.0),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -244,7 +251,10 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                     )
                 )
             ));
-            launchInMotifOrder(motif, 3);
+
+
+            launchInMotifOrder(motif, 1);
+
         }
 
         // LEave

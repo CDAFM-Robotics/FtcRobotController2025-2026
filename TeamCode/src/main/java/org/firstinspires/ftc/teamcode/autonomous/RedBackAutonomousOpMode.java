@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
@@ -28,7 +29,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, 11.75), Math.toRadians(-90)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, -11.75), Math.toRadians(-90)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
@@ -173,12 +174,13 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         // Go to the Launch Pose
 
-        Actions.runBlocking(new ParallelAction(
-            trajectories[0],
-            autonomousActionBuilder.getSpinLauncherFar()
+        Actions.runBlocking(new SequentialAction(
+            new ParallelAction(
+                trajectories[0],
+                autonomousActionBuilder.getSpinLauncherFar()
+            ),
+            new SleepAction(0.5)
         ));
-
-
 
         //Actions.runBlocking(launchInMotifOrder(motif));
 

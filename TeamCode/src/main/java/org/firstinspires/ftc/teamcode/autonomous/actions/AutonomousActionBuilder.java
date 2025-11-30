@@ -46,7 +46,7 @@ public class AutonomousActionBuilder {
     public Action blueCloseLaunchPickupSecondMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
 
-    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-112)); // TODO 14nov25 -113
+    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-108)); // TODO 14nov25 -113
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
     public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 30), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(90));
@@ -55,14 +55,14 @@ public class AutonomousActionBuilder {
     public static Pose2d redThirdMarkStart = new Pose2d(36, 30, Math.toRadians(90));
     public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(90));
 
-    public static Pose2d blueFarLaunchPose = new Pose2d(47, -11.5, Math.toRadians(-64));
+    public static Pose2d blueFarLaunchPose = new Pose2d(49, -12.5, Math.toRadians(-64));
     public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-45));
-    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -20), Math.toRadians(90));
-    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -46), Math.toRadians(90)); // TODO added minus to y
-    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, -20), Math.toRadians(-90));  // TODO made (-y) change UNTESTED
-    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -57), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
-    public static Pose2d blueThirdMarkStart = new Pose2d(new Vector2d(36, -20), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
-    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90)); // TODO made (-y) change UNTESTED
+    public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -30), Math.toRadians(-90));
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -57), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(11.5, -30), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -62), Math.toRadians(-90));
+    public static Pose2d blueThirdMarkStart = new Pose2d(36, -30, Math.toRadians(-90));
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90));
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
     public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(20);
