@@ -68,7 +68,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             }
             telemetry.addData("left_bumper pushed: is aiming", isAiming);
-            telemetry.addData("should aim", robot.getLauncher().shouldAim());
+            telemetry.addData("Limelight valid", robot.getLauncher().limelightValid());
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
@@ -137,11 +137,17 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().changeLauncherVelocity(50);
+                robot.getLauncher().changeLauncherVelocity(10);
             }
 
             if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().changeLauncherVelocity(-50);
+                robot.getLauncher().changeLauncherVelocity(-10);
+            }
+
+            //set launcher velocity
+            if ( robot.getLauncher().limelightValid() & robot.getLauncher().isLauncherActive() ) {
+                robot.getLauncher().setLauncherVelocity(
+                        robot.getLauncher().getVelocity(robot.getLauncher().getRedGoalDistance()));
             }
 
             //launch a green ball

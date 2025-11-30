@@ -21,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Config
 public class Launcher {
@@ -44,15 +46,20 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR = 1400;
+    public final double LAUNCH_VELOCITY_FAR =1420;
     public final double LAUNCH_VELOCITY_NEAR= 1300;
-    public final double LAUNCH_VELOCITY_FULL= 3000;
+    public final double LAUNCH_VELOCITY_FULL= 1460;
     public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
-    public final double LIMELIGHT_OFFSET = -1.1;
+    public final double LIMELIGHT_OFFSET = 17.4;
 
-    public static double aimKp = 0.02;
+    public static double aimKp = 0.028;
+    public static double aimKi = 0.0;
     public static double powerStatic = 0.0;
     public static double aimErrorTolerance = 2;
+
+    // A TreeMap is better than HashMap for interpolation because it keeps
+    // keys sorted, allowing easy finding of surrounding points.
+    private final TreeMap<Double, Double> distanceToVelocityMap = new TreeMap<>();
 
     public class SpinLauncherAction implements Action {
 
@@ -227,6 +234,27 @@ public class Launcher {
         limelight.pipelineSwitch(0);
 
         limelight.start();
+
+        // Initialize the map with calibration points.
+        // Distances in cm, velocities as motor power (0.0 to 1.0)
+        // Example values:
+        distanceToVelocityMap.put(714.0, 1060.0);
+        distanceToVelocityMap.put(768.0, 1060.0);
+        distanceToVelocityMap.put(890.0, 1070.0);
+        distanceToVelocityMap.put(976.0, 1100.0);
+        distanceToVelocityMap.put(1126.0, 1100.0);
+        distanceToVelocityMap.put(1244.0, 1120.0);
+        distanceToVelocityMap.put(1436.0, 1140.0);
+        distanceToVelocityMap.put(1524.0, 1150.0);
+        distanceToVelocityMap.put(1648.0, 1180.0);
+        distanceToVelocityMap.put(1748.0, 1210.0);
+        distanceToVelocityMap.put(1775.0, 1220.0);
+        distanceToVelocityMap.put(2035.0, 1260.0);
+        distanceToVelocityMap.put(2610.0, 1320.0);
+        distanceToVelocityMap.put(2790.0, 1380.0);
+        distanceToVelocityMap.put(2880.0, 1400.0);
+        distanceToVelocityMap.put(3050.0, 1440.0);
+        distanceToVelocityMap.put(3250.0, 1440.0);  // Far, max speed
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
@@ -409,7 +437,7 @@ public class Launcher {
         return answer;
     }
 
-    public Boolean shouldAim(){
+    public Boolean limelightValid(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         LLResult result = limelight.getLatestResult();
         if(result.isValid()){
@@ -504,5 +532,33 @@ public class Launcher {
         launcherActive = (launcherVelocity != 0.0);
     }
 
+    public double getVelocity(double currentDistance) {
+        // Handle edge cases: distance beyond min/max points
+        if (currentDistance <= distanceToVelocityMap.firstKey()) {
+            return distanceToVelocityMap.firstEntry().getValue();
+        }
+        if (currentDistance >= distanceToVelocityMap.lastKey()) {
+            return distanceToVelocityMap.lastEntry().getValue();
+        }
+
+        // Find the bounding points for linear interpolation
+        Map.Entry<Double, Double> lower = distanceToVelocityMap.floorEntry(currentDistance);
+        Map.Entry<Double, Double> upper = distanceToVelocityMap.ceilingEntry(currentDistance);
+
+        if (lower == null || upper == null) {
+            return 0.0; // Should not happen with the edge case checks, but for safety
+        }
+
+        // Perform linear interpolation (LERP)
+        double dist1 = lower.getKey();
+        double vel1 = lower.getValue();
+        double dist2 = upper.getKey();
+        double vel2 = upper.getValue();
+
+        // Formula: v = v1 + (v2 - v1) * ((d - d1) / (d2 - d1))
+        double velocity = vel1 + (vel2 - vel1) * ((currentDistance - dist1) / (dist2 - dist1));
+
+        return velocity;
+    }
 
 }
