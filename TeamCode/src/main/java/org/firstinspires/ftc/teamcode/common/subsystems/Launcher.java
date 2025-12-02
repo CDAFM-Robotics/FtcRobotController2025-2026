@@ -247,23 +247,32 @@ public class Launcher {
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
         // Example values:
-        distanceToVelocityMap.put(650.0, 1080.0);
-        distanceToVelocityMap.put(768.0, 1080.0);
-        distanceToVelocityMap.put(890.0, 1080.0);
-        distanceToVelocityMap.put(976.0, 1100.0);
-        distanceToVelocityMap.put(1126.0, 1100.0);
-        distanceToVelocityMap.put(1244.0, 1120.0);
-        distanceToVelocityMap.put(1436.0, 1140.0);
-        distanceToVelocityMap.put(1524.0, 1150.0);
-        distanceToVelocityMap.put(1648.0, 1180.0);
-        distanceToVelocityMap.put(1748.0, 1210.0);
-        distanceToVelocityMap.put(1775.0, 1220.0);
-        distanceToVelocityMap.put(2056.0, 1280.0);
+        distanceToVelocityMap.put(650.0, 1180.0);
+        distanceToVelocityMap.put(684.0, 1180.0);
+        distanceToVelocityMap.put(768.0, 1190.0);
+        distanceToVelocityMap.put(890.0, 1200.0);
+        distanceToVelocityMap.put(976.0, 1200.0);
+        distanceToVelocityMap.put(1051.0, 1210.0);
+        distanceToVelocityMap.put(1126.0, 1210.0);
+        distanceToVelocityMap.put(1244.0, 1210.0);
+        distanceToVelocityMap.put(1326.0, 1220.0);
+        distanceToVelocityMap.put(1436.0, 1220.0);
+        distanceToVelocityMap.put(1524.0, 1220.0);
+        distanceToVelocityMap.put(1648.0, 1230.0);
+        distanceToVelocityMap.put(1748.0, 1230.0);
+        distanceToVelocityMap.put(1825.0, 1240.0);
+        distanceToVelocityMap.put(1925.0, 1260.0);
+        distanceToVelocityMap.put(2046.0, 1290.0);
+        distanceToVelocityMap.put(2126.0, 1300.0);
+        distanceToVelocityMap.put(2169.0, 1310.0);
         distanceToVelocityMap.put(2528.0, 1330.0);
-        distanceToVelocityMap.put(2790.0, 1380.0);
-        distanceToVelocityMap.put(2880.0, 1400.0);
-        distanceToVelocityMap.put(3050.0, 1440.0);
-        distanceToVelocityMap.put(3250.0, 1460.0);  // Far, max speed
+        distanceToVelocityMap.put(2681.0, 1340.0);
+        distanceToVelocityMap.put(2751.0, 1350.0);
+        distanceToVelocityMap.put(2853.0, 1350.0);
+        distanceToVelocityMap.put(2952.0, 1410.0);
+        distanceToVelocityMap.put(3014.0, 1420.0);
+        distanceToVelocityMap.put(3100.0, 1440.0);
+        distanceToVelocityMap.put(3550.0, 1460.0);  // Far, max speed
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
