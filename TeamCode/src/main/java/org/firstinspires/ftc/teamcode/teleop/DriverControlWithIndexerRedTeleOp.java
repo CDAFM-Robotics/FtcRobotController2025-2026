@@ -20,6 +20,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
         boolean fieldCentric = true;
         double index_position = 0.5;
         boolean isAiming = false;
+        boolean autoLaunch = true;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -140,10 +141,12 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             if (currentGamepad2.b && !previousGamepad2.b) {
                 robot.getLauncher().toggleLauncher();
+                autoLaunch = true;
             }
 
             if (currentGamepad2.a && !previousGamepad2.a) {
-              robot.getLauncher().toggleLauncherPartialPower();
+                robot.getLauncher().toggleLauncherManual();
+                autoLaunch = false;
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
@@ -155,9 +158,10 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             //set launcher velocity
-            if ( robot.getLauncher().limelightValid() & robot.getLauncher().isLauncherActive() ) {
-                robot.getLauncher().setLauncherVelocity(
-                        robot.getLauncher().getVelocity(robot.getLauncher().getRedGoalDistance()));
+            if ( robot.getLauncher().limelightValid()
+                    && robot.getLauncher().isLauncherActive()
+                    && autoLaunch) {
+                robot.getLauncher().setLauncherVelocityRedDistance();
             }
 
             //launch a green ball
@@ -183,7 +187,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-            telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
+            //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("launcher velocity:", robot.getLauncher().getLauncherVelocity());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);

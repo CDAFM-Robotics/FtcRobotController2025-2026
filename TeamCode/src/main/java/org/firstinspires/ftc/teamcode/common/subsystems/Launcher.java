@@ -247,9 +247,9 @@ public class Launcher {
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
         // Example values:
-        distanceToVelocityMap.put(714.0, 1060.0);
-        distanceToVelocityMap.put(768.0, 1060.0);
-        distanceToVelocityMap.put(890.0, 1070.0);
+        distanceToVelocityMap.put(650.0, 1080.0);
+        distanceToVelocityMap.put(768.0, 1080.0);
+        distanceToVelocityMap.put(890.0, 1080.0);
         distanceToVelocityMap.put(976.0, 1100.0);
         distanceToVelocityMap.put(1126.0, 1100.0);
         distanceToVelocityMap.put(1244.0, 1120.0);
@@ -341,18 +341,31 @@ public class Launcher {
         }
     }
 
+    public void toggleLauncherManual(){
+        if (launcherMotor1.getPower() == 0) {
+            startLauncherManual();
+        }
+        else {
+            stopLauncher();
+        }
+    }
     public void startLauncher() {
         //launchPower = LAUNCH_POWER_FAR;
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            setLauncherVelocity(
-                getVelocity(getRedGoalDistance()));
+            launcherVelocity = getVelocity(getRedGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_FAR;
-            setLauncherVelocity(launcherVelocity);
         }
+        setLauncherVelocity(launcherVelocity);
+        launcherActive = true;
+    }
+
+    public void startLauncherManual(){
+        launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
 
@@ -400,13 +413,12 @@ public class Launcher {
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            setLauncherVelocity(
-                getVelocity(getRedGoalDistance()));
+            launcherVelocity = getVelocity(getRedGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_NEAR;
-            setLauncherVelocity(launcherVelocity);
         }
+        setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
 
@@ -539,35 +551,44 @@ public class Launcher {
 
             // Combine all terms
             power = proportional + integral + derivative + feedforward;
-
-/*            if (currentX < 0) {
-                power = -(powerStatic + aimKp * Math.abs(currentX));
-            }
-            else {
-                power = powerStatic + aimKp * Math.abs(currentX);
-            }*/
         }
         return power;
     }
 
-    public double getRedGoalDistance(){
+    public double getRedGoalDistance() {
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        return getGoalDistance();
+    }
+
+    public double getBlueGoalDistance(){
+        limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = Blue_GOAL
+        return getGoalDistance();
+    }
+
+    public double getGoalDistance () {
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
-        if(llresult.isValid()){
-            distance = 448/Math.tan(Math.toRadians(llresult.getTy()+LIMELIGHT_OFFSET));
+        if (llresult.isValid()) {
+            distance = 448 / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
         }
-        else{
-                distance = 0;
-        }
-
         return distance;
     }
 
     public void setLauncherVelocity(double velocity) {
-        launcherMotor2.setVelocity(velocity);
-        launcherMotor1.setVelocity(velocity);
+        launcherMotor2.setVelocity(launcherVelocity);
+        launcherMotor1.setVelocity(launcherVelocity);
     }
+
+    public void setLauncherVelocityRedDistance() {
+        launcherVelocity = getVelocity(getRedGoalDistance());
+        setLauncherVelocity(launcherVelocity);
+    }
+
+    public void setLauncherVelocityBlueDistance() {
+        launcherVelocity = getVelocity(getBlueGoalDistance());
+        setLauncherVelocity(launcherVelocity);
+    }
+
 
     public void changeLauncherVelocity(double change) {
         launcherVelocity += change;
