@@ -46,16 +46,23 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR =1420;
-    public final double LAUNCH_VELOCITY_NEAR= 1300;
+    public final double LAUNCH_VELOCITY_FAR = 1340;
+    public final double LAUNCH_VELOCITY_NEAR= 1260;
     public final double LAUNCH_VELOCITY_FULL= 1460;
-    public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
+    public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
 
-    public static double aimKp = 0.028;
-    public static double aimKi = 0.0;
-    public static double powerStatic = 0.0;
+    public static double aimKp = 0.02;
+    public static double aimKi = 0.01;
+    public static double aimKd = 0.0055;
+    public static double powerStatic = 0.05;
     public static double aimErrorTolerance = 2;
+    private double lastTime;
+    private double integralSum = 0.0;
+    // Limits for integral sum to prevent windup
+    private double integralSumMax = 1.0;
+    private double integralSumMin = -1.0;
+    private double lastError = 0.0;
 
     // A TreeMap is better than HashMap for interpolation because it keeps
     // keys sorted, allowing easy finding of surrounding points.
@@ -221,6 +228,8 @@ public class Launcher {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class, "launcherMotor1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class, "launcherMotor2");
 
+        launcherMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        launcherMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -238,23 +247,32 @@ public class Launcher {
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
         // Example values:
-        distanceToVelocityMap.put(714.0, 1060.0);
-        distanceToVelocityMap.put(768.0, 1060.0);
-        distanceToVelocityMap.put(890.0, 1070.0);
-        distanceToVelocityMap.put(976.0, 1100.0);
-        distanceToVelocityMap.put(1126.0, 1100.0);
-        distanceToVelocityMap.put(1244.0, 1120.0);
-        distanceToVelocityMap.put(1436.0, 1140.0);
-        distanceToVelocityMap.put(1524.0, 1150.0);
-        distanceToVelocityMap.put(1648.0, 1180.0);
-        distanceToVelocityMap.put(1748.0, 1210.0);
-        distanceToVelocityMap.put(1775.0, 1220.0);
-        distanceToVelocityMap.put(2035.0, 1260.0);
-        distanceToVelocityMap.put(2610.0, 1320.0);
-        distanceToVelocityMap.put(2790.0, 1380.0);
-        distanceToVelocityMap.put(2880.0, 1400.0);
-        distanceToVelocityMap.put(3050.0, 1440.0);
-        distanceToVelocityMap.put(3250.0, 1440.0);  // Far, max speed
+        distanceToVelocityMap.put(650.0, 1180.0);
+        distanceToVelocityMap.put(684.0, 1180.0);
+        distanceToVelocityMap.put(768.0, 1190.0);
+        distanceToVelocityMap.put(890.0, 1200.0);
+        distanceToVelocityMap.put(976.0, 1200.0);
+        distanceToVelocityMap.put(1051.0, 1210.0);
+        distanceToVelocityMap.put(1126.0, 1210.0);
+        distanceToVelocityMap.put(1244.0, 1210.0);
+        distanceToVelocityMap.put(1326.0, 1220.0);
+        distanceToVelocityMap.put(1436.0, 1220.0);
+        distanceToVelocityMap.put(1524.0, 1220.0);
+        distanceToVelocityMap.put(1648.0, 1230.0);
+        distanceToVelocityMap.put(1748.0, 1230.0);
+        distanceToVelocityMap.put(1825.0, 1240.0);
+        distanceToVelocityMap.put(1925.0, 1260.0);
+        distanceToVelocityMap.put(2046.0, 1290.0);
+        distanceToVelocityMap.put(2126.0, 1300.0);
+        distanceToVelocityMap.put(2169.0, 1310.0);
+        distanceToVelocityMap.put(2528.0, 1330.0);
+        distanceToVelocityMap.put(2681.0, 1340.0);
+        distanceToVelocityMap.put(2751.0, 1350.0);
+        distanceToVelocityMap.put(2853.0, 1350.0);
+        distanceToVelocityMap.put(2952.0, 1410.0);
+        distanceToVelocityMap.put(3014.0, 1420.0);
+        distanceToVelocityMap.put(3100.0, 1440.0);
+        distanceToVelocityMap.put(3550.0, 1460.0);  // Far, max speed
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
@@ -332,11 +350,30 @@ public class Launcher {
         }
     }
 
+    public void toggleLauncherManual(){
+        if (launcherMotor1.getPower() == 0) {
+            startLauncherManual();
+        }
+        else {
+            stopLauncher();
+        }
+    }
     public void startLauncher() {
         //launchPower = LAUNCH_POWER_FAR;
         //setLauncherPower(launchPower);
         //start launcher with velocity
-        launcherVelocity = LAUNCH_VELOCITY_FAR;
+        if ( limelightValid() ) {
+            launcherVelocity = getVelocity(getRedGoalDistance());
+        }
+        else {
+            launcherVelocity = LAUNCH_VELOCITY_FAR;
+        }
+        setLauncherVelocity(launcherVelocity);
+        launcherActive = true;
+    }
+
+    public void startLauncherManual(){
+        launcherVelocity = LAUNCH_VELOCITY_NEAR;
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
@@ -384,7 +421,12 @@ public class Launcher {
         //launchPower = LAUNCH_POWER_NEAR;
         //setLauncherPower(launchPower);
         //start launcher with velocity
-        launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        if ( limelightValid() ) {
+            launcherVelocity = getVelocity(getRedGoalDistance());
+        }
+        else {
+            launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        }
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
@@ -439,13 +481,9 @@ public class Launcher {
 
     public Boolean limelightValid(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        LLResult result = limelight.getLatestResult();
-        if(result.isValid()){
-            if(Math.abs(result.getTx()) > aimErrorTolerance){
+        if(limelight.getLatestResult().isValid()){
                 return true;
-            }
         }
-
         return false;
     }
 
@@ -474,49 +512,92 @@ public class Launcher {
         return answer;
     }
 
-    public double setRedAimPowerPID () {
+    public double setRedAimPowerPID (double time) {
         setLimelightPipeline(Robot.LLPipelines.RED_GOAL.ordinal());
-        return getAimPowerPID();
+        return getAimPowerPID(time);
     }
 
-    public double getBlueAimPowerPID () {
+    public double getBlueAimPowerPID (double time) {
         setLimelightPipeline(Robot.LLPipelines.BLUE_GOAL.ordinal());
-        return getAimPowerPID();
+        return getAimPowerPID(time);
     }
 
-    public double getAimPowerPID() {
+    public double getAimPowerPID(double time) {
+        double currentTime = time;
+        double deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
         LLResult result = limelight.getLatestResult();
         double power = 0;
-        if(result.isValid()){
+        if(result.isValid()) {
             double currentX = result.getTx();
+            // Proportional term
+            double proportional = 0.0;
+            proportional = aimKp * currentX;
+
+            // Integral term
+            integralSum += currentX * deltaTime;
+            // Clamp integral sum to prevent windup
+            if (integralSum > integralSumMax) {
+                integralSum = integralSumMax;
+            } else if (integralSum < integralSumMin) {
+                integralSum = integralSumMin;
+            }
+            double integral = aimKi * integralSum;
+
+            // Derivative term
+            double derivative = aimKd * ((currentX - lastError) / deltaTime);
+            lastError = currentX;
+
+            // Feedforward term (can be used to counteract gravity or apply a base power)
+            double feedforward = 0.0;
             if (currentX < 0) {
-                power = -(powerStatic + aimKp * Math.abs(currentX));
+                feedforward = 0 - powerStatic; // Or kF * signum(target - currentPosition) for simple direction
             }
-            else {
-                power = powerStatic + aimKp * Math.abs(currentX);
+            else{
+                feedforward = powerStatic;
             }
+
+            // Combine all terms
+            power = proportional + integral + derivative + feedforward;
         }
         return power;
     }
 
-    public double getRedGoalDistance(){
+    public double getRedGoalDistance() {
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        return getGoalDistance();
+    }
+
+    public double getBlueGoalDistance(){
+        limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = Blue_GOAL
+        return getGoalDistance();
+    }
+
+    public double getGoalDistance () {
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
-        if(llresult.isValid()){
-            distance = 448/Math.tan(Math.toRadians(llresult.getTy()+LIMELIGHT_OFFSET));
+        if (llresult.isValid()) {
+            distance = 448 / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
         }
-        else{
-                distance = 0;
-        }
-
         return distance;
     }
 
     public void setLauncherVelocity(double velocity) {
-        launcherMotor2.setVelocity(velocity);
-        launcherMotor1.setVelocity(velocity);
+        launcherMotor2.setVelocity(launcherVelocity);
+        launcherMotor1.setVelocity(launcherVelocity);
     }
+
+    public void setLauncherVelocityRedDistance() {
+        launcherVelocity = getVelocity(getRedGoalDistance());
+        setLauncherVelocity(launcherVelocity);
+    }
+
+    public void setLauncherVelocityBlueDistance() {
+        launcherVelocity = getVelocity(getBlueGoalDistance());
+        setLauncherVelocity(launcherVelocity);
+    }
+
 
     public void changeLauncherVelocity(double change) {
         launcherVelocity += change;

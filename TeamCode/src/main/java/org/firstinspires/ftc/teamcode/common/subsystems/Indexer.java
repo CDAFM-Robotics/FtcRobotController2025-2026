@@ -413,10 +413,40 @@ public class Indexer {
         //telemetry.addLine("haveABall");
         //telemetry.addData("nextShootSlot:", nextShootSlot);
 
-        for (int i=0; i<=2; i++){
-            if (artifactColorArray[i] == ballColor){
-                nextShootSlot = i;
-                telemetry.addData("nextShootSlot:", nextShootSlot);
+        if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT){
+            //is there a ball at ZERO?
+            if (artifactColorArray[0] == ballColor) {
+                nextShootSlot = 0;
+                return true;
+            } else if (artifactColorArray[1] == ballColor){
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[2] == ballColor) {
+                nextShootSlot = 2;
+                return true;
+            }
+        } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT){
+            //is there a ball at one?
+            if (artifactColorArray[1] == ballColor) {
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[0] == ballColor){
+                nextShootSlot = 0;
+                return true;
+            } else if (artifactColorArray[2] == ballColor) {
+                nextShootSlot = 2;
+                return true;
+            }
+        } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+            //is there a ball at two?
+            if (artifactColorArray[2] == ballColor) {
+                nextShootSlot = 2;
+                return true;
+            } else if (artifactColorArray[1] == ballColor) {
+                nextShootSlot = 1;
+                return true;
+            } else if (artifactColorArray[0] == ballColor) {
+                nextShootSlot = 0;
                 return true;
             }
         }
