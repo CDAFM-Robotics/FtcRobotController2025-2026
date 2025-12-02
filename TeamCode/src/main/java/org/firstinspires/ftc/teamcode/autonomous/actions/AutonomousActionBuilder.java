@@ -41,11 +41,11 @@ public class AutonomousActionBuilder {
     public Action blueCloseLaunchToLeaveLaunchZone;
 
     public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-108)); // TODO 14nov25 -113
-    public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-135));
+    public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-129));
     public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 30), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(90));
-    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(11.5, 30), Math.toRadians(90));
-    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(11.5, 62), Math.toRadians(90));
+    public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(12.5, 30), Math.toRadians(90));
+    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(12.5, 62), Math.toRadians(90));
     public static Pose2d redThirdMarkStart = new Pose2d(36, 30, Math.toRadians(90));
     public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 62), Math.toRadians(90));
 
@@ -63,7 +63,7 @@ public class AutonomousActionBuilder {
 
     public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-10, 20);
 
-    public static TurnConstraints turnConstraints = new TurnConstraints(Math.PI, -Math.PI/3, Math.PI/2);
+    public static TurnConstraints turnConstraints = new TurnConstraints(Math.PI, -Math.PI, Math.PI);
 
     Robot robot;
 
@@ -123,7 +123,7 @@ public class AutonomousActionBuilder {
             .build();
 
         redCloseLaunchPickupSecondMark = md.actionBuilder(redCloseLaunchPose)
-            .turn(Math.toRadians(90))
+            .turn(Math.toRadians(-135), turnConstraints)
             .setTangent(Math.toRadians(0))
             .splineToConstantHeading(redSecondMarkStart.position, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(redSecondMarkEnd.position, slowTranslationalVelConstraint)
@@ -261,7 +261,15 @@ public class AutonomousActionBuilder {
     }
 
     public Action getSpinLauncherClose() {
-        return robot.getLauncher().getSpinLauncherAction(1120);
+        return robot.getLauncher().getSpinLauncherAction(1140);
+    }
+
+    public Action getLauncherIsReadyFar() {
+        return robot.getLauncher().getWaitUntilVelocityAction(1340, 1);
+    }
+
+    public Action getLauncherIsReadyClose() {
+        return robot.getLauncher().getWaitUntilVelocityAction(1140, 1);
     }
 
     public Action getStopLauncher() {

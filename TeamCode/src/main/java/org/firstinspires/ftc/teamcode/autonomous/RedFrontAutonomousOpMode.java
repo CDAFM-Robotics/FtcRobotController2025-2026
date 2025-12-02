@@ -190,15 +190,15 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[2],
-                    autonomousActionBuilder.getIndexAction(2),
+                    autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0.6),
+                        new SleepAction(2),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getIndexAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherClose(),
                         autonomousActionBuilder.getStopIntake()
                     )
@@ -217,15 +217,15 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[3],
-                    autonomousActionBuilder.getIndexAction(2),
+                    autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(1.5),
+                        new SleepAction(3),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getIndexAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherClose(),
                         autonomousActionBuilder.getStopIntake()
                     )
@@ -247,13 +247,18 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
     public Action launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
 
+        // TODO: 12/2/2025 Add a log to waitUntilAction to check the power 
+
         Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0));
+        Actions.runBlocking(autonomousActionBuilder.getLauncherIsReadyClose());
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
         Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2)));
+        Actions.runBlocking(autonomousActionBuilder.getLauncherIsReadyClose());
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
         Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2));
+        Actions.runBlocking(autonomousActionBuilder.getLauncherIsReadyClose());
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(new ParallelAction(
             autonomousActionBuilder.getStopLauncher(),
@@ -274,7 +279,5 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                 autonomousActionBuilder.getResetKicker()
             )
         );
-
-
     }
 }

@@ -19,6 +19,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
+import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
 import java.util.List;
 import java.util.Map;
@@ -187,6 +189,13 @@ public class Launcher {
         return new SequentialAction(
             new SpinLauncherAction(velocity),
             new SleepAction(1)
+        );
+    }
+
+    public Action getWaitUntilVelocityAction(double velocity, double timeout) {
+        return new RunTimeoutAction(
+            new WaitUntilAction(() -> launcherMotor1.getVelocity() + launcherMotor2.getVelocity() == velocity),
+            timeout
         );
     }
 
