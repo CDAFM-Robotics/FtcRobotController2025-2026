@@ -28,8 +28,10 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
         ElapsedTime timeSinceLastIncident = new ElapsedTime();
         ElapsedTime initializedIndexerTimer  = new ElapsedTime();
+        ElapsedTime aimTimer  = new ElapsedTime();
 
         initializedIndexerTimer.reset();
+        aimTimer.reset();
         robot.resetIndexerColorStart();
         while (initializedIndexerTimer.milliseconds() < 1800) {
             robot.resetIndexer();
@@ -65,14 +67,14 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             if(currentGamepad2.y && !previousGamepad2.y){
                 isAiming = true;
-
+                aimTimer.reset();
             }
             telemetry.addData("left_bumper pushed: is aiming", isAiming);
             telemetry.addData("Limelight valid", robot.getLauncher().limelightValid());
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                    double power = robot.getLauncher().setRedAimPowerPID();
+                    double power = robot.getLauncher().setRedAimPowerPID(aimTimer.milliseconds());
                     telemetry.addData("aiming: motor power", power);
                     robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
@@ -102,6 +104,14 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
             else if (currentGamepad1.left_trigger == 0 && previousGamepad1.left_trigger != 0){
                 robot.getIntake().stopIntake();
+            }
+
+            if (currentGamepad1.a != previousGamepad1.a) {
+                robot.getDriveBase().setKickStand();
+            }
+
+            if (currentGamepad1.b != previousGamepad1.b) {
+                robot.getDriveBase().resetKickStand();
             }
 
             // Manual Indexer control.
@@ -178,6 +188,8 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
+            RobotLog.d("launcher velocity: %f",
+                    robot.getLauncher().getLauncherVelocity());
 
             // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);

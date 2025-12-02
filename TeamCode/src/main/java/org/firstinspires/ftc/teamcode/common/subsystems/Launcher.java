@@ -46,16 +46,23 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR =1420;
-    public final double LAUNCH_VELOCITY_NEAR= 1300;
+    public final double LAUNCH_VELOCITY_FAR = 1340;
+    public final double LAUNCH_VELOCITY_NEAR= 1260;
     public final double LAUNCH_VELOCITY_FULL= 1460;
-    public final double LAUNCH_VELOCITY_LOW=690;   // TODO find lowest valuable power and set this
+    public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
 
-    public static double aimKp = 0.028;
-    public static double aimKi = 0.0;
-    public static double powerStatic = 0.0;
+    public static double aimKp = 0.02;
+    public static double aimKi = 0.01;
+    public static double aimKd = 0.0055;
+    public static double powerStatic = 0.05;
     public static double aimErrorTolerance = 2;
+    private double lastTime;
+    private double integralSum = 0.0;
+    // Limits for integral sum to prevent windup
+    private double integralSumMax = 1.0;
+    private double integralSumMin = -1.0;
+    private double lastError = 0.0;
 
     // A TreeMap is better than HashMap for interpolation because it keeps
     // keys sorted, allowing easy finding of surrounding points.
@@ -249,12 +256,12 @@ public class Launcher {
         distanceToVelocityMap.put(1648.0, 1180.0);
         distanceToVelocityMap.put(1748.0, 1210.0);
         distanceToVelocityMap.put(1775.0, 1220.0);
-        distanceToVelocityMap.put(2035.0, 1260.0);
-        distanceToVelocityMap.put(2610.0, 1320.0);
+        distanceToVelocityMap.put(2056.0, 1280.0);
+        distanceToVelocityMap.put(2528.0, 1330.0);
         distanceToVelocityMap.put(2790.0, 1380.0);
         distanceToVelocityMap.put(2880.0, 1400.0);
         distanceToVelocityMap.put(3050.0, 1440.0);
-        distanceToVelocityMap.put(3250.0, 1440.0);  // Far, max speed
+        distanceToVelocityMap.put(3250.0, 1460.0);  // Far, max speed
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
@@ -336,8 +343,14 @@ public class Launcher {
         //launchPower = LAUNCH_POWER_FAR;
         //setLauncherPower(launchPower);
         //start launcher with velocity
-        launcherVelocity = LAUNCH_VELOCITY_FAR;
-        setLauncherVelocity(launcherVelocity);
+        if ( limelightValid() ) {
+            setLauncherVelocity(
+                getVelocity(getRedGoalDistance()));
+        }
+        else {
+            launcherVelocity = LAUNCH_VELOCITY_FAR;
+            setLauncherVelocity(launcherVelocity);
+        }
         launcherActive = true;
     }
 
@@ -384,8 +397,14 @@ public class Launcher {
         //launchPower = LAUNCH_POWER_NEAR;
         //setLauncherPower(launchPower);
         //start launcher with velocity
-        launcherVelocity = LAUNCH_VELOCITY_NEAR;
-        setLauncherVelocity(launcherVelocity);
+        if ( limelightValid() ) {
+            setLauncherVelocity(
+                getVelocity(getRedGoalDistance()));
+        }
+        else {
+            launcherVelocity = LAUNCH_VELOCITY_NEAR;
+            setLauncherVelocity(launcherVelocity);
+        }
         launcherActive = true;
     }
 
@@ -439,13 +458,9 @@ public class Launcher {
 
     public Boolean limelightValid(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        LLResult result = limelight.getLatestResult();
-        if(result.isValid()){
-            if(Math.abs(result.getTx()) > aimErrorTolerance){
+        if(limelight.getLatestResult().isValid()){
                 return true;
-            }
         }
-
         return false;
     }
 
@@ -474,27 +489,61 @@ public class Launcher {
         return answer;
     }
 
-    public double setRedAimPowerPID () {
+    public double setRedAimPowerPID (double time) {
         setLimelightPipeline(Robot.LLPipelines.RED_GOAL.ordinal());
-        return getAimPowerPID();
+        return getAimPowerPID(time);
     }
 
-    public double getBlueAimPowerPID () {
+    public double getBlueAimPowerPID (double time) {
         setLimelightPipeline(Robot.LLPipelines.BLUE_GOAL.ordinal());
-        return getAimPowerPID();
+        return getAimPowerPID(time);
     }
 
-    public double getAimPowerPID() {
+    public double getAimPowerPID(double time) {
+        double currentTime = time;
+        double deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
         LLResult result = limelight.getLatestResult();
         double power = 0;
-        if(result.isValid()){
+        if(result.isValid()) {
             double currentX = result.getTx();
+            // Proportional term
+            double proportional = 0.0;
+            proportional = aimKp * currentX;
+
+            // Integral term
+            integralSum += currentX * deltaTime;
+            // Clamp integral sum to prevent windup
+            if (integralSum > integralSumMax) {
+                integralSum = integralSumMax;
+            } else if (integralSum < integralSumMin) {
+                integralSum = integralSumMin;
+            }
+            double integral = aimKi * integralSum;
+
+            // Derivative term
+            double derivative = aimKd * ((currentX - lastError) / deltaTime);
+            lastError = currentX;
+
+            // Feedforward term (can be used to counteract gravity or apply a base power)
+            double feedforward = 0.0;
             if (currentX < 0) {
+                feedforward = 0 - powerStatic; // Or kF * signum(target - currentPosition) for simple direction
+            }
+            else{
+                feedforward = powerStatic;
+            }
+
+            // Combine all terms
+            power = proportional + integral + derivative + feedforward;
+
+/*            if (currentX < 0) {
                 power = -(powerStatic + aimKp * Math.abs(currentX));
             }
             else {
                 power = powerStatic + aimKp * Math.abs(currentX);
-            }
+            }*/
         }
         return power;
     }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,6 +22,8 @@ public class DriveBase {
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
+    private Servo leftKickStand = null;
+    private Servo rightKickStand = null;
 
     // private IMU imu;
 
@@ -40,6 +43,8 @@ public class DriveBase {
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
+        leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -51,6 +56,9 @@ public class DriveBase {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // initialize the kick stand servos
+        rightKickStand.setPosition(0.5);
+        leftKickStand.setPosition(0.5);
 
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -129,4 +137,15 @@ public class DriveBase {
         backRightMotor.setPower(backRightPower);
         backLeftMotor.setPower(backLeftPower);
     }
+
+    public void setKickStand() {
+        rightKickStand.setPosition(0.0);
+        leftKickStand.setPosition(1.0);
+    }
+
+    public void resetKickStand() {
+        rightKickStand.setPosition(0.5);
+        leftKickStand.setPosition(0.5);
+    }
+
 }
