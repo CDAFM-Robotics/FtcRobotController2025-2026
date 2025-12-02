@@ -228,6 +228,8 @@ public class Launcher {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class, "launcherMotor1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class, "launcherMotor2");
 
+        launcherMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        launcherMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
