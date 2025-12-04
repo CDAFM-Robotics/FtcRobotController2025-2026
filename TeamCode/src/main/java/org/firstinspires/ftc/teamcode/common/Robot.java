@@ -34,7 +34,7 @@ public class Robot {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public final int WAIT_TIME_KICKER = 350;
+    public final int WAIT_TIME_KICKER = 250;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
@@ -434,7 +434,7 @@ public class Robot {
             case INIT:
                 break;
             case CHECK_INTAKE:
-                if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > 500) {
+                if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                     indexer.updateBallColors();
                     double position = indexer.getIndexerPosition();
                     if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {

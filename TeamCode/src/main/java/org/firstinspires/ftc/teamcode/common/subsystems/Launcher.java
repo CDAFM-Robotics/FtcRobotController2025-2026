@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -63,6 +64,13 @@ public class Launcher {
     private double integralSumMax = 1.0;
     private double integralSumMin = -1.0;
     private double lastError = 0.0;
+
+    public static double shootKp = 25;
+    public static double shootKi = 1.5;
+    public static double shootKd = 4;
+    public static double shootKf = 1.1;
+    public static double targetVelocity;
+    public static double currentVelocity;
 
     // A TreeMap is better than HashMap for interpolation because it keeps
     // keys sorted, allowing easy finding of surrounding points.
@@ -235,6 +243,18 @@ public class Launcher {
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // Get the PIDF coefficients for the RUN_USING_ENCODER RunMode.
+        PIDFCoefficients pidfOrig = launcherMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("original PIDF coefficients p", pidfOrig.p);
+        telemetry.addData("original PIDF coefficients i", pidfOrig.i);
+        telemetry.addData("original PIDF coefficients d", pidfOrig.d);
+        telemetry.addData("original PIDF coefficients f", pidfOrig.f);
+
+        PIDFCoefficients pidfNew = new PIDFCoefficients(shootKp, shootKi, shootKd, shootKf);
+        launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+        launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
 
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
@@ -262,7 +282,7 @@ public class Launcher {
         distanceToVelocityMap.put(1748.0, 1230.0);
         distanceToVelocityMap.put(1825.0, 1240.0);
         distanceToVelocityMap.put(1925.0, 1260.0);
-        distanceToVelocityMap.put(2046.0, 1290.0);
+        distanceToVelocityMap.put(2046.0, 1280.0);
         distanceToVelocityMap.put(2126.0, 1300.0);
         distanceToVelocityMap.put(2169.0, 1310.0);
         distanceToVelocityMap.put(2528.0, 1330.0);
@@ -363,7 +383,7 @@ public class Launcher {
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            launcherVelocity = getVelocity(getRedGoalDistance());
+            launcherVelocity = getVelocityDistance(getRedGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_FAR;
@@ -422,7 +442,7 @@ public class Launcher {
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            launcherVelocity = getVelocity(getRedGoalDistance());
+            launcherVelocity = getVelocityDistance(getRedGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_NEAR;
@@ -447,7 +467,8 @@ public class Launcher {
     }
 
     public double getLauncherVelocity() {
-        return launcherMotor1.getVelocity();
+        currentVelocity = launcherMotor1.getVelocity();
+        return currentVelocity;
     }
 
     public Boolean isLauncherActive(){
@@ -589,12 +610,13 @@ public class Launcher {
     }
 
     public void setLauncherVelocityRedDistance() {
-        launcherVelocity = getVelocity(getRedGoalDistance());
+        launcherVelocity = getVelocityDistance(getRedGoalDistance());
         setLauncherVelocity(launcherVelocity);
+        targetVelocity = launcherVelocity;
     }
 
     public void setLauncherVelocityBlueDistance() {
-        launcherVelocity = getVelocity(getBlueGoalDistance());
+        launcherVelocity = getVelocityDistance(getBlueGoalDistance());
         setLauncherVelocity(launcherVelocity);
     }
 
@@ -613,7 +635,7 @@ public class Launcher {
         launcherActive = (launcherVelocity != 0.0);
     }
 
-    public double getVelocity(double currentDistance) {
+    public double getVelocityDistance(double currentDistance) {
         // Handle edge cases: distance beyond min/max points
         if (currentDistance <= distanceToVelocityMap.firstKey()) {
             return distanceToVelocityMap.firstEntry().getValue();
@@ -640,6 +662,18 @@ public class Launcher {
         double velocity = vel1 + (vel2 - vel1) * ((currentDistance - dist1) / (dist2 - dist1));
 
         return velocity;
+    }
+
+    //For launch motor coefficients testing only
+    public void setLaunchMotorPIDFCoefficients() {
+        // Change coefficients using methods included with DcMotorEx class.
+        PIDFCoefficients pidfNew = new PIDFCoefficients(shootKp, shootKi, shootKd, shootKf);
+        launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+        launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
+    }
+
+    public PIDFCoefficients getLauncherMotorPIDFCoefficients() {
+        return launcherMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
