@@ -49,7 +49,7 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR = 1400;
+    public final double LAUNCH_VELOCITY_FAR = 1380;
     public final double LAUNCH_VELOCITY_NEAR= 1300;
     public final double LAUNCH_VELOCITY_FULL= 1500;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
@@ -554,7 +554,7 @@ public class Launcher {
         return answer;
     }
 
-    public double setAimPowerPID (double time) {
+    public double setAimPowerPID (double time, boolean isRed, boolean isBlue) {
         double currentTime = time;
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -563,6 +563,10 @@ public class Launcher {
         double power = 0;
         if(result.isValid()) {
             double currentX = result.getTx();
+            if (isBlue) {
+                currentX -= 1.25;
+            }
+
             // Proportional term
             double proportional = 0.0;
             proportional = aimKp * currentX;

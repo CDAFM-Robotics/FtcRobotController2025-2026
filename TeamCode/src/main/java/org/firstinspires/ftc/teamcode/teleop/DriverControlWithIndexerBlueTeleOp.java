@@ -79,7 +79,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                    double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds());
+                    double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide, isBlueSide);
                     telemetry.addData("aiming: motor power", power);
                     robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
