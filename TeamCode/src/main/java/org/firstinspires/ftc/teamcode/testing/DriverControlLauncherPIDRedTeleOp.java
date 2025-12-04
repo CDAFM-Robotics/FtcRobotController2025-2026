@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.testing;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
-
+@Disabled
 @Config
 @TeleOp(name = "RED Driver Control Launcher PID RedTeleop", group = "0teleop")
 public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
@@ -159,12 +160,17 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             //Launcher
 
             if (currentGamepad2.b && !previousGamepad2.b) {
-                robot.getLauncher().toggleLauncher();
+                robot.getLauncher().toggleLauncherManualFar();
                 autoLaunch = true;
             }
 
             if (currentGamepad2.a && !previousGamepad2.a) {
-                robot.getLauncher().toggleLauncherManual();
+                robot.getLauncher().toggleLauncherManualNear();
+                autoLaunch = false;
+            }
+
+            if (currentGamepad2.x && !previousGamepad2.x) {
+                robot.getLauncher().startLauncher();
                 autoLaunch = false;
             }
 

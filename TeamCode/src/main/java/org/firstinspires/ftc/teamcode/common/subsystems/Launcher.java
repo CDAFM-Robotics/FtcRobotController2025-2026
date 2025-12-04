@@ -49,9 +49,9 @@ public class Launcher {
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR = 1340;
-    public final double LAUNCH_VELOCITY_NEAR= 1260;
-    public final double LAUNCH_VELOCITY_FULL= 1460;
+    public final double LAUNCH_VELOCITY_FAR = 1400;
+    public final double LAUNCH_VELOCITY_NEAR= 1300;
+    public final double LAUNCH_VELOCITY_FULL= 1500;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
 
@@ -294,13 +294,13 @@ public class Launcher {
         distanceToVelocityMap.put(2046.0, 1280.0);
         distanceToVelocityMap.put(2126.0, 1300.0);
         distanceToVelocityMap.put(2169.0, 1310.0);
-        distanceToVelocityMap.put(2400.0, 1330.0);
-        distanceToVelocityMap.put(2528.0, 1330.0);
-        distanceToVelocityMap.put(2681.0, 1340.0);
-        distanceToVelocityMap.put(2751.0, 1350.0);
-        distanceToVelocityMap.put(2853.0, 1350.0);
-        distanceToVelocityMap.put(2952.0, 1410.0);
-        distanceToVelocityMap.put(3014.0, 1420.0);
+        distanceToVelocityMap.put(2400.0, 1360.0);
+        distanceToVelocityMap.put(2528.0, 1360.0);
+        distanceToVelocityMap.put(2681.0, 1380.0);
+        distanceToVelocityMap.put(2751.0, 1400.0);
+        distanceToVelocityMap.put(2853.0, 1400.0);
+        distanceToVelocityMap.put(2952.0, 1420.0);
+        distanceToVelocityMap.put(3014.0, 1440.0);
         distanceToVelocityMap.put(3100.0, 1440.0);
         distanceToVelocityMap.put(3550.0, 1460.0);  // Far, max speed
     }
@@ -363,35 +363,33 @@ public class Launcher {
     }
 
     public void toggleLauncher() {
+       if (launcherMotor1.getPower() == 0) {
+           startLauncher();
+       }
+       else {
+           stopLauncher();
+       }
+    }
+
+    public void toggleLauncherManualFar() {
         if (launcherMotor1.getPower() == 0) {
-            startLauncher();
+            startLauncherManualFar();
         }
         else {
             stopLauncher();
         }
     }
 
-    public void toggleLauncherPartialPower() {
-        if (((double) Math.round(launcherMotor1.getPower()*100)/100) != 0.8) {
-            startLauncherPartialPower();
-        }
-        else {
-            stopLauncher();
-        }
-    }
-
-    public void toggleLauncherManual(){
+    public void toggleLauncherManualNear(){
         if (launcherMotor1.getPower() == 0) {
-            startLauncherManual();
+            startLauncherManualNear();
         }
         else {
             stopLauncher();
         }
     }
     public void startLauncher() {
-        //launchPower = LAUNCH_POWER_FAR;
-        //setLauncherPower(launchPower);
-        //start launcher with velocity
+        //Auto shooting velocity
         if ( limelightValid() ) {
             launcherVelocity = getVelocityDistance(getGoalDistance());
         }
@@ -402,8 +400,14 @@ public class Launcher {
         launcherActive = true;
     }
 
-    public void startLauncherManual(){
+    public void startLauncherManualNear(){
         launcherVelocity = LAUNCH_VELOCITY_NEAR;
+        setLauncherVelocity(launcherVelocity);
+        launcherActive = true;
+    }
+
+    public void startLauncherManualFar(){
+        launcherVelocity = LAUNCH_VELOCITY_FAR;
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }

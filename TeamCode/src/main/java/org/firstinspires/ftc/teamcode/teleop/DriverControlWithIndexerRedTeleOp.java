@@ -143,14 +143,20 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             //Launcher
 
             if (currentGamepad2.b && !previousGamepad2.b) {
+                robot.getLauncher().toggleLauncherManualFar();
+                autoLaunch = false;
+            }
+
+            if (currentGamepad2.a && !previousGamepad2.a) {
+                robot.getLauncher().toggleLauncherManualNear();
+                autoLaunch = false;
+            }
+
+            if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getLauncher().toggleLauncher();
                 autoLaunch = true;
             }
 
-            if (currentGamepad2.a && !previousGamepad2.a) {
-                robot.getLauncher().toggleLauncherManual();
-                autoLaunch = false;
-            }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                 robot.getLauncher().changeLauncherVelocity(50);
