@@ -34,7 +34,7 @@ public class Robot {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public final int WAIT_TIME_KICKER = 250;
+    public final int WAIT_TIME_KICKER = 275;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class

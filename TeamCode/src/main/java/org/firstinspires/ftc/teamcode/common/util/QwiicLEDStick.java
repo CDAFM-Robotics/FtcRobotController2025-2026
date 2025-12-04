@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.DevicePropertie
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @I2cDeviceType()
-@DeviceProperties(name = "QWIIC LED Stick", description = "Sparkfun QWIIC LED Stick", xmlTag = "QWIIC_LED_STICK")
+@DeviceProperties(name = "SparkFun QWIIC LED Stick", description = "Sparkfun QWIIC LED Stick", xmlTag = "QWIIC_LED_STICK")
 public class QwiicLEDStick extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
 
     private enum Commands {

@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
-@Disabled
 @Config
 @TeleOp(name = "RED Driver Control Launcher PID RedTeleop", group = "0teleop")
 public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
@@ -169,10 +168,10 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
                 autoLaunch = false;
             }
 
-            if (currentGamepad2.x && !previousGamepad2.x) {
-                robot.getLauncher().startLauncher();
-                autoLaunch = false;
-            }
+//            if (currentGamepad2.x && !previousGamepad2.x) {
+//                robot.getLauncher().startLauncher();
+//                autoLaunch = false;
+//            }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                 robot.getLauncher().changeLauncherVelocity(10);
