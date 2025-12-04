@@ -23,7 +23,7 @@ public class Robot {
     private Intake intake;
     private Hud hud;
 
-    private ElapsedTime timeSinceIndex = new ElapsedTime();
+    //private ElapsedTime timeSinceIndex = new ElapsedTime();
     private ElapsedTime timeSinceKick = new ElapsedTime();
     private ElapsedTime timeSinceKickReset  = new ElapsedTime();
 
@@ -40,7 +40,7 @@ public class Robot {
         // Create an instance of the hardware map and telemetry in the Robot class
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        timeSinceIndex.startTime();
+        //timeSinceIndex.startTime();
         timeSinceKick.startTime();
         timeSinceKickReset.startTime();
 
@@ -142,15 +142,15 @@ public class Robot {
             if (ballColors[currentIntakePosition] == ArtifactColor.GREEN || ballColors[currentIntakePosition] == ArtifactColor.PURPLE) {
                 if (ballColors[0] == ArtifactColor.NONE) {
                     indexer.rotateToOnePosition();
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                 }
                 else if (ballColors[1] == ArtifactColor.NONE) {
                     indexer.rotateToTwoPosition();
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                 }
                 else if (ballColors[2] == ArtifactColor.NONE){
                     indexer.rotateToZeroPosition();
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                 }
             }
         }
@@ -184,15 +184,15 @@ public class Robot {
                 if (ballColors[currentOuttakePosition] != ArtifactColor.GREEN && indexer.indexerFinishedTurning()) {
                     if (ballColors[0] == ArtifactColor.GREEN) {
                         indexer.rotateToZeroPosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                     else if (ballColors[1] == ArtifactColor.GREEN) {
                         indexer.rotateToOnePosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                     else if (ballColors[2] == ArtifactColor.GREEN) {
                         indexer.rotateToTwoPosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                 } else if (indexer.indexerFinishedTurning()) {
                     launcher.kickBall();
@@ -203,26 +203,26 @@ public class Robot {
                 if (ballColors[currentOuttakePosition] != ArtifactColor.PURPLE && indexer.indexerFinishedTurning()) {
                     if (ballColors[0] == ArtifactColor.PURPLE) {
                         indexer.rotateToZeroPosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                     else if (ballColors[1] == ArtifactColor.PURPLE) {
                         indexer.rotateToOnePosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                     else if (ballColors[2] == ArtifactColor.PURPLE) {
                         indexer.rotateToTwoPosition();
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                     }
                 } else if (indexer.indexerFinishedTurning()) {
                     launcher.kickBall();
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                 }
             }
 
 
             if (indexer.indexerFinishedTurning() && launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                 launcher.resetKicker();
-                timeSinceIndex.reset();
+                //timeSinceIndex.reset();
             }
         }
 
@@ -319,7 +319,7 @@ public class Robot {
                 case TURN_TO_LAUNCH:
                     //telemetry.addLine("launchAColorBall: TURN_TO_LAUNCH");
                     if (indexer.moveToOuttake()) {
-                        timeSinceIndex.reset();
+                        //timeSinceIndex.reset();
                         launchState = LaunchBallStates.KICK_BALL;
                         break;
                     } else {
@@ -449,14 +449,14 @@ public class Robot {
                         indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
                         indexerResetState = IndexerResetStates.CHECK_2TO1;
                     }
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                 }
                 break;
             case CHECK_0TO1:
                 if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
                 break;
@@ -464,7 +464,7 @@ public class Robot {
                 if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
                 break;
@@ -472,7 +472,7 @@ public class Robot {
                 if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
-                    timeSinceIndex.reset();
+                    //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
                 break;
