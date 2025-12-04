@@ -250,13 +250,13 @@ public class Robot {
                 && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
             if (indexer.checkEmptySlot()){
                 telemetry.addLine("Robot: found empty slot");
-                RobotLog.d("RRobot: found empty slot");
+                //RobotLog.d("RRobot: found empty slot");
                 indexer.turnEmptySlotToIntake();
                 // replace waiting for timer with Axon servo position checking
                 // if ( timeSinceIndex.milliseconds() > 550 ) {
                 if (indexer.indexerFinishedTurning()) {
                     telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
-                    RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
+                    //RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
                     indexer.updateBallColors();
                 }
             }
@@ -479,6 +479,10 @@ public class Robot {
             case CHECK_LAST:
                 if (indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
+                    double position = indexer.getIndexerPosition();
+                    if (position == indexer.POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
+                        indexer.rotateToPosition(indexer.POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
+                    }
                     indexerResetState = IndexerResetStates.INIT;
                 }
                 break;

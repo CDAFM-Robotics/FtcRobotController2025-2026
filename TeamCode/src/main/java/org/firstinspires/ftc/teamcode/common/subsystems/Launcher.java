@@ -106,7 +106,7 @@ public class Launcher {
             double measuredVelocityTotal = measuredVelocity1 + measuredVelocity2;
             // Logging
             if (measuredVelocity1 != 0.0 || measuredVelocity2 != 0.0) {
-                RobotLog.d("m1: %f m2: %f", measuredVelocity1, measuredVelocity2);
+                //RobotLog.d("m1: %f m2: %f", measuredVelocity1, measuredVelocity2);
             }
             return measuredVelocityTotal < velocity * 2;
         }

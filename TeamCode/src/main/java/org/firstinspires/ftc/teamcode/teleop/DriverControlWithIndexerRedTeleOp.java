@@ -115,8 +115,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.getDriveBase().resetKickStand();
             }
 
-            // Manual Indexer control.
-            // TODO: Add checking the kicker position so the indexer will not hit the kicker
+            // Manual Indexer control. (deprecated)
             // removed the manual indexer control after auto indexer control is implemented
             /*if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getIndexer().rotateClockwise();

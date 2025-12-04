@@ -267,7 +267,7 @@ public class Indexer {
     public double getIndexerPosition() {
         double position = indexerServo.getPosition();
         telemetry.addData("position get index position", position);
-        RobotLog.d("position get index pos: %.2f", position);
+        //RobotLog.d("position get index pos: %.2f", position);
         return (double) Math.round(position * 100) / 100.00;
     }
 
@@ -489,11 +489,11 @@ public class Indexer {
             if (artifactColorArray[0] != Robot.ArtifactColor.NONE) {
                 nextShootSlot = 0;
                 return true;
-            } else if (artifactColorArray[1] != Robot.ArtifactColor.NONE){
-                nextShootSlot = 1;
-                return true;
             } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
                 nextShootSlot = 2;
+                return true;
+            }else if (artifactColorArray[1] != Robot.ArtifactColor.NONE){
+                nextShootSlot = 1;
                 return true;
             }
         } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT){
@@ -501,11 +501,11 @@ public class Indexer {
             if (artifactColorArray[1] != Robot.ArtifactColor.NONE) {
                 nextShootSlot = 1;
                 return true;
-            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE){
-                nextShootSlot = 0;
-                return true;
             } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
                 nextShootSlot = 2;
+                return true;
+            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE){
+                nextShootSlot = 0;
                 return true;
             }
         } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
