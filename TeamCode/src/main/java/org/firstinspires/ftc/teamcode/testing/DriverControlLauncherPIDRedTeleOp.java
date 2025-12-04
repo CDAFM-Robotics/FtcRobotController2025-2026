@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.common.Robot;
 @Config
 @TeleOp(name = "RED Driver Control Launcher PID RedTeleop", group = "0teleop")
 public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
+    public boolean isRedSide = true;
+    public boolean isBlueSide = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,6 +54,9 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
         while (initializedIndexerTimer.milliseconds() < 1800) {
             robot.resetIndexer();
         }
+
+        robot.getLauncher().setLimelightPipeline(isRedSide, isBlueSide);
+
 
         waitForStart();
 
@@ -90,7 +95,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                 && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                double power = robot.getLauncher().setRedAimPowerPID(aimTimer.milliseconds());
+                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds());
                 telemetry.addData("aiming: motor power", power);
                 robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
@@ -102,7 +107,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             telemetry.addData("limelight valid", robot.getLauncher().getLimelightResult().isValid());
             telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
             telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
-            telemetry.addData("Distance to AprilTag", robot.getLauncher().getRedGoalDistance());
+            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
             // Active Intake
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
@@ -175,7 +180,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             if ( robot.getLauncher().limelightValid()
                 && robot.getLauncher().isLauncherActive()
                 && autoLaunch) {
-                robot.getLauncher().setLauncherVelocityRedDistance();
+                robot.getLauncher().setLauncherVelocityDistance();
             }
 
             //launch a green ball

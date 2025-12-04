@@ -281,7 +281,7 @@ public class Launcher {
         distanceToVelocityMap.put(768.0, 1190.0);
         distanceToVelocityMap.put(890.0, 1200.0);
         distanceToVelocityMap.put(976.0, 1200.0);
-        distanceToVelocityMap.put(1051.0, 1210.0);
+        distanceToVelocityMap.put(1051.0, 1205.0);
         distanceToVelocityMap.put(1126.0, 1210.0);
         distanceToVelocityMap.put(1244.0, 1210.0);
         distanceToVelocityMap.put(1326.0, 1220.0);
@@ -294,6 +294,7 @@ public class Launcher {
         distanceToVelocityMap.put(2046.0, 1280.0);
         distanceToVelocityMap.put(2126.0, 1300.0);
         distanceToVelocityMap.put(2169.0, 1310.0);
+        distanceToVelocityMap.put(2400.0, 1330.0);
         distanceToVelocityMap.put(2528.0, 1330.0);
         distanceToVelocityMap.put(2681.0, 1340.0);
         distanceToVelocityMap.put(2751.0, 1350.0);
@@ -392,7 +393,7 @@ public class Launcher {
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            launcherVelocity = getVelocityDistance(getRedGoalDistance());
+            launcherVelocity = getVelocityDistance(getGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_FAR;
@@ -451,7 +452,7 @@ public class Launcher {
         //setLauncherPower(launchPower);
         //start launcher with velocity
         if ( limelightValid() ) {
-            launcherVelocity = getVelocityDistance(getRedGoalDistance());
+            launcherVelocity = getVelocityDistance(getGoalDistance());
         }
         else {
             launcherVelocity = LAUNCH_VELOCITY_NEAR;
@@ -493,7 +494,7 @@ public class Launcher {
         return limelight.getLatestResult();
     }
 
-    public double getRedAimingPower(){
+/*    public double getRedAimingPower(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         LLResult result = limelight.getLatestResult();
         double answer = 0;
@@ -513,21 +514,24 @@ public class Launcher {
 
         return answer;
     }
-
-    public Boolean limelightValid(){
-        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        if(limelight.getLatestResult().isValid()){
-                return true;
-        }
-        return false;
+*/
+    public Boolean limelightValid() {
+        return limelight.getLatestResult().isValid();
     }
 
     public void setLimelightPipeline(int pipeline) {
         limelight.pipelineSwitch(pipeline);
     }
 
-    public double getBlueAimingPower(){
-        limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
+    public void setLimelightPipeline(boolean isRed, boolean isBlue) {
+        if (isRed) {
+            limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+        } else if (isBlue) {
+            limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
+        }
+    }
+
+    public double getAimingPower(){
         LLResult result = limelight.getLatestResult();
         double answer = 0;
         if(result.isValid()){
@@ -543,21 +547,10 @@ public class Launcher {
                 answer = 0;
             }
         }
-
         return answer;
     }
 
-    public double setRedAimPowerPID (double time) {
-        setLimelightPipeline(Robot.LLPipelines.RED_GOAL.ordinal());
-        return getAimPowerPID(time);
-    }
-
-    public double getBlueAimPowerPID (double time) {
-        setLimelightPipeline(Robot.LLPipelines.BLUE_GOAL.ordinal());
-        return getAimPowerPID(time);
-    }
-
-    public double getAimPowerPID(double time) {
+    public double setAimPowerPID (double time) {
         double currentTime = time;
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -599,7 +592,7 @@ public class Launcher {
         return power;
     }
 
-    public double getRedGoalDistance() {
+/*    public double getREDGoalDistance() {
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
         return getGoalDistance();
     }
@@ -608,6 +601,7 @@ public class Launcher {
         limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = Blue_GOAL
         return getGoalDistance();
     }
+*/
 
     public double getGoalDistance () {
         LLResult llresult = limelight.getLatestResult();
@@ -623,17 +617,17 @@ public class Launcher {
         launcherMotor1.setVelocity(launcherVelocity);
     }
 
-    public void setLauncherVelocityRedDistance() {
-        launcherVelocity = getVelocityDistance(getRedGoalDistance());
+    public void setLauncherVelocityDistance() {
+        launcherVelocity = getVelocityDistance(getGoalDistance());
         setLauncherVelocity(launcherVelocity);
         targetVelocity = launcherVelocity;
     }
 
-    public void setLauncherVelocityBlueDistance() {
-        launcherVelocity = getVelocityDistance(getBlueGoalDistance());
+/*    public void setLauncherVelocityBlueDistance() {
+        launcherVelocity = getVelocityDistance(getGoalDistance());
         setLauncherVelocity(launcherVelocity);
     }
-
+*/
 
     public void changeLauncherVelocity(double change) {
         launcherVelocity += change;
