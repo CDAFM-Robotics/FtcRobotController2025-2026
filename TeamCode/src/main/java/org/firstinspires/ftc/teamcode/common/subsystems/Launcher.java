@@ -67,9 +67,9 @@ public class Launcher {
     private double integralSumMin = -1.0;
     private double lastError = 0.0;
 
-    public static double shootKp = 25;
+    public static double shootKp = 250; //25;
     public static double shootKi = 1.5;
-    public static double shootKd = 4;
+    public static double shootKd = 10; //4;
     public static double shootKf = 1.1;
     public static double targetVelocity;
     public static double currentVelocity;
@@ -478,6 +478,11 @@ public class Launcher {
     public double getLauncherVelocity() {
         currentVelocity = launcherMotor1.getVelocity();
         return currentVelocity;
+    }
+
+    public double getLauncherVelocity2() {
+        double currentVelocity2 = launcherMotor2.getVelocity();
+        return currentVelocity2;
     }
 
     public Boolean isLauncherActive(){

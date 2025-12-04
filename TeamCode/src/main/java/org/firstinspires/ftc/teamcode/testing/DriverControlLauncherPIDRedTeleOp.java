@@ -208,6 +208,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("launcher target velocity:", robot.getLauncher().targetVelocity);
             telemetry.addData("launcher current velocity:", robot.getLauncher().getLauncherVelocity());
+            telemetry.addData("launcher current velocity2:", robot.getLauncher().getLauncherVelocity2());
             telemetry.addData("launch motors p", robot.getLauncher().getLauncherMotorPIDFCoefficients().p);
             telemetry.addData("launch motors i", robot.getLauncher().getLauncherMotorPIDFCoefficients().i);
             telemetry.addData("launch motors d", robot.getLauncher().getLauncherMotorPIDFCoefficients().d);
