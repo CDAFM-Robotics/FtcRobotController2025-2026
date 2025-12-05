@@ -5,42 +5,140 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
-import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-
-import java.util.function.Supplier;
 
 @Autonomous(name = "Blue Front Autonomous", group = "0competition")
 public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     Action[] trajectories;
 
-    Supplier<Action>[] otherActions;
-
     AutonomousActionBuilder autonomousActionBuilder;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(37)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 
         trajectories = autonomousActionBuilder.getBlueCloseTrajectories();
 
-        otherActions = autonomousActionBuilder.getOtherActions();
-
         Robot.ArtifactColor[] motif = null;
 
+        telemetry.setMsTransmissionInterval(50);
+
+        int selectedRow = 0;
+        double delay = 0;
+
+        boolean firstMark = true;
+        boolean secondMark = true;
+        boolean thirdMark = false;
+
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad previousGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
+
+        while(opModeInInit()) {
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
+
+            if ((currentGamepad1.dpad_down && !previousGamepad1.dpad_down) || (currentGamepad2.dpad_down && !previousGamepad2.dpad_down)) {
+                selectedRow++;
+                if (selectedRow > 3) {
+                    selectedRow = 0;
+                }
+            }
+            if ((currentGamepad1.dpad_up && !previousGamepad1.dpad_up) || (currentGamepad2.dpad_up && !previousGamepad2.dpad_up)) {
+                selectedRow--;
+                if (selectedRow < 0) {
+                    selectedRow = 3;
+                }
+            }
+
+            if ((currentGamepad1.dpad_right && !previousGamepad1.dpad_right) || (currentGamepad2.dpad_right && !previousGamepad2.dpad_right)) {
+                if (selectedRow == 0) {
+                    delay += 0.5;
+                    if (delay > 30) {
+                        delay = 30;
+                    }
+                }
+                else if (selectedRow == 1) {
+                    thirdMark = !thirdMark;
+                }
+                else if (selectedRow == 2) {
+                    secondMark = !secondMark;
+                }
+                else if (selectedRow == 3) {
+                    firstMark = !firstMark;
+                }
+            }
+
+            if ((currentGamepad1.dpad_left && !previousGamepad1.dpad_left) || (currentGamepad2.dpad_left && !previousGamepad2.dpad_left)) {
+                if (selectedRow == 0) {
+                    delay -= 0.5;
+                    if (delay < 0) {
+                        delay = 0;
+                    }
+                }
+                else if (selectedRow == 1) {
+                    thirdMark = !thirdMark;
+                }
+                else if (selectedRow == 2) {
+                    secondMark = !secondMark;
+                }
+                else if (selectedRow == 3) {
+                    firstMark = !firstMark;
+                }
+            }
+
+            if (selectedRow == 0) {
+                telemetry.addData("> Delay", delay);
+            }
+            else {
+                telemetry.addData("  Delay", delay);
+            }
+
+            if (selectedRow == 1) {
+                telemetry.addData("> Pickup First Mark", firstMark);
+            }
+            else {
+                telemetry.addData("  Pickup First Mark", firstMark);
+            }
+
+            if (selectedRow == 2) {
+                telemetry.addData("> Pickup Second Mark", secondMark);
+            }
+            else {
+                telemetry.addData("  Pickup Second Mark", secondMark);
+            }
+
+            if (selectedRow == 3) {
+                telemetry.addData("> Pickup Third Mark", thirdMark);
+            }
+            else {
+                telemetry.addData("  Pickup Third Mark", thirdMark);
+            }
+
+
+            telemetry.update();
+
+
+        }
+
         waitForStart();
+
+        sleep((long) (delay * 1000));
 
         //start always with PGP
 
@@ -62,9 +160,6 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             telemetry.update();
         }
 
-        sleep(1000);
-
-
         if (motif == null) {
             motif = new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
         }
@@ -78,37 +173,61 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             autonomousActionBuilder.getSpinLauncherClose()
         ));
 
-        sleep(500);
-
-        launchInMotifOrder(motif, 1);
-
-        // Pickup first mark
-
-        Actions.runBlocking(new SequentialAction(
-            new ParallelAction(
-                trajectories[2],
-                autonomousActionBuilder.getIndexAction(2),
-                new SequentialAction(
-                    new SleepAction(0.6),
-                    autonomousActionBuilder.getStartIntake(),
-                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                    autonomousActionBuilder.getIndexAction(1),
-                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                    autonomousActionBuilder.getIndexAction(2),
-                    autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                    autonomousActionBuilder.getSpinLauncherClose(),
-                    autonomousActionBuilder.getStopIntake()
-                )
-            )
-        ));
-
-        //Actions.runBlocking(trajectories[1]);
-
-        sleep(500);
-
         launchInMotifOrder(motif, 0);
 
-        sleep(500);
+        if (firstMark) {
+
+            // Pickup first mark
+
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[2],
+                    autonomousActionBuilder.getIndexAction(0),
+                    new SequentialAction(
+                        new SleepAction(0),
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getStopIntake(),
+                        autonomousActionBuilder.getSpinLauncherClose()
+                    )
+                )
+            ));
+
+            //Actions.runBlocking(trajectories[1]);
+
+            launchInMotifOrder(motif, 1);
+        }
+
+        if (secondMark) {
+
+            // Pickup second mark
+
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[3],
+                    autonomousActionBuilder.getIndexAction(0),
+                    new SequentialAction(
+                        new SleepAction(0),
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getStopIntake(),
+                        autonomousActionBuilder.getSpinLauncherClose()
+                    )
+                )
+            ));
+
+            //Actions.runBlocking(trajectories[1]);
+
+            launchInMotifOrder(motif, 0);
+        }
 
         // LEave
 
@@ -118,8 +237,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         ));
     }
 
-    public Action launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
-
+    public void launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
         Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
@@ -132,22 +250,5 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             autonomousActionBuilder.getStopLauncher(),
             autonomousActionBuilder.getResetKicker()
         ));
-
-        return new SequentialAction(
-            motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 0 ? 3 : 2].get(),
-            autonomousActionBuilder.getKickBall(),
-            autonomousActionBuilder.getResetKicker(),
-            motifPattern[1] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : (motifPattern[0] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation == 0 ? 3 : 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get()),
-            autonomousActionBuilder.getKickBall(),
-            autonomousActionBuilder.getResetKicker(),
-            motifPattern[2] == Robot.ArtifactColor.GREEN ? otherActions[greenLocation + 2].get() : otherActions[greenLocation == 2 ? 3 : 4].get(),
-            autonomousActionBuilder.getKickBall(),
-            new ParallelAction(
-                otherActions[1].get(),
-                autonomousActionBuilder.getResetKicker()
-            )
-        );
-
-
     }
 }

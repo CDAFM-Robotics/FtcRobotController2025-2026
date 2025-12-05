@@ -252,14 +252,6 @@ public class Launcher {
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Get the PIDF coefficients for the RUN_USING_ENCODER RunMode.
-        PIDFCoefficients pidfOrig = launcherMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData("original PIDF coefficients p", pidfOrig.p);
-        telemetry.addData("original PIDF coefficients i", pidfOrig.i);
-        telemetry.addData("original PIDF coefficients d", pidfOrig.d);
-        telemetry.addData("original PIDF coefficients f", pidfOrig.f);
-
         PIDFCoefficients pidfNew = new PIDFCoefficients(shootKp, shootKi, shootKd, shootKf);
         launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
