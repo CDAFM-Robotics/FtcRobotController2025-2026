@@ -247,8 +247,8 @@ public class Launcher {
 
         launcherMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         launcherMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+       // launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+       // launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
