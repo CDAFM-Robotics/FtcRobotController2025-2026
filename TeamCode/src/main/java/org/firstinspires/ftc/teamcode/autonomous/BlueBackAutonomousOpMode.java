@@ -89,13 +89,13 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                         delay = 30;
                     }
                 }
-                else if (selectedRow == 1) {
+                else if (selectedRow == 3) {
                     thirdMark = !thirdMark;
                 }
                 else if (selectedRow == 2) {
                     secondMark = !secondMark;
                 }
-                else if (selectedRow == 3) {
+                else if (selectedRow == 1) {
                     firstMark = !firstMark;
                 }
             }
@@ -107,13 +107,13 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
                         delay = 0;
                     }
                 }
-                else if (selectedRow == 1) {
+                else if (selectedRow == 3) {
                     thirdMark = !thirdMark;
                 }
                 else if (selectedRow == 2) {
                     secondMark = !secondMark;
                 }
-                else if (selectedRow == 3) {
+                else if (selectedRow == 1) {
                     firstMark = !firstMark;
                 }
             }
