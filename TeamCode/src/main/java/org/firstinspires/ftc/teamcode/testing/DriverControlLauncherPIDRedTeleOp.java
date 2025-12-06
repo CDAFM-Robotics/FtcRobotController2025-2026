@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
+@Disabled
 @Config
 @TeleOp(name = "RED Driver Control Launcher PID RedTeleop", group = "0teleop")
 public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {

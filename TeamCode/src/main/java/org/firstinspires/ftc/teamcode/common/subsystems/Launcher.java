@@ -268,14 +268,14 @@ public class Launcher {
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
         // Example values:
-        distanceToVelocityMap.put(650.0, 1180.0);
-        distanceToVelocityMap.put(684.0, 1180.0);
-        distanceToVelocityMap.put(768.0, 1190.0);
-        distanceToVelocityMap.put(890.0, 1200.0);
-        distanceToVelocityMap.put(976.0, 1200.0);
-        distanceToVelocityMap.put(1051.0, 1205.0);
-        distanceToVelocityMap.put(1126.0, 1210.0);
-        distanceToVelocityMap.put(1244.0, 1210.0);
+        distanceToVelocityMap.put(650.0, 1160.0);
+        distanceToVelocityMap.put(684.0, 1160.0);
+        distanceToVelocityMap.put(768.0, 1180.0);
+        distanceToVelocityMap.put(890.0, 1180.0);
+        distanceToVelocityMap.put(976.0, 1180.0);
+        distanceToVelocityMap.put(1051.0, 1200.0);
+        distanceToVelocityMap.put(1126.0, 1200.0);
+        distanceToVelocityMap.put(1244.0, 1200.0);
         distanceToVelocityMap.put(1326.0, 1220.0);
         distanceToVelocityMap.put(1436.0, 1220.0);
         distanceToVelocityMap.put(1524.0, 1220.0);

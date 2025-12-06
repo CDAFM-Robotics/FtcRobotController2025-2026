@@ -40,7 +40,7 @@ public class AutonomousActionBuilder {
     public Action blueCloseLaunchPickupSecondMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
 
-    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-108)); // TODO 14nov25 -113
+    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-111.5)); // TODO 14nov25 -113
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-129));
     public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 30), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 57), Math.toRadians(90));
@@ -59,9 +59,9 @@ public class AutonomousActionBuilder {
     public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90));
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
-    public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(28);
+    public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(25);
 
-    public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-10, 20);
+    public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-10, 15);
 
     public static TurnConstraints turnConstraints = new TurnConstraints(Math.PI, -Math.PI, Math.PI);
 
@@ -77,7 +77,7 @@ public class AutonomousActionBuilder {
 
         redFarLaunchPickupThirdMark = md.actionBuilder(redFarLaunchPose)
           .setTangent(Math.toRadians(165))
-          .splineToSplineHeading(redThirdMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+          .splineToSplineHeading(redThirdMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
           .strafeToConstantHeading(redThirdMarkEnd.position, slowTranslationalVelConstraint)
           .setTangent(Math.toRadians(-90))
           .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
@@ -85,7 +85,7 @@ public class AutonomousActionBuilder {
 
         redFarLaunchPickupSecondMark = md.actionBuilder(redFarLaunchPose)
             .setTangent(Math.toRadians(180))
-            .splineToSplineHeading(redSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .splineToSplineHeading(redSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(redSecondMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
             .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
@@ -93,7 +93,7 @@ public class AutonomousActionBuilder {
 
         redFarLaunchPickupFirstMark = md.actionBuilder(redFarLaunchPose)
             .setTangent(Math.toRadians(180))
-            .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint)
+            .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(redFirstMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
             .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
@@ -257,7 +257,7 @@ public class AutonomousActionBuilder {
     }
 
     public Action getSpinLauncherFar() {
-        return robot.getLauncher().getSpinLauncherAction(1340);
+        return robot.getLauncher().getSpinLauncherAction(1360);
     }
 
     public Action getSpinLauncherClose() {
