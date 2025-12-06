@@ -192,7 +192,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                     trajectories[2],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(2),
+                        new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -219,7 +219,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                     trajectories[3],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(3),
+                        new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
