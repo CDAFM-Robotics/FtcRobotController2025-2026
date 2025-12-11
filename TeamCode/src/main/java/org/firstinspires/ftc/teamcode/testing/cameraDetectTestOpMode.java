@@ -63,6 +63,7 @@ public class cameraDetectTestOpMode extends LinearOpMode {
                 telemetry.addLine("----------------------------------------------------------");
                 if(circleFit.getRadius() >= biggestBlob.getRadius()){
                     biggestBlob = circleFit;
+                    //ppoopo test thing delete ts line
                 }
             }
 
