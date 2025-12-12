@@ -101,6 +101,10 @@ public class PS5ButtonPressTestOpMode extends LinearOpMode {
             addData("share", gamepad2.share);
             addData("options", gamepad2.options);
 
+            if(gamepad1.triangle){
+                gamepad1.rumble(250);
+            }
+
             telemetry.update();
         }
     }
