@@ -57,7 +57,8 @@ public class Launcher {
 
     public static double aimKp = 0.02;
     public static double aimKi = 0.01;
-    public static double aimKd = 0.0055;
+    //public static double aimKd = 0.0055;
+    public static double aimKd = 1.1;
     public static double powerStatic = 0.05;
     public static double aimErrorTolerance = 2;
     private double lastTime;
@@ -475,6 +476,10 @@ public class Launcher {
     public double getLauncherVelocity() {
         currentVelocity = launcherMotor1.getVelocity();
         return currentVelocity;
+    }
+
+    public double getLauncherTargetVelocity(){
+        return launcherVelocity;
     }
 
     public double getLauncherVelocity2() {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -238,7 +239,7 @@ public class Robot {
     }
 
      // Auto-Indexing for intake
-     public void intakeWithIndexerTurn(){
+     public void intakeWithIndexerTurn(Gamepad gamepad){
         //telemetry.addLine("intakeWithIndexerTurn");
         //check to see if kicker is up. If yes, move it down.
          double kickerPosition = launcher.getKickerPosition();
@@ -258,6 +259,7 @@ public class Robot {
                     telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
                     //RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
                     indexer.updateBallColors();
+                    gamepad.rumble(0.3, 0.15, 60);
                 }
             }
             else {

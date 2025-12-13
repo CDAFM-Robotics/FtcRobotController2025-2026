@@ -30,6 +30,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
         double index_position = 0.5;
         boolean isAiming = false;
         boolean autoLaunch = true;
+        boolean aprilTagInView = false;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -71,6 +72,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             if (currentGamepad1.start && !previousGamepad1.start){
                 robot.getDriveBase().resetIMU();
+                gamepad1.rumble(300);
             }
 
             if (currentGamepad1.right_bumper != previousGamepad1.right_bumper) {
@@ -104,7 +106,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
                 robot.getIntake().startIntake();
                 if (currentGamepad1.right_trigger != 0.0)
-                    robot.intakeWithIndexerTurn();
+                    robot.intakeWithIndexerTurn(gamepad1);
             }
             else if ((currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0)
                     || (currentGamepad2.left_trigger == 0.0 && previousGamepad2.left_trigger != 0)){
@@ -202,6 +204,29 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             if (currentGamepad2.right_trigger != 0) {
                 robot.shootAllBalls();
             }
+
+//rumble gamepad 2 when apriltag is in view
+            /*if(robot.getLauncher().getLimelightResult().isValid() && !aprilTagInView && robot.getLauncher().getLauncherTargetVelocity() == 0.0){
+                gamepad2.rumble(50);
+                gamepad2.setLedColor(255, 255, 255, 50);
+                aprilTagInView = true;
+            }
+            if(!robot.getLauncher().getLimelightResult().isValid() && aprilTagInView){
+                gamepad2.rumble(0.5, .5, 60);
+                aprilTagInView = false;
+            }*/
+
+            //change gamepad 2 light barwhen sped up all the way
+            if(robot.getLauncher().getLauncherVelocity() == robot.getLauncher().getLauncherTargetVelocity() && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
+                gamepad2.setLedColor(255, 255, 0, 20);
+            }
+
+            //rumble gamepad 2 when empty
+            if(robot.getIndexer().artifactColorArray == new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE} && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
+                gamepad2.rumble(0.25, 0, 10);
+                gamepad2.rumble(0, 0.25, 10);
+            }
+
 
             //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("launcher velocity:", robot.getLauncher().getLauncherVelocity());
