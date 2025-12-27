@@ -5,6 +5,7 @@ import android.graphics.Color;
 import androidx.annotation.ColorInt;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -40,6 +41,19 @@ public class Hud {
             Color.parseColor("silver") // white
     };
 
+    private @ColorInt int[] colors_all = new int[]{
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+            Color.rgb(0, 0, 0),
+    };
+
     public Hud(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -57,21 +71,11 @@ public class Hud {
     }
 
     public void UpdateBallUI2() {
-        @ColorInt int[] colors_all = new int[]{
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-                Color.rgb(0, 0, 0),
-        };
+
 
         if (ball1 != last1 || ball2 != last2 || ball3 != last3 || aimLED != lastAimLED)
         {
+            RobotLog.d("HUD: %s %s %s %s", ball1,ball2,ball3,aimLED);
             if (ball1 != last1)
             {
                 last1 = ball1;
@@ -99,8 +103,16 @@ public class Hud {
                 colors_all[9] = Balls[aimLED.ordinal()];
             }
 
+//            RobotLog.d("HUD: %d %d %d | %d %d %d | %d %d %d | %d",
+//                    colors_all[0], colors_all[1], colors_all[2],
+//                    colors_all[3], colors_all[4], colors_all[5],
+//                    colors_all[6], colors_all[7], colors_all[8],
+//                    colors_all[9]
+//            );
             ledstripRear.setColors(colors_all);
+            sleep(ms_delay);
             ledstripFront.setColors(colors_all);
+            sleep(ms_delay);
         }
 
     }
