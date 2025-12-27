@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.common.Robot;
 @TeleOp(name = "BLUE Driver Control With Indexer Teleop", group = "0teleop")
 public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
     public boolean isRedSide = false;
-    public boolean isBlueSide = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,7 +48,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             robot.resetIndexer();
         }
 
-        robot.getLauncher().setLimelightPipeline(isRedSide, isBlueSide);
+        robot.getLauncher().setLimelightPipeline(isRedSide);
 
         waitForStart();
 
@@ -89,7 +88,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                     && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                    double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide, isBlueSide);
+                    double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
                     telemetry.addData("aiming: motor power", power);
                     robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
