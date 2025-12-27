@@ -30,7 +30,6 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         boolean isAiming = false;
         boolean autoLaunch = true;
         boolean aprilTagInView = false;
-        double targetLauncherVelocity = 0.0;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
