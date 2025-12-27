@@ -18,8 +18,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // TODO Add Data to Dashboard Start
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        //FtcDashboard dashboard = FtcDashboard.getInstance();
+        //telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
 
         Robot robot = new Robot(hardwareMap, telemetry);
@@ -43,12 +43,17 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
         initializedIndexerTimer.reset();
         aimTimer.reset();
+
+        //Check the color of the balls at init
         robot.resetIndexerColorStart();
-        while (initializedIndexerTimer.milliseconds() < 1800) {
+        //RobotLog.d("start indexing");
+        while (initializedIndexerTimer.milliseconds() < 1800.0) {
             robot.resetIndexer();
         }
+        //RobotLog.d("done indexing");
 
         robot.getLauncher().setLimelightPipeline(isRedSide);
+        //telemetry.update();
 
         waitForStart();
 

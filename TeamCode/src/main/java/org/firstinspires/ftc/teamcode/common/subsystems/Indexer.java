@@ -202,12 +202,12 @@ public class Indexer {
         //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
         double position = getIndexerPosition();
 
-        int i = -1;
+        int i = 0;
 
         if (position == POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
             i = 0;
         }
-        else if(position == POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+        else if(position ==POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
             i = 1;
         }
         else if (position == POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
@@ -226,7 +226,8 @@ public class Indexer {
                     ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
                     ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
             //telemetry.addData("updateBallColors index", i);
-            telemetry.addData("updateBallColors color", artifactColorArray[i]);
+            //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
+            //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
             if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
                     color[0]++;
             else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
@@ -244,7 +245,8 @@ public class Indexer {
                         ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
                         ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
                 //telemetry.addData("updateBallColors index", i);
-                telemetry.addData("updateBallColors color", artifactColorArray[i]);
+                //telemetry.addData("updateBallColors color2", artifactColorArray[i]);
+                //RobotLog.d("updateBallColors color2 %s",artifactColorArray[i]);
                 if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
                     color[0]++;
                 else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
@@ -270,6 +272,7 @@ public class Indexer {
             artifactColorArray[i] = Robot.ArtifactColor.NONE;
             telemetry.addLine("ERROR: color UNKNOWN");
         }
+        //RobotLog.d("updateBallColors color final %s",artifactColorArray[i]);
     }
 
     public Robot.ArtifactColor[] getBallColors() {
@@ -280,7 +283,7 @@ public class Indexer {
 
     public double getIndexerPosition() {
         double position = indexerServo.getPosition();
-        telemetry.addData("position get index position", position);
+        //telemetry.addData("getIndexerPosition position", position);
         //RobotLog.d("position get index pos: %.2f", position);
         return (double) Math.round(position * 100) / 100.00;
     }
@@ -539,6 +542,7 @@ public class Indexer {
     }
 
     public double getAxonServoPosition() {
+        //RobotLog.d("getAxonServoPosition: %f", indexerServoVoltage.getVoltage());
         return (indexerServoVoltage.getVoltage() - AXON_SERVO_VOLTAGE_OFFSET) * AXON_SERVO_VOLTAGE_SCALER;
     }
 

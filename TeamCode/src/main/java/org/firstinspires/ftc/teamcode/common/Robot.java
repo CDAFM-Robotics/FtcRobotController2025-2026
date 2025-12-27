@@ -421,11 +421,16 @@ public class Robot {
     }
 
     public void resetIndexerColorStart(){
+        //telemetry.addData("resetIndexerColorStart: start state", indexerResetState);
+        //RobotLog.d("resetIndexerColorStart: start state: %s", indexerResetState);
         indexerResetState = IndexerResetStates.CHECK_INTAKE;
+        //telemetry.addData("resetIndexerColorStart: done state", indexerResetState);
+        //RobotLog.d("resetIndexerColorStart: done state %s", indexerResetState);
     }
 
     public void resetIndexer() {
-        telemetry.addData("resetIndexer: state", indexerResetState);
+        //telemetry.addData("resetIndexer: start state", indexerResetState);
+        //RobotLog.d("resetIndexer: start state: %s", indexerResetState);
 
         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
             launcher.resetKicker();
@@ -436,7 +441,9 @@ public class Robot {
             case INIT:
                 break;
             case CHECK_INTAKE:
-                if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
+                if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_INIT
+                    && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER
+                    && indexer.indexerFinishedTurning()) {
                     indexer.updateBallColors();
                     double position = indexer.getIndexerPosition();
                     if (position == indexer.POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
@@ -453,6 +460,7 @@ public class Robot {
                     }
                     //timeSinceIndex.reset();
                 }
+                //telemetry.addData("resetIndexer: CHECK_INTAKE", indexerResetState);
                 break;
             case CHECK_0TO1:
                 if (indexer.indexerFinishedTurning()) {
@@ -461,6 +469,8 @@ public class Robot {
                     //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
+                //telemetry.addData("resetIndexer: CHECK_0TO1", indexerResetState);
+                //RobotLog.d("resetIndexer: CHECK_0TO1: %s", indexerResetState);
                 break;
             case CHECK_1TO2:
                 if (indexer.indexerFinishedTurning()) {
@@ -469,6 +479,8 @@ public class Robot {
                     //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
+                //telemetry.addData("resetIndexer: CHECK_1TO2", indexerResetState);
+                //RobotLog.d("resetIndexer: CHECK_1TO2: %s", indexerResetState);
                 break;
             case CHECK_2TO1:
                 if (indexer.indexerFinishedTurning()) {
@@ -477,6 +489,8 @@ public class Robot {
                     //timeSinceIndex.reset();
                     indexerResetState = IndexerResetStates.CHECK_LAST;
                 }
+                //telemetry.addData("resetIndexer: CHECK_2TO1", indexerResetState);
+                //RobotLog.d("resetIndexer: CHECK_2TO1: %s", indexerResetState);
                 break;
             case CHECK_LAST:
                 if (indexer.indexerFinishedTurning()) {
@@ -487,10 +501,16 @@ public class Robot {
                     }
                     indexerResetState = IndexerResetStates.INIT;
                 }
+                //telemetry.addData("resetIndexer: CHECK_LAST", indexerResetState);
+                //RobotLog.d("resetIndexer: CHECK_LAST: %s", indexerResetState);
                 break;
             default:
+                //telemetry.addData("resetIndexer: default state", indexerResetState);
+                //RobotLog.d("resetIndexer: default state: %s", indexerResetState);
                 break;
         }
+        //telemetry.addData("resetIndexer: end state", indexerResetState);
+        //RobotLog.d("resetIndexer: end state: %s", indexerResetState);
     }
 
     public void robotStopIntake(){
