@@ -239,7 +239,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
             robot.getHud().setAimIndicator(isAiming);
-            robot.getHud().UpdateBallUI();
+            robot.getHud().UpdateBallUI2();
 
             // TODO Add timing Log at end of loop
 //            RobotLog.d("c0: %s c1: %s c2: %s",
