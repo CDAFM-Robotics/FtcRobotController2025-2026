@@ -281,9 +281,16 @@ public class AutonomousActionBuilder {
         return robot.getLauncher().getStopLauncherAction();
     }
 
+    // Output
     public Action getIndexAction(int indexPos) {
         return indexPos == 0 ? robot.getIndexer().getGoToZeroBallAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBallAction() : robot.getIndexer().getGoToTwoBallAction());
     }
+
+    // Intake
+    public Action getIndexIntakeAction(int indexPos) {
+        return indexPos == 0 ? robot.getIndexer().getGotoZeroBall_IntakeAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBall_IntakeAction() : robot.getIndexer().getGoToTwoBall_IntakeAction());
+    }
+
 
     public Action getKickBall() {
         return robot.getLauncher().getKickBallAction();

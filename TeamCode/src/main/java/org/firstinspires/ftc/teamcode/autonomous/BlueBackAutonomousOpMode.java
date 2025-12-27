@@ -178,8 +178,8 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             new SleepAction(0.5)
         ));
 
-        //Actions.runBlocking(launchInMotifOrder(motif));
 
+        // Launch first 3
         launchInMotifOrder(motif, 0);
 
         // Pickup third mark
@@ -189,13 +189,13 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[1],
-                    autonomousActionBuilder.getIndexAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherFar(),
                         autonomousActionBuilder.getStopIntake()
@@ -205,7 +205,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
 
 
-            launchInMotifOrder(motif, 2);
+            launchInMotifOrder(motif, 0);
         }
 
         if (secondMark) {
@@ -213,14 +213,14 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[2],
-                    autonomousActionBuilder.getIndexAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherFar(),
                         autonomousActionBuilder.getStopIntake()
@@ -229,7 +229,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             ));
 
 
-            launchInMotifOrder(motif, 0);
+            launchInMotifOrder(motif, 1);
 
         }
 
@@ -253,7 +253,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             ));
 
 
-            launchInMotifOrder(motif, 1);
+            launchInMotifOrder(motif, 2);
 
         }
 

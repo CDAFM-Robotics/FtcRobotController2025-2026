@@ -182,14 +182,40 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[2],
-                    autonomousActionBuilder.getIndexAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getStopIntake(),
+                        autonomousActionBuilder.getSpinLauncherClose()
+                    )
+                )
+            ));
+
+            //Actions.runBlocking(trajectories[1]);
+
+            launchInMotifOrder(motif, 2);
+        }
+
+        if (secondMark) {
+
+            // Pickup second mark
+            // TODO: Why 8 second timeout?
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[3],
+                    autonomousActionBuilder.getIndexIntakeAction(0),
+                    new SequentialAction(
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
                         autonomousActionBuilder.getStopIntake(),
                         autonomousActionBuilder.getSpinLauncherClose()
                     )
@@ -201,33 +227,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             launchInMotifOrder(motif, 1);
         }
 
-        if (secondMark) {
-
-            // Pickup second mark
-
-            Actions.runBlocking(new SequentialAction(
-                new ParallelAction(
-                    trajectories[3],
-                    autonomousActionBuilder.getIndexAction(0),
-                    new SequentialAction(
-                        autonomousActionBuilder.getStartIntake(),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
-                        autonomousActionBuilder.getIndexAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
-                        autonomousActionBuilder.getIndexAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
-                        autonomousActionBuilder.getStopIntake(),
-                        autonomousActionBuilder.getSpinLauncherClose()
-                    )
-                )
-            ));
-
-            //Actions.runBlocking(trajectories[1]);
-
-            launchInMotifOrder(motif, 0);
-        }
-
-        // LEave
+        // Leave
 
         Actions.runBlocking(new ParallelAction(
             trajectories[4],

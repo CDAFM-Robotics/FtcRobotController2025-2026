@@ -96,6 +96,20 @@ public class Indexer {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
+    public Action getGotoZeroBall_IntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+    }
+
+    public Action getGoToOneBall_IntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+    }
+
+    public Action getGoToTwoBall_IntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+    }
+
+
+
     public Action getWaitUntilBallInIndexerAction(double timeout) {
         return new RunTimeoutAction(
             new WaitUntilAction(
