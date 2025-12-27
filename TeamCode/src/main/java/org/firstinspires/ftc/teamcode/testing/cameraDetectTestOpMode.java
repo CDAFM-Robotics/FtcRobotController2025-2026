@@ -47,11 +47,11 @@ public class cameraDetectTestOpMode extends LinearOpMode {
         while(opModeIsActive() || opModeInInit()){
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            telemetry.addLine("***********************************************************");
+            telemetry.addLine("****************************************************");
             telemetry.addData("BIGGEST BLOB X", biggestBlob.getX());
             telemetry.addData("BIGGEST BLOB Y", biggestBlob.getY());
             telemetry.addData("BIGGEST BLOB RADIUS", biggestBlob.getRadius());
-            telemetry.addLine("***********************************************************");
+            telemetry.addLine("****************************************************");
 
             List<ColorBlobLocatorProcessor.Blob> detectedBlobs = colorBlobLocatorProcessor.getBlobs();
             for(ColorBlobLocatorProcessor.Blob blob : detectedBlobs){
@@ -72,11 +72,11 @@ public class cameraDetectTestOpMode extends LinearOpMode {
     }
     void initVisionPortal(){
         colorBlobLocatorProcessor = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
+                .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
                 .setRoi(ImageRegion.entireFrame())
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setDrawContours(true)
-                .setCircleFitColor(Color.MAGENTA)
+                .setCircleFitColor(Color.GREEN)
                 .setDilateSize(dialateSize)
                 .setErodeSize(erosionSize)
                 .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
@@ -87,8 +87,6 @@ public class cameraDetectTestOpMode extends LinearOpMode {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .enableLiveView(true)
                 .build();
-
-
     }
 }
 

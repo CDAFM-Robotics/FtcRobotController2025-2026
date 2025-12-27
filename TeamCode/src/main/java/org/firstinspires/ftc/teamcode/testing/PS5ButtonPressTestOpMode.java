@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name = "PS5 Button Test", group = "testing")
 
 public class PS5ButtonPressTestOpMode extends LinearOpMode {
 
+    Gamepad.LedEffect ledEffect = new Gamepad.LedEffect.Builder()
+            .addStep(255, 0,0, 300)
+            .build();
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
@@ -29,6 +33,13 @@ public class PS5ButtonPressTestOpMode extends LinearOpMode {
             addData("leftStickY", gamepad1.touchpad_finger_1_y);
             addData("rightStickX", gamepad1.touchpad_finger_2_x);
             addData("rightStickY", gamepad1.touchpad_finger_2_y);
+
+            addData("touchpad button 1", gamepad1.touchpad);
+            if(gamepad1.touchpad){
+                //gamepad1.runLedEffect(ledEffect);
+                gamepad1.setLedColor(60, 60, 60, 800);
+            }
+
 
             
 
@@ -100,6 +111,10 @@ public class PS5ButtonPressTestOpMode extends LinearOpMode {
 
             addData("share", gamepad2.share);
             addData("options", gamepad2.options);
+
+            if(gamepad1.triangle){
+                gamepad1.rumble(250);
+            }
 
             telemetry.update();
         }

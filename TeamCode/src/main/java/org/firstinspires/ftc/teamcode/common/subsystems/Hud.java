@@ -19,6 +19,7 @@ public class Hud {
     Telemetry telemetry;
 
     public QwiicLEDStick ledstrip;
+    public QwiicLEDStick ledstripFront;
 
     public static int LED_STICK_BRIGHTNESS=6; // Brightness (1-31)
     public static int LED_STICK_TOTAL_LEDS=10; // How many Total LED there are to control
@@ -53,6 +54,9 @@ public class Hud {
         ledstrip = hardwareMap.get(QwiicLEDStick.class, "ledstrip");
         ledstrip.changeLength(LED_STICK_TOTAL_LEDS); // limit addressable LED to number of LED installed
         ledstrip.setBrightness(LED_STICK_BRIGHTNESS);// 10 LEDs at brightness 31 generates 660ma current
+        ledstripFront = hardwareMap.get(QwiicLEDStick.class, "ledstripFront");
+        ledstripFront.changeLength(LED_STICK_TOTAL_LEDS);
+        ledstripFront.setBrightness(LED_STICK_BRIGHTNESS);
     }
 
     public void UpdateBallUI() {
@@ -65,10 +69,14 @@ public class Hud {
             last1 = ball1;
             // Ball1 (bottom) LEDs 0-2
             ledstrip.setColor(0, Balls[ball1.ordinal()]);
+            ledstripFront.setColor(0, Balls[ball1.ordinal()]);
+
             sleep(ms_delay);
             ledstrip.setColor(1, Balls[ball1.ordinal()]);
+            ledstripFront.setColor(1, Balls[ball1.ordinal()]);
             sleep(ms_delay);
             ledstrip.setColor(2, Balls[ball1.ordinal()]);
+            ledstripFront.setColor(2, Balls[ball1.ordinal()]);
             sleep(ms_delay);
         }
 
@@ -76,10 +84,16 @@ public class Hud {
             last2 = ball2;
             // Ball2
             ledstrip.setColor(3, Balls[ball2.ordinal()]);
+            ledstripFront.setColor(3, Balls[ball2.ordinal()]);
+
             sleep(ms_delay);
             ledstrip.setColor(4, Balls[ball2.ordinal()]);
+            ledstripFront.setColor(4, Balls[ball2.ordinal()]);
+
             sleep(ms_delay);
             ledstrip.setColor(5, Balls[ball2.ordinal()]);
+            ledstripFront.setColor(5, Balls[ball2.ordinal()]);
+
             sleep(ms_delay);
 
         }
@@ -87,10 +101,15 @@ public class Hud {
             // Drop2_sensor (bottom) LEDs 5-8
             last3 = ball3;
             ledstrip.setColor(6, Balls[ball3.ordinal()]);
+            ledstripFront.setColor(6, Balls[ball3.ordinal()]);
+
             sleep(ms_delay);
             ledstrip.setColor(7, Balls[ball3.ordinal()]);
+            ledstripFront.setColor(7, Balls[ball3.ordinal()]);
+
             sleep(ms_delay);
             ledstrip.setColor(8, Balls[ball3.ordinal()]);
+            ledstripFront.setColor(8, Balls[ball3.ordinal()]);
             sleep(ms_delay);
             //
          //    ledstrip.setColor(9, Balls[ball3.ordinal()]);
@@ -101,6 +120,8 @@ public class Hud {
         if (aimLED != lastAimLED) {
             lastAimLED = aimLED;
             ledstrip.setColor(9, Balls[aimLED.ordinal()]);
+            ledstripFront.setColor(9, Balls[aimLED.ordinal()]);
+
             sleep(ms_delay);
         }
     }
