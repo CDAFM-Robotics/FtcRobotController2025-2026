@@ -36,7 +36,7 @@ public class RedBackAutonomousOpMode extends LinearOpMode {
 
         trajectories = autonomousActionBuilder.getRedFarTrajectories();
 
-        otherActions = autonomousActionBuilder.getOtherActions();
+
 
         Robot.ArtifactColor[] motif = null;
 

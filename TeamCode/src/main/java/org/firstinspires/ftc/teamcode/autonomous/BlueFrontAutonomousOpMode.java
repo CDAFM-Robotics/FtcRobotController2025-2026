@@ -184,7 +184,6 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                     trajectories[2],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexAction(1),
@@ -211,13 +210,12 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                     trajectories[3],
                     autonomousActionBuilder.getIndexAction(0),
                     new SequentialAction(
-                        new SleepAction(0),
                         autonomousActionBuilder.getStartIntake(),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
                         autonomousActionBuilder.getIndexAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
                         autonomousActionBuilder.getIndexAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
                         autonomousActionBuilder.getStopIntake(),
                         autonomousActionBuilder.getSpinLauncherClose()
                     )

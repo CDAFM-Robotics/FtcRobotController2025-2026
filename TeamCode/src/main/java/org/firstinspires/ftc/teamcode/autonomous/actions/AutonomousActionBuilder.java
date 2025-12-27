@@ -38,6 +38,7 @@ public class AutonomousActionBuilder {
     public Action blueAprilTagReadToCloseLaunch;
     public Action blueCloseLaunchPickupFirstMark;
     public Action blueCloseLaunchPickupSecondMark;
+    public Action blueCloseLaunchPickupSecondMarkHitGate;
     public Action blueCloseLaunchToLeaveLaunchZone;
 
     public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-111.5)); // TODO 14nov25 -113
@@ -52,7 +53,7 @@ public class AutonomousActionBuilder {
     public static Pose2d blueFarLaunchPose = new Pose2d(49, -12.5, Math.toRadians(-64));
     public static Pose2d blueCloseLaunchPose = new Pose2d(-20, -20, Math.toRadians(-40));
     public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -30), Math.toRadians(-90));
-    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -57), Math.toRadians(-90));
+    public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -56), Math.toRadians(-90));
     public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(14, -30), Math.toRadians(-90));
     public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(14, -62), Math.toRadians(-90));
     public static Pose2d blueThirdMarkStart = new Pose2d(36, -30, Math.toRadians(-90));
@@ -190,6 +191,28 @@ public class AutonomousActionBuilder {
             .splineToSplineHeading(blueSecondMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(blueSecondMarkEnd.position, slowTranslationalVelConstraint)
             .setTangent(Math.toRadians(90))
+            .splineToSplineHeading(new Pose2d(11.5, -46, Math.toRadians(180)), Math.toRadians(90), normalTranslationalVelConstraint)
+            .splineToSplineHeading(new Pose2d(2, -56, Math.toRadians(180)), Math.toRadians(-90), normalTranslationalVelConstraint)
+            .setTangent(Math.toRadians(90))
+            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
+            .build();
+
+//        blueCloseLaunchPickupSecondMark = md.actionBuilder(blueCloseLaunchPose)
+//            .setTangent(Math.toRadians(-10))
+//            .splineToSplineHeading(blueSecondMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint, lowAccelConstraint)
+//            .strafeToConstantHeading(blueSecondMarkEnd.position, slowTranslationalVelConstraint)
+//            .setTangent(Math.toRadians(90))
+//            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
+//            .build();
+
+        blueCloseLaunchPickupSecondMarkHitGate = md.actionBuilder(blueCloseLaunchPose)
+            .setTangent(Math.toRadians(-10))
+            .splineToSplineHeading(blueSecondMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint, lowAccelConstraint)
+            .strafeToConstantHeading(blueSecondMarkEnd.position, slowTranslationalVelConstraint)
+            .setTangent(Math.toRadians(90))
+            .splineToSplineHeading(new Pose2d(11.5, -46, Math.toRadians(180)), Math.toRadians(90), normalTranslationalVelConstraint)
+            .splineToSplineHeading(new Pose2d(2, -56, Math.toRadians(180)), Math.toRadians(-90), normalTranslationalVelConstraint)
+            .setTangent(Math.toRadians(90))
             .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
             .build();
 
@@ -238,30 +261,12 @@ public class AutonomousActionBuilder {
         };
     }
 
-
-    public Supplier[] getOtherActions() {
-        return new Supplier[] {
-            () -> robot.getLauncher().getSpinLauncherAction(1380),
-            () -> robot.getLauncher().getStopLauncherAction(),
-            () -> robot.getIndexer().getGoToZeroBallAction(),
-            () -> robot.getIndexer().getGoToOneBallAction(),
-            () -> robot.getIndexer().getGoToTwoBallAction(),
-            () -> robot.getLauncher().getKickBallAction(),
-            () -> robot.getIntake().getStartIntakeAction(),
-            () -> robot.getIntake().getStopIntakeAction(),
-            () -> robot.getLauncher().getResetKickerAction(),
-            () -> robot.getLauncher().getSpinLauncherAction(1300),
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(4),
-            () -> robot.getIndexer().getWaitUntilBallInIndexerAction(1.5)
-        };
-    }
-
     public Action getSpinLauncherFar() {
         return robot.getLauncher().getSpinLauncherAction(1360);
     }
 
     public Action getSpinLauncherClose() {
-        return robot.getLauncher().getSpinLauncherAction(1140);
+        return robot.getLauncher().getSpinLauncherAction(1200);
     }
 
     public Action getLauncherIsReadyFar() {
@@ -269,7 +274,7 @@ public class AutonomousActionBuilder {
     }
 
     public Action getLauncherIsReadyClose() {
-        return robot.getLauncher().getWaitUntilVelocityAction(1140, 1);
+        return robot.getLauncher().getWaitUntilVelocityAction(1160, 1);
     }
 
     public Action getStopLauncher() {

@@ -203,7 +203,7 @@ public class Indexer {
             telemetry.addLine("ERROR: updateBallColors");
         }
 
-        int color[] = {0,0,0,0};
+        int[] color = {0,0,0,0};
 
         for (int j=0; j<5;j++) {
             artifactColorArray[i] = getPredictedColor(

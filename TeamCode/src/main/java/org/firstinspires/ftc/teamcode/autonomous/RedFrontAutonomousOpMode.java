@@ -23,7 +23,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
     Action[] trajectories;
 
-    Supplier<Action>[] otherActions;
+
 
     AutonomousActionBuilder autonomousActionBuilder;
 
@@ -37,7 +37,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
         trajectories = autonomousActionBuilder.getRedCloseTrajectories();
 
-        otherActions = autonomousActionBuilder.getOtherActions();
+
 
         Robot.ArtifactColor[] motif = null;
 

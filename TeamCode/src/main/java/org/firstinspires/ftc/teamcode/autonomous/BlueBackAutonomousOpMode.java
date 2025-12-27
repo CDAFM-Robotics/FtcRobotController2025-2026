@@ -36,7 +36,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
         trajectories = autonomousActionBuilder.getBlueFarTrajectories();
 
-        otherActions = autonomousActionBuilder.getOtherActions();
+
 
         Robot.ArtifactColor[] motif = null;
 
