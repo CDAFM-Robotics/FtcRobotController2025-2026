@@ -67,7 +67,7 @@ public class Indexer {
                 initialized = true;
             }
 
-            return !getIndexerServoAtPosition(position, 0.05);
+            return !getIndexerServoAtPosition(position, 0.08);
 
         }
     }
@@ -539,8 +539,8 @@ public class Indexer {
     }
 
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
-        double indexerposition = getAxonServoPosition();
-        return Math.abs(indexerposition - position) < accuracy;
+        double indexerPosition = getAxonServoPosition();
+        return Math.abs(indexerPosition - position) < accuracy;
     }
 
     public boolean indexerFinishedTurning() {
