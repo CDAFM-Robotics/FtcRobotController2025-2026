@@ -12,8 +12,6 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-import java.util.function.Supplier;
-
 public class AutonomousActionBuilder {
 
     public Action redFarStartToFarLaunch;
@@ -282,13 +280,13 @@ public class AutonomousActionBuilder {
     }
 
     // Output
-    public Action getIndexAction(int indexPos) {
-        return indexPos == 0 ? robot.getIndexer().getGoToZeroBallAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBallAction() : robot.getIndexer().getGoToTwoBallAction());
+    public Action getIndexOutputAction(int indexPos) {
+        return indexPos == 0 ? robot.getIndexer().getGoToZeroBallOutputAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBallOutputAction() : robot.getIndexer().getGoToTwoBallOutputAction());
     }
 
     // Intake
     public Action getIndexIntakeAction(int indexPos) {
-        return indexPos == 0 ? robot.getIndexer().getGotoZeroBall_IntakeAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBall_IntakeAction() : robot.getIndexer().getGoToTwoBall_IntakeAction());
+        return indexPos == 0 ? robot.getIndexer().getGotoZeroBallIntakeAction() : (indexPos == 1 ? robot.getIndexer().getGoToOneBallIntakeAction() : robot.getIndexer().getGoToTwoBallIntakeAction());
     }
 
 

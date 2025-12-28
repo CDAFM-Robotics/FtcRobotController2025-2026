@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -40,13 +39,6 @@ public class Indexer {
     AnalogInput indexerServoVoltage = null;
 
     public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
-
-    //public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
-    //public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
-    //public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
-    //public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
-    //public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
-    //public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
 
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
@@ -84,27 +76,27 @@ public class Indexer {
         return new RotateIndexerAction(position);
     }
 
-    public Action getGoToZeroBallAction() {
+    public Action getGoToZeroBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    public Action getGoToOneBallAction() {
+    public Action getGoToOneBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
-    public Action getGoToTwoBallAction() {
+    public Action getGoToTwoBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
 
-    public Action getGotoZeroBall_IntakeAction() {
+    public Action getGotoZeroBallIntakeAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
     }
 
-    public Action getGoToOneBall_IntakeAction() {
+    public Action getGoToOneBallIntakeAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
     }
 
-    public Action getGoToTwoBall_IntakeAction() {
+    public Action getGoToTwoBallIntakeAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
     }
 

@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -165,7 +164,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         }
 
         if (motif[0] != Robot.ArtifactColor.GREEN) {
-            Actions.runBlocking(autonomousActionBuilder.getIndexAction(1));
+            Actions.runBlocking(autonomousActionBuilder.getIndexOutputAction(1));
         }
 
         Actions.runBlocking(new ParallelAction(
@@ -204,18 +203,18 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         if (secondMark) {
 
             // Pickup second mark
-            // TODO: Why 8 second timeout?
+            // TODO: Why 8 second timeout? changing to match red front
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[3],
                     autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexIntakeAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getIndexIntakeAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(8),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getStopIntake(),
                         autonomousActionBuilder.getSpinLauncherClose()
                     )
@@ -236,13 +235,13 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
     }
 
     public void launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
-        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0));
+        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 0 ? 1 : 0));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2)));
+        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 2 ? 1 : 2)));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2));
+        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 2 ? 1 : 2));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(new ParallelAction(
             autonomousActionBuilder.getStopLauncher(),
