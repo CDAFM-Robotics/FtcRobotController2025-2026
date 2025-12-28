@@ -163,19 +163,14 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
         }
 
 
-
-
-
-
-
         // Go to the Launch Pose
 
         Actions.runBlocking(new SequentialAction(
-            new ParallelAction(
+                //new ParallelAction(
                 trajectories[0],
                 autonomousActionBuilder.getSpinLauncherFar()
-            ),
-            new SleepAction(0.5)
+                //),
+            // new SleepAction(0.5)
         ));
 
 

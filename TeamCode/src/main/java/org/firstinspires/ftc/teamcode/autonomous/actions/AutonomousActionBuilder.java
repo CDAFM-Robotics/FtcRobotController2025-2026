@@ -55,12 +55,12 @@ public class AutonomousActionBuilder {
     public static Pose2d blueFirstMarkStart = new Pose2d(new Vector2d(-11.5, -30), Math.toRadians(-90));
     public static Pose2d blueFirstMarkEnd = new Pose2d(new Vector2d(-11.5, -56), Math.toRadians(-90));
     public static Pose2d blueSecondMarkStart = new Pose2d(new Vector2d(14, -30), Math.toRadians(-90));
-    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(14, -62), Math.toRadians(-90));
+    public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(14, -60), Math.toRadians(-90)); // Y: -62
     public static Pose2d blueThirdMarkStart = new Pose2d(36, -30, Math.toRadians(-90));
-    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90));
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -52), Math.toRadians(-90)); // Y: -62
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
-    public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(25);
+    public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(35); // was 25 (27Dec25)
 
     public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-10, 15);
 
@@ -262,7 +262,7 @@ public class AutonomousActionBuilder {
     }
 
     public Action getSpinLauncherFar() {
-        return robot.getLauncher().getSpinLauncherAction(1360);
+        return robot.getLauncher().getSpinLauncherAction(1380);  // was 1360 (27Dec25)
     }
 
     public Action getSpinLauncherClose() {
