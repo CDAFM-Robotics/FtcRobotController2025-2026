@@ -19,7 +19,7 @@ public class Hud {
     public QwiicLEDStick ledstripRear;
     public QwiicLEDStick ledstripFront;
 
-    public static int LED_STICK_BRIGHTNESS=8; // Brightness (1-31)
+    public static int LED_STICK_BRIGHTNESS=5; // Brightness (1-31)
     public static int LED_STICK_TOTAL_LEDS=10; // How many Total LED there are to control
     public static int ms_delay=8;
 
@@ -110,9 +110,9 @@ public class Hud {
 //                    colors_all[9]
 //            );
             ledstripRear.setColors(colors_all);
-            sleep(ms_delay);
+            sleep(2*ms_delay);
             ledstripFront.setColors(colors_all);
-            sleep(ms_delay);
+            sleep(2*ms_delay);
         }
 
     }
