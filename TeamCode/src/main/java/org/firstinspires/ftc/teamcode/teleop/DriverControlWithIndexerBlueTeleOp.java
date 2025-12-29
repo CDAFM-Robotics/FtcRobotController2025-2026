@@ -126,10 +126,12 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             if (currentGamepad1.a != previousGamepad1.a) {
                 robot.getDriveBase().setKickStand();
+                robot.getDriveBase().setKickStandLight();
             }
 
             if (currentGamepad1.b != previousGamepad1.b) {
                 robot.getDriveBase().resetKickStand();
+                robot.getDriveBase().resetKickStandLight();
             }
 
             // Manual Indexer control. (deprecated)
