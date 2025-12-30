@@ -40,11 +40,11 @@ public class Indexer {
 
     public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10; // 0.10 (pre29Dec) was 0.07 one is at wait; two is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.47; // 0.51 (pre29Dec) was 0.5 zero is at intake; two is at wait
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.84; // 0.89 (pre29Dec) was as 0.93 zero is at wait; one is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
 
     public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;
@@ -150,7 +150,7 @@ public class Indexer {
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
 
-        if (sensor1Distance > 5) {
+        if (sensor1Distance > 5) {;//w
             sensor1DetectedColor = Robot.ArtifactColor.NONE;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {

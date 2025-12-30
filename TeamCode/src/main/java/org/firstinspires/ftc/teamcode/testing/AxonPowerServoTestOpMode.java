@@ -28,6 +28,7 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
 
         double voltageOffset = 0.228;
         double voltageScaler = 27/0.2815; // 27 degrees / 0.2815 on average change b/t every number
+        double theReading = 0.0;
 
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -49,6 +50,13 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
             }
             if (currentGamepad1.b && !previousGamepad1.b) {
                 position -= 0.1;
+            }
+
+            if (currentGamepad1.x && !previousGamepad1.x) {
+                position += 0.01;
+            }
+            if (currentGamepad1.y && !previousGamepad1.y) {
+                position -= 0.01;
             }
 
             /*
@@ -81,7 +89,9 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
             mpos = (axon_position_V.getVoltage() - voltageOffset) * voltageScaler;
             telemetry.addData("set position", position * 270);
             telemetry.addData("measured position", mpos);
-            telemetry.addData("Voltage: ", axon_position_V.getVoltage());
+            theReading  =axon_position_V.getVoltage();
+            telemetry.addData("Voltage: ", theReading);
+            telemetry.addData( "/ 3.3v: (0-1 pos)", theReading / 3.3);
             telemetry.update();
         }
     }

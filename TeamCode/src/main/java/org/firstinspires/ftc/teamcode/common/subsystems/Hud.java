@@ -5,6 +5,7 @@ import android.graphics.Color;
 import androidx.annotation.ColorInt;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +22,7 @@ public class Hud {
 
     public static int LED_STICK_BRIGHTNESS=5; // Brightness (1-31)
     public static int LED_STICK_TOTAL_LEDS=10; // How many Total LED there are to control
-    public static int ms_delay=8;
+    public static int ms_delay=9;
 
     // ColorTable2 is the possible COLORS for 2025-2026 Decode
     public enum ColorTable {PURPLE, GREEN, NONE, RED, WHITE}
@@ -32,16 +33,19 @@ public class Hud {
     public ColorTable ball3, last3 = ColorTable.NONE;
     public ColorTable aimLED, lastAimLED = ColorTable.NONE;
 
+    public ElapsedTime timeSinceLastHUDChange = new ElapsedTime();
+
     // Pre-defined color values for valid Balls (2025-2026) (same order as Enum)
-    public @ColorInt int[] Balls = new int[]{
-            Color.parseColor("purple"), // purple
+    public static @ColorInt int[] Balls = new int[]{
+            // Color.parseColor("purple"), // purple
+            Color.rgb(255,0,255), // purple (direct)
             Color.rgb(0,255,0), // green
             Color.rgb(0,0,0), // off
             Color.parseColor("red"), // red
             Color.parseColor("silver") // white
     };
 
-    private @ColorInt int[] colors_all = new int[]{
+    public static @ColorInt int[] colors_all = new int[]{
             Color.rgb(0, 0, 0),
             Color.rgb(0, 0, 0),
             Color.rgb(0, 0, 0),
@@ -68,14 +72,22 @@ public class Hud {
         ledstripFront = hardwareMap.get(QwiicLEDStick.class, "ledstripFront");
         ledstripFront.changeLength(LED_STICK_TOTAL_LEDS);
         ledstripFront.setBrightness(LED_STICK_BRIGHTNESS);
+        timeSinceLastHUDChange.reset();
+
+        // Set LAST to an unused color to ensure it gets updated once at init to clear carryover.
+        last1 = ColorTable.WHITE;
+        last2 = ColorTable.WHITE;
+        last3 = ColorTable.WHITE;
+        lastAimLED = ColorTable.WHITE;
+        RobotLog.d("HUD: Init %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
     }
 
     public void UpdateBallUI2() {
 
-
-        if (ball1 != last1 || ball2 != last2 || ball3 != last3 || aimLED != lastAimLED)
+        int[] color_test = new int[] {};
+        if (((ball1 != last1) || (ball2 != last2) || (ball3 != last3) || (aimLED != lastAimLED)) && timeSinceLastHUDChange.milliseconds() >= 250 )
         {
-            RobotLog.d("HUD: %s %s %s %s", ball1,ball2,ball3,aimLED);
+            RobotLog.d("HUD: %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
             if (ball1 != last1)
             {
                 last1 = ball1;
@@ -103,16 +115,15 @@ public class Hud {
                 colors_all[9] = Balls[aimLED.ordinal()];
             }
 
-//            RobotLog.d("HUD: %d %d %d | %d %d %d | %d %d %d | %d",
-//                    colors_all[0], colors_all[1], colors_all[2],
-//                    colors_all[3], colors_all[4], colors_all[5],
-//                    colors_all[6], colors_all[7], colors_all[8],
-//                    colors_all[9]
-//            );
+            RobotLog.d("HUD: colors_all [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]",
+                    colors_all[0],colors_all[1],colors_all[2],
+                    colors_all[3],colors_all[4],colors_all[5],
+                    colors_all[6],colors_all[7],colors_all[8],
+                    colors_all[9]);
+
             ledstripRear.setColors(colors_all);
-            sleep(2*ms_delay);
             ledstripFront.setColors(colors_all);
-            sleep(2*ms_delay);
+            timeSinceLastHUDChange.reset();
         }
 
     }
@@ -131,13 +142,15 @@ public class Hud {
             last1 = ball1;
             // Ball1 (bottom) LEDs 0-2
             ledstripRear.setColor(0, Balls[ball1.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(0, Balls[ball1.ordinal()]);
-
             sleep(ms_delay);
             ledstripRear.setColor(1, Balls[ball1.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(1, Balls[ball1.ordinal()]);
             sleep(ms_delay);
             ledstripRear.setColor(2, Balls[ball1.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(2, Balls[ball1.ordinal()]);
             sleep(ms_delay);
         }
@@ -146,16 +159,16 @@ public class Hud {
             last2 = ball2;
             // Ball2
             ledstripRear.setColor(3, Balls[ball2.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(3, Balls[ball2.ordinal()]);
-
             sleep(ms_delay);
             ledstripRear.setColor(4, Balls[ball2.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(4, Balls[ball2.ordinal()]);
-
             sleep(ms_delay);
             ledstripRear.setColor(5, Balls[ball2.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(5, Balls[ball2.ordinal()]);
-
             sleep(ms_delay);
 
         }
@@ -163,14 +176,17 @@ public class Hud {
             // Drop2_sensor (bottom) LEDs 5-8
             last3 = ball3;
             ledstripRear.setColor(6, Balls[ball3.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(6, Balls[ball3.ordinal()]);
 
             sleep(ms_delay);
             ledstripRear.setColor(7, Balls[ball3.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(7, Balls[ball3.ordinal()]);
 
             sleep(ms_delay);
             ledstripRear.setColor(8, Balls[ball3.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(8, Balls[ball3.ordinal()]);
             sleep(ms_delay);
         }
@@ -178,6 +194,7 @@ public class Hud {
         if (aimLED != lastAimLED) {
             lastAimLED = aimLED;
             ledstripRear.setColor(9, Balls[aimLED.ordinal()]);
+            sleep(ms_delay);
             ledstripFront.setColor(9, Balls[aimLED.ordinal()]);
             sleep(ms_delay);
         }

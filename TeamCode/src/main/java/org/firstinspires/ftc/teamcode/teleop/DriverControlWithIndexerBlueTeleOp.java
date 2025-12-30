@@ -238,13 +238,12 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
-            RobotLog.d("launcher velocity: %f",
-                    robot.getLauncher().getLauncherVelocity());
+            // RobotLog.d("launcher velocity: %f", robot.getLauncher().getLauncherVelocity());
 
             // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
             robot.getHud().setAimIndicator(isAiming);
-            robot.getHud().UpdateBallUI2();
+            robot.getHud().UpdateBallUI();
 
             // TODO Add timing Log at end of loop
 //            RobotLog.d("c0: %s c1: %s c2: %s",
