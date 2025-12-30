@@ -524,10 +524,10 @@ public class Launcher {
         limelight.pipelineSwitch(pipeline);
     }
 
-    public void setLimelightPipeline(boolean isRed, boolean isBlue) {
+    public void setLimelightPipeline(boolean isRed) {
         if (isRed) {
             limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        } else if (isBlue) {
+        } else {
             limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
         }
     }
@@ -551,7 +551,7 @@ public class Launcher {
         return answer;
     }
 
-    public double setAimPowerPID (double time, boolean isRed, boolean isBlue) {
+    public double setAimPowerPID (double time, boolean isRed) {
         double currentTime = time;
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -560,7 +560,7 @@ public class Launcher {
         double power = 0;
         if(result.isValid()) {
             double currentX = result.getTx();
-            if (isBlue) {
+            if (!isRed) {
                 currentX -= 1.25;
             }
 

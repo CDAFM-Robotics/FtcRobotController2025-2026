@@ -4,12 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.sun.tools.javac.code.Scope;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 
-@TeleOp(name = "Axon Servo Test", group = "testing")
-public class AxonPowerServoTestOpMode extends LinearOpMode {
+@TeleOp(name = "Servo Test", group = "testing")
+public class ServoTestOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,9 +25,10 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
         double position = 0;
         double mpos = 0;
 
+        double led_power = 0.0;
+
         double voltageOffset = 0.228;
         double voltageScaler = 27/0.2815; // 27 degrees / 0.2815 on average change b/t every number
-        double theReading = 0.0;
 
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -38,6 +38,23 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
 
         waitForStart();
 
+        // 2025 - 2026 (Archimedes)
+        // Control HUB
+        // 0 Indexer Servo (Axoon)
+        // 1 Kicker
+        // 2 Undef
+        // 3 UNdef
+        // 4 kickStandLight
+        // 5 rightKickStand
+
+        // Exp Hub
+        // 0 leftKickStand
+        // 1 Undef
+        // 2 Undef
+        // 3 Undef
+        // 4 Undef
+        // 5 Undef
+
         while (opModeIsActive()) {
 
             previousGamepad1.copy(currentGamepad1);
@@ -45,6 +62,7 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
+            // A/B Test Axon (Indexer)
             if (currentGamepad1.a && !previousGamepad1.a) {
                 position += 0.1;
             }
@@ -52,12 +70,47 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
                 position -= 0.1;
             }
 
-            if (currentGamepad1.x && !previousGamepad1.x) {
-                position += 0.01;
+            // X/Y Kick Stand   (Left = ControlHub P5 / Right = ExpHub P0
+            if (currentGamepad1.x != previousGamepad1.x) {
+                robot.getDriveBase().setKickStand();
             }
-            if (currentGamepad1.y && !previousGamepad1.y) {
-                position -= 0.01;
+
+            if (currentGamepad1.y != previousGamepad1.y) {
+                robot.getDriveBase().resetKickStand();
             }
+
+
+            // U/D Kick Stand Lights
+            if (currentGamepad1.dpad_up != previousGamepad1.dpad_up) {
+                robot.getDriveBase().setKickStandLight();
+                led_power = 1.0;
+            }
+
+            if (currentGamepad1.dpad_down != previousGamepad1.dpad_down) {
+                robot.getDriveBase().resetKickStandLight();
+                led_power = 0.0;
+            }
+
+            // L/R Kick Stand Lights
+            if (currentGamepad1.dpad_right != previousGamepad1.dpad_right) {
+                led_power += 0.1;
+                if (led_power >= 1.0)
+                {
+                    led_power = 1.0;
+                }
+                robot.getDriveBase().adjustKickStandLight(led_power);
+            }
+
+            if (currentGamepad1.dpad_left != previousGamepad1.dpad_left) {
+                led_power -= 0.1;
+                if (led_power <= 0.0)
+                {
+                    led_power = 0.0;
+                }
+                robot.getDriveBase().adjustKickStandLight(led_power);
+            }
+
+
 
             /*
 
@@ -87,11 +140,11 @@ public class AxonPowerServoTestOpMode extends LinearOpMode {
 
             robot.getIndexer().rotateToPosition(position);
             mpos = (axon_position_V.getVoltage() - voltageOffset) * voltageScaler;
-            telemetry.addData("set position", position * 270);
-            telemetry.addData("measured position", mpos);
-            theReading  =axon_position_V.getVoltage();
-            telemetry.addData("Voltage: ", theReading);
-            telemetry.addData( "/ 3.3v: (0-1 pos)", theReading / 3.3);
+            telemetry.addLine("A/B: Indexer,  X/Y: KickStand,  Up/Dn: kickStandLight,  RT: Kicker");
+            telemetry.addData("Axon set position: ", position * 270);
+            telemetry.addData("measured position: ", mpos);
+            telemetry.addData("Voltage: ", axon_position_V.getVoltage());
+            telemetry.addData("light power: ", led_power);
             telemetry.update();
         }
     }

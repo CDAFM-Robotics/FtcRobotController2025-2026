@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -41,18 +40,11 @@ public class Indexer {
 
     public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
 
-    //public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
-    //public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
-    //public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
-    //public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
-    //public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
-    //public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
-
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10;//was 0.07 one is at wait; two is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10; // 0.10 (pre29Dec) was 0.07 one is at wait; two is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.51;//was 0.5 zero is at intake; two is at wait
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.47; // 0.51 (pre29Dec) was 0.5 zero is at intake; two is at wait
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.89;//was 0.93 zero is at wait; one is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.84; // 0.89 (pre29Dec) was as 0.93 zero is at wait; one is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
 
     public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;
@@ -75,7 +67,7 @@ public class Indexer {
                 initialized = true;
             }
 
-            return !getIndexerServoAtPosition(position, 0.05);
+            return !getIndexerServoAtPosition(position, 0.08);
 
         }
     }
@@ -84,17 +76,31 @@ public class Indexer {
         return new RotateIndexerAction(position);
     }
 
-    public Action getGoToZeroBallAction() {
+    public Action getGoToZeroBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    public Action getGoToOneBallAction() {
+    public Action getGoToOneBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
     }
 
-    public Action getGoToTwoBallAction() {
+    public Action getGoToTwoBallOutputAction() {
         return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
     }
+
+    public Action getGotoZeroBallIntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE);
+    }
+
+    public Action getGoToOneBallIntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE);
+    }
+
+    public Action getGoToTwoBallIntakeAction() {
+        return getRotateIndexerAction(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);
+    }
+
+
 
     public Action getWaitUntilBallInIndexerAction(double timeout) {
         return new RunTimeoutAction(
@@ -144,7 +150,7 @@ public class Indexer {
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
 
-        if (sensor1Distance > 5) {
+        if (sensor1Distance > 5) {;//w
             sensor1DetectedColor = Robot.ArtifactColor.NONE;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {
@@ -188,12 +194,12 @@ public class Indexer {
         //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
         double position = getIndexerPosition();
 
-        int i = -1;
+        int i = 0;
 
         if (position == POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
             i = 0;
         }
-        else if(position == POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+        else if(position ==POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
             i = 1;
         }
         else if (position == POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
@@ -212,7 +218,8 @@ public class Indexer {
                     ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
                     ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
             //telemetry.addData("updateBallColors index", i);
-            telemetry.addData("updateBallColors color", artifactColorArray[i]);
+            //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
+            //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
             if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
                     color[0]++;
             else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
@@ -230,7 +237,8 @@ public class Indexer {
                         ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
                         ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
                 //telemetry.addData("updateBallColors index", i);
-                telemetry.addData("updateBallColors color", artifactColorArray[i]);
+                //telemetry.addData("updateBallColors color2", artifactColorArray[i]);
+                //RobotLog.d("updateBallColors color2 %s",artifactColorArray[i]);
                 if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
                     color[0]++;
                 else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
@@ -256,6 +264,7 @@ public class Indexer {
             artifactColorArray[i] = Robot.ArtifactColor.NONE;
             telemetry.addLine("ERROR: color UNKNOWN");
         }
+        //RobotLog.d("updateBallColors color final %s",artifactColorArray[i]);
     }
 
     public Robot.ArtifactColor[] getBallColors() {
@@ -266,7 +275,7 @@ public class Indexer {
 
     public double getIndexerPosition() {
         double position = indexerServo.getPosition();
-        telemetry.addData("position get index position", position);
+        //telemetry.addData("getIndexerPosition position", position);
         //RobotLog.d("position get index pos: %.2f", position);
         return (double) Math.round(position * 100) / 100.00;
     }
@@ -525,12 +534,13 @@ public class Indexer {
     }
 
     public double getAxonServoPosition() {
+        //RobotLog.d("getAxonServoPosition: %f", indexerServoVoltage.getVoltage());
         return (indexerServoVoltage.getVoltage() - AXON_SERVO_VOLTAGE_OFFSET) * AXON_SERVO_VOLTAGE_SCALER;
     }
 
     public boolean getIndexerServoAtPosition(double position, double accuracy) {
-        double indexerposition = getAxonServoPosition();
-        return Math.abs(indexerposition - position) < accuracy;
+        double indexerPosition = getAxonServoPosition();
+        return Math.abs(indexerPosition - position) < accuracy;
     }
 
     public boolean indexerFinishedTurning() {

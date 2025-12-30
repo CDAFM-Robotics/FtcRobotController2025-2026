@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
@@ -163,23 +162,18 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
         }
 
 
-
-
-
-
-
         // Go to the Launch Pose
 
-        Actions.runBlocking(new SequentialAction(
-            new ParallelAction(
-                trajectories[0],
+        Actions.runBlocking(new ParallelAction(
+            trajectories[0],
+            new SequentialAction(
+                new SleepAction(0.5),
                 autonomousActionBuilder.getSpinLauncherFar()
-            ),
-            new SleepAction(0.5)
+            )
         ));
 
-        //Actions.runBlocking(launchInMotifOrder(motif));
 
+        // Launch first 3
         launchInMotifOrder(motif, 0);
 
         // Pickup third mark
@@ -189,13 +183,13 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[1],
-                    autonomousActionBuilder.getIndexAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherFar(),
                         autonomousActionBuilder.getStopIntake()
@@ -205,7 +199,7 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
 
 
-            launchInMotifOrder(motif, 2);
+            launchInMotifOrder(motif, 0);
         }
 
         if (secondMark) {
@@ -213,38 +207,14 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[2],
-                    autonomousActionBuilder.getIndexAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(0),
                     new SequentialAction(
                         new SleepAction(0.5),
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getSpinLauncherFar(),
-                        autonomousActionBuilder.getStopIntake()
-                    )
-                )
-            ));
-
-
-            launchInMotifOrder(motif, 0);
-
-        }
-
-        if (firstMark) {
-            Actions.runBlocking(new SequentialAction(
-                new ParallelAction(
-                    trajectories[3],
-                    autonomousActionBuilder.getIndexAction(0),
-                    new SequentialAction(
-                        new SleepAction(1.0),
-                        autonomousActionBuilder.getStartIntake(),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
-                        autonomousActionBuilder.getIndexAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexAction(2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
                         autonomousActionBuilder.getSpinLauncherFar(),
                         autonomousActionBuilder.getStopIntake()
@@ -254,6 +224,30 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
 
 
             launchInMotifOrder(motif, 1);
+
+        }
+
+        if (firstMark) {
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[3],
+                    autonomousActionBuilder.getIndexOutputAction(0),
+                    new SequentialAction(
+                        new SleepAction(1.0),
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getIndexOutputAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getIndexOutputAction(2),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getSpinLauncherFar(),
+                        autonomousActionBuilder.getStopIntake()
+                    )
+                )
+            ));
+
+
+            launchInMotifOrder(motif, 2);
 
         }
 
@@ -268,13 +262,13 @@ public class BlueBackAutonomousOpMode extends LinearOpMode {
     }
 
     public void launchInMotifOrder(Robot.ArtifactColor[] motifPattern, int greenLocation) {
-        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0));
+        Actions.runBlocking(motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 0 ? 1 : 0));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2)));
+        Actions.runBlocking(motifPattern[1] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : (motifPattern[0] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation == 0 ? 1 : 0) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 2 ? 1 : 2)));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(autonomousActionBuilder.getResetKicker());
-        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexAction(greenLocation) : autonomousActionBuilder.getIndexAction(greenLocation == 2 ? 1 : 2));
+        Actions.runBlocking(motifPattern[2] == Robot.ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(greenLocation) : autonomousActionBuilder.getIndexOutputAction(greenLocation == 2 ? 1 : 2));
         Actions.runBlocking(autonomousActionBuilder.getKickBall());
         Actions.runBlocking(new ParallelAction(
             autonomousActionBuilder.getStopLauncher(),

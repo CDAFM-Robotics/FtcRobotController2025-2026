@@ -24,6 +24,7 @@ public class DriveBase {
     private DcMotor backRightMotor = null;
     private Servo leftKickStand = null;
     private Servo rightKickStand = null;
+    private Servo kickStandLight = null;
 
     // private IMU imu;
 
@@ -45,6 +46,7 @@ public class DriveBase {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
         leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
+        kickStandLight = hardwareMap.get(Servo.class, "kickStandLight");
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -59,6 +61,10 @@ public class DriveBase {
         // initialize the kick stand servos
         rightKickStand.setPosition(0.5);
         leftKickStand.setPosition(0.5);
+
+        // ground lights OFF
+        kickStandLight.setPosition(0.0);
+
 
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -146,6 +152,18 @@ public class DriveBase {
     public void resetKickStand() {
         rightKickStand.setPosition(0.5);
         leftKickStand.setPosition(0.5);
+    }
+
+    public void setKickStandLight() {
+        kickStandLight.setPosition(1.0);
+    }
+
+    public void resetKickStandLight(){
+        kickStandLight.setPosition(0.0);
+    }
+
+    public void adjustKickStandLight(double power){
+        kickStandLight.setPosition(power);
     }
 
 }
