@@ -269,7 +269,7 @@ public class Robot {
         }
     }
 
-    public void stratLaunchAGreenBall(){
+    public void startLaunchAGreenBall(){
         if(launcher.isLauncherActive()) {
             //telemetry.addLine("stratLaunchAGreenBall");
             ballColor = ArtifactColor.GREEN;
@@ -281,7 +281,7 @@ public class Robot {
         }
     }
 
-    public void stratLaunchAPurpleBall(){
+    public void startLaunchAPurpleBall(){
         if(launcher.isLauncherActive()) {
             //telemetry.addLine("stratLaunchAPupleBall");
             ballColor = ArtifactColor.PURPLE;
@@ -358,22 +358,29 @@ public class Robot {
 
     public void shootAllBalls() {
         if(launcher.isLauncherActive()) {
-            //telemetry.addLine("shootAllBalls");
-            //telemetry.addData("color:", indexer.artifactColorArray[0]);
-            //telemetry.addData("color:", indexer.artifactColorArray[1]);
-            //telemetry.addData("color:", indexer.artifactColorArray[2]);
+            telemetry.addLine("shootAllBalls");
+            telemetry.addData("color:", indexer.artifactColorArray[0]);
+            telemetry.addData("color:", indexer.artifactColorArray[1]);
+            telemetry.addData("color:", indexer.artifactColorArray[2]);
+            RobotLog.d("shootAllBalls");
+            RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
+            RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
+            RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
+
 
             if (indexer.findABall()) {
                 switch (launchState) {
                     case IDLE:
-                        //telemetry.addLine("shootAllBalls: IDLE");
+                        telemetry.addLine("shootAllBalls: IDLE");
+                        RobotLog.d("shootAllBalls: IDLE");
                         launchState = LaunchBallStates.INIT;
                         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
                         }
                     case INIT:
-                        //telemetry.addLine("shootAllBalls: INIT");
+                        telemetry.addLine("shootAllBalls: INIT");
+                        RobotLog.d("shootAllBalls: INIT");
                         if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                             //If yes, turn it to launcher
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
@@ -381,7 +388,8 @@ public class Robot {
                             break;
                         }
                     case TURN_TO_LAUNCH:
-                        //telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
+                        telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
+                        RobotLog.d("shootAllBalls: TURN_TO_LAUNCH");
                         if (indexer.moveToOuttake()) {
                             //timeSinceIndex.reset();
                             launchState = LaunchBallStates.KICK_BALL;
@@ -390,7 +398,8 @@ public class Robot {
                             launchState = LaunchBallStates.KICK_BALL;
                         }
                     case KICK_BALL:
-                        //telemetry.addLine("shootAllBalls: KICK_BALL");
+                        telemetry.addLine("shootAllBalls: KICK_BALL");
+                        RobotLog.d("shootAllBalls: KICK_BALL");
                         if (indexer.indexerFinishedTurning()) {
                             launcher.kickBall();
                             timeSinceKick.reset();
@@ -400,20 +409,24 @@ public class Robot {
                             break;
                         }
                     case RESET_KICKER:
-                        //telemetry.addLine("shootAllBalls: RESET_KICKER");
+                        telemetry.addLine("shootAllBalls: RESET_KICKER");
+                        RobotLog.d("shootAllBalls: RESET_KICKER");
                         if (timeSinceKick.milliseconds() > WAIT_TIME_KICKER) {
                             launcher.resetKicker();
                             timeSinceKickReset.reset();
                             launchState = LaunchBallStates.UPDATE_INDEXER;
+                            break;
                         } else {
                             break;
                         }
                     case UPDATE_INDEXER:
-                        //telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                        telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                        RobotLog.d("shootAllBalls: UPDATE_INDEXER");
                         indexer.updateAfterShoot();
                         launchState = LaunchBallStates.IDLE;
                         break;
                     default:
+                        RobotLog.d("shootAllBalls Unexpected");
                         throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
                 }
             }

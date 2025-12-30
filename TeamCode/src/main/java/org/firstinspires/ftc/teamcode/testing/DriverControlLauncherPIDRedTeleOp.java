@@ -190,7 +190,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
 
             //launch a green ball
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
-                robot.stratLaunchAGreenBall();
+                robot.startLaunchAGreenBall();
             }
 
             if (currentGamepad2.left_bumper) {
@@ -199,7 +199,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
 
             //launch a purple ball
             if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-                robot.stratLaunchAPurpleBall();
+                robot.startLaunchAPurpleBall();
             }
 
             if (currentGamepad2.right_bumper) {
