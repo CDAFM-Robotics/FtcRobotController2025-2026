@@ -113,7 +113,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
                 robot.getIntake().startIntake();
                 if (currentGamepad1.right_trigger != 0.0)
-                    robot.intakeWithIndexerTurn(gamepad1);
+                    robot.intakeWithIndexerTurn();
             }
             else if ((currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0)
                 || (currentGamepad2.left_trigger == 0.0 && previousGamepad2.left_trigger != 0)){

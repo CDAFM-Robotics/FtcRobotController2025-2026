@@ -291,8 +291,8 @@ public class Launcher {
         distanceToVelocityMap.put(2528.0, 1360.0);
         distanceToVelocityMap.put(2681.0, 1380.0);
         distanceToVelocityMap.put(2751.0, 1400.0);
-        distanceToVelocityMap.put(2853.0, 1400.0);
-        distanceToVelocityMap.put(2952.0, 1420.0);
+        distanceToVelocityMap.put(2853.0, 1420.0);
+        distanceToVelocityMap.put(2952.0, 1440.0);
         distanceToVelocityMap.put(3014.0, 1440.0);
         distanceToVelocityMap.put(3100.0, 1440.0);
         distanceToVelocityMap.put(3550.0, 1460.0);  // Far, max speed

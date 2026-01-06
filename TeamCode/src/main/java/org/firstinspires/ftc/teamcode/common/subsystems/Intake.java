@@ -47,7 +47,7 @@ public class Intake {
     }
 
     public Action getStartIntakeAction() {
-        return getSetIntakeMotorPowerAction(0.9);
+        return getSetIntakeMotorPowerAction(1.0);
     }
 
     public Action getStopIntakeAction() {
