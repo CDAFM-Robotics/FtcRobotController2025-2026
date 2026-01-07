@@ -648,45 +648,45 @@ public class Indexer {
         //RobotLog.d("updateBallColors color final %s",artifactColorArray[i]);
     }
 
-    private Robot.ArtifactColor getPredictedColor1(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
+    private ArtifactColor getPredictedColor1(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
 
-        Robot.ArtifactColor sensor1DetectedColor;
+        ArtifactColor sensor1DetectedColor;
         //telemetry.addData("sensor1Distance", sensor1Distance);
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
         if (sensor1Distance > 5) {
-            sensor1DetectedColor = Robot.ArtifactColor.UNKNOWN;
+            sensor1DetectedColor = ArtifactColor.UNKNOWN;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {
-            sensor1DetectedColor = Robot.ArtifactColor.PURPLE;
+            sensor1DetectedColor = ArtifactColor.PURPLE;
         }
         else {
-            sensor1DetectedColor = Robot.ArtifactColor.GREEN;
+            sensor1DetectedColor = ArtifactColor.GREEN;
         }
 
-        Robot.ArtifactColor sensor2DetectedColor;
+        ArtifactColor sensor2DetectedColor;
 
         if (sensor2Distance > 5) {
-            sensor2DetectedColor = Robot.ArtifactColor.UNKNOWN;
+            sensor2DetectedColor = ArtifactColor.UNKNOWN;
         }
         else if (sensor2RGBA.blue > sensor2RGBA.green) {
-            sensor2DetectedColor = Robot.ArtifactColor.PURPLE;
+            sensor2DetectedColor = ArtifactColor.PURPLE;
         }
         else {
-            sensor2DetectedColor = Robot.ArtifactColor.GREEN;
+            sensor2DetectedColor = ArtifactColor.GREEN;
         }
 
         if (sensor1DetectedColor == sensor2DetectedColor) {
             return sensor1DetectedColor;
         }
-        else if (sensor2DetectedColor == Robot.ArtifactColor.UNKNOWN) {
+        else if (sensor2DetectedColor == ArtifactColor.UNKNOWN) {
             return  sensor1DetectedColor;
         }
-        else if (sensor1DetectedColor == Robot.ArtifactColor.UNKNOWN){
+        else if (sensor1DetectedColor == ArtifactColor.UNKNOWN){
             return  sensor2DetectedColor;
         }
         else {
-            return  Robot.ArtifactColor.UNKNOWN;
+            return  ArtifactColor.UNKNOWN;
         }
     }
 
