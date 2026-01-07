@@ -56,12 +56,13 @@ public class Launcher {
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
 
-    public static double aimKp = 0.02;
-    public static double aimKi = 0.01;
-    //public static double aimKd = 0.0055;
-    public static double aimKd = 1.1;
-    public static double powerStatic = 0.05;
-    public static double aimErrorTolerance = 2;
+    // Teleop AutoAIM PID Constants
+    public static double aimKp = 0.016; // 0.02
+    public static double aimKi = 0.006; // 0.01
+    public static double aimKd = 1.0; // 1.1 // 0.0055
+    public static int aimTimeout = 650; // 800
+    public static double powerStatic = 0.064; // 0.05
+    public static double aimErrorTolerance = 0; // 3
     private double lastTime;
     private double integralSum = 0.0;
     // Limits for integral sum to prevent windup

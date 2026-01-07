@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 
 @TeleOp(name = "BLUE Driver Control With Indexer Teleop", group = "0teleop")
 public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
@@ -18,8 +19,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // TODO Add Data to Dashboard Start
-        //FtcDashboard dashboard = FtcDashboard.getInstance();
-        //telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        // FtcDashboard dashboard = FtcDashboard.getInstance();
+        // telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
 
         Robot robot = new Robot(hardwareMap, telemetry);
@@ -31,6 +32,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         boolean autoLaunch = true;
         boolean aprilTagInView = false;
         double xAngle = 0.0;
+        boolean llLastIsValid = false;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -110,7 +112,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 isAiming = false;
             }
 
-            telemetry.addData("limelight valid", robot.getLauncher().getLimelightResult().isValid());
+            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
+            telemetry.addData("limelight valid", llLastIsValid);
             xAngle = robot.getLauncher().getLimelightResult().getTx();
             telemetry.addData("limelight x", xAngle);
             telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
@@ -211,8 +214,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.left_bumper) {
-                if (xAngle < 3.0
-                    || aimTimer.milliseconds() > 800){
+                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
+                    || aimTimer.milliseconds() > Launcher.aimTimeout){
                     isAiming = false;
                     robot.launchAColorBall();
                 }
@@ -230,8 +233,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_bumper) {
-                if (xAngle < 3.0
-                    || aimTimer.milliseconds() > 800){
+                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
+                    || aimTimer.milliseconds() > Launcher.aimTimeout){
                     isAiming = false;
                     robot.launchAColorBall();
                 }
@@ -244,8 +247,8 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_trigger != 0) {
-                if (xAngle < 3.0
-                    || aimTimer.milliseconds() > 800){
+                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
+                    || aimTimer.milliseconds() > Launcher.aimTimeout){
                     isAiming = false;
                     robot.shootAllBalls();
                 }
@@ -301,9 +304,20 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             //RobotLog.d("launcher velocity: %f",
                     //robot.getLauncher().getLauncherVelocity());
 
+
             // Refresh the indicator lights
             robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
-            robot.getHud().setAimIndicator(isAiming);
+            if (llLastIsValid == true)
+            {
+                // RobotLog.d("Aim PID X: %f", xAngle);
+                if (xAngle < Launcher.aimErrorTolerance)
+                {
+                    robot.getHud().setAimIndicator(true);
+                }
+            }
+            else {
+                robot.getHud().setAimIndicator(false);
+            }
             robot.getHud().UpdateBallUI();
 
             // TODO Add timing Log at end of loop

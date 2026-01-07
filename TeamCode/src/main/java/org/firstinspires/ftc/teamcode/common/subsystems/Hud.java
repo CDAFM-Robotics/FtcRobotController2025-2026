@@ -6,10 +6,8 @@ import androidx.annotation.ColorInt;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.QwiicLEDStick;
 
@@ -29,10 +27,10 @@ public class Hud {
     public enum ColorTable {PURPLE, GREEN, NONE, RED, WHITE}
 
     // instance vars to hold Ball colors (2025-2026 Decode)
-    public ColorTable ball1, last1 = ColorTable.NONE;
-    public ColorTable ball2, last2 = ColorTable.NONE;
-    public ColorTable ball3, last3 = ColorTable.NONE;
-    public ColorTable aimLED, lastAimLED = ColorTable.NONE;
+    public ColorTable ball1= ColorTable.NONE, last1 = ColorTable.NONE;
+    public ColorTable ball2= ColorTable.NONE, last2 = ColorTable.NONE;
+    public ColorTable ball3= ColorTable.NONE, last3 = ColorTable.NONE;
+    public ColorTable aimLED = ColorTable.NONE, lastAimLED = ColorTable.NONE;
 
     public ElapsedTime timeSinceLastHUDChange = new ElapsedTime();
 
@@ -75,20 +73,19 @@ public class Hud {
         ledstripFront.setBrightness(LED_STICK_BRIGHTNESS);
         timeSinceLastHUDChange.reset();
 
-        // Set LAST to an unused color to ensure it gets updated once at init to clear carryover.
+        // Set LAST to an unused and different color to ensure it gets updated once at init to clear carry-over.
         last1 = ColorTable.WHITE;
         last2 = ColorTable.WHITE;
         last3 = ColorTable.WHITE;
         lastAimLED = ColorTable.WHITE;
-        RobotLog.d("HUD: Init %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
+        // RobotLog.d("HUD: Init %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
     }
 
     public void UpdateBallUI2() {
 
-        int[] color_test = new int[] {};
         if (((ball1 != last1) || (ball2 != last2) || (ball3 != last3) || (aimLED != lastAimLED)) && timeSinceLastHUDChange.milliseconds() >= 250 )
         {
-            RobotLog.d("HUD: %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
+            // RobotLog.d("HUD: %s %s %s %s - T:  %.2f ms", ball1,ball2,ball3,aimLED,timeSinceLastHUDChange.milliseconds());
             if (ball1 != last1)
             {
                 last1 = ball1;
@@ -116,11 +113,11 @@ public class Hud {
                 colors_all[9] = Balls[aimLED.ordinal()];
             }
 
-            RobotLog.d("HUD: colors_all [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]",
-                    colors_all[0],colors_all[1],colors_all[2],
-                    colors_all[3],colors_all[4],colors_all[5],
-                    colors_all[6],colors_all[7],colors_all[8],
-                    colors_all[9]);
+            // RobotLog.d("HUD: colors_all [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]",
+//                    colors_all[0],colors_all[1],colors_all[2],
+//                    colors_all[3],colors_all[4],colors_all[5],
+//                    colors_all[6],colors_all[7],colors_all[8],
+//                    colors_all[9]);
 
             ledstripRear.setColors(colors_all);
             ledstripFront.setColors(colors_all);
