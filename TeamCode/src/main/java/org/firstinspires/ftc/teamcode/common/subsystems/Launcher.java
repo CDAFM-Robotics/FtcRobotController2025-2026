@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
@@ -158,7 +159,7 @@ public class Launcher {
     public class AprilTagAction implements Action {
         private boolean initialized = false;
 
-        private Robot.ArtifactColor[] motifPattern;
+        private ArtifactColor[] motifPattern;
 
         public AprilTagAction(int pipeline) {
             limelight.pipelineSwitch(pipeline);
@@ -173,15 +174,15 @@ public class Launcher {
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     if (fr.getFiducialId() == 21) {
-                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                        motifPattern = new ArtifactColor[] {ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
                         return false;
                     }
                     else if (fr.getFiducialId() == 22) {
-                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                        motifPattern = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
                         return false;
                     }
                     else if (fr.getFiducialId() == 23) {
-                        motifPattern = new Robot.ArtifactColor[] {Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                        motifPattern = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
                         return false;
                     }
                 }
@@ -189,7 +190,7 @@ public class Launcher {
             return true;
         }
 
-        public Robot.ArtifactColor[] getMotifPattern() {
+        public ArtifactColor[] getMotifPattern() {
             return motifPattern;
         }
     }
@@ -311,18 +312,18 @@ public class Launcher {
      */
 
 
-    public Robot.ArtifactColor[] getMotifPattern() {
+    public ArtifactColor[] getMotifPattern() {
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             if (fiducialResults != null) {
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     if (fr.getFiducialId() == 21) {
-                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE};
+                        return new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
                     } else if (fr.getFiducialId() == 22) {
-                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN, Robot.ArtifactColor.PURPLE};
+                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
                     } else if (fr.getFiducialId() == 23) {
-                        return new Robot.ArtifactColor[]{Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.PURPLE, Robot.ArtifactColor.GREEN};
+                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
                     }
                 }
             }

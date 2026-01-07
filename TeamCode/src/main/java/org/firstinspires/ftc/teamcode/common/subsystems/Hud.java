@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.QwiicLEDStick;
 
 public class Hud {
@@ -201,7 +202,7 @@ public class Hud {
 
     }
 
-    public void setBalls(Robot.ArtifactColor b1, Robot.ArtifactColor b2, Robot.ArtifactColor b3)
+    public void setBalls(ArtifactColor b1, ArtifactColor b2, ArtifactColor b3)
     {
         ball1 = Hud.ColorTable.values()[b1.ordinal()];
         ball2 = Hud.ColorTable.values()[b2.ordinal()];

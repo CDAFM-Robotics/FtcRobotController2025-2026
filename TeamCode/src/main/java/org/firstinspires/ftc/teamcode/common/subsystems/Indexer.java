@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
@@ -38,7 +39,7 @@ public class Indexer {
 
     AnalogInput indexerServoVoltage = null;
 
-    public Robot.ArtifactColor[] artifactColorArray = new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE};
+    public ArtifactColor[] artifactColorArray = new ArtifactColor[] {ArtifactColor.NONE, ArtifactColor.NONE, ArtifactColor.NONE};
 
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.10; // 0.10 (pre29Dec) was 0.07 one is at wait; two is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
@@ -109,7 +110,7 @@ public class Indexer {
                 colorSensor1Left.getNormalizedColors(),
                 colorSensor1Right.getNormalizedColors(),
                 ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-                ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != Robot.ArtifactColor.NONE),
+                ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != ArtifactColor.NONE),
 
                 timeout
             );
@@ -143,46 +144,46 @@ public class Indexer {
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
-    private Robot.ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
+    private ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
 
-        Robot.ArtifactColor sensor1DetectedColor;
+        ArtifactColor sensor1DetectedColor;
         //telemetry.addData("sensor1Distance", sensor1Distance);
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
 
         if (sensor1Distance > 5) {;//w
-            sensor1DetectedColor = Robot.ArtifactColor.NONE;
+            sensor1DetectedColor = ArtifactColor.NONE;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {
-            sensor1DetectedColor = Robot.ArtifactColor.PURPLE;
+            sensor1DetectedColor = ArtifactColor.PURPLE;
         }
         else {
-            sensor1DetectedColor = Robot.ArtifactColor.GREEN;
+            sensor1DetectedColor = ArtifactColor.GREEN;
         }
 
-        Robot.ArtifactColor sensor2DetectedColor;
+        ArtifactColor sensor2DetectedColor;
 
         if (sensor2Distance > 5) {
-            sensor2DetectedColor = Robot.ArtifactColor.NONE;
+            sensor2DetectedColor = ArtifactColor.NONE;
         }
         else if (sensor2RGBA.blue > sensor2RGBA.green) {
-            sensor2DetectedColor = Robot.ArtifactColor.PURPLE;
+            sensor2DetectedColor = ArtifactColor.PURPLE;
         }
         else {
-            sensor2DetectedColor = Robot.ArtifactColor.GREEN;
+            sensor2DetectedColor = ArtifactColor.GREEN;
         }
 
         if (sensor1DetectedColor == sensor2DetectedColor) {
             return sensor1DetectedColor;
         }
-        else if (sensor2DetectedColor == Robot.ArtifactColor.NONE) {
+        else if (sensor2DetectedColor == ArtifactColor.NONE) {
             return  sensor1DetectedColor;
         }
-        else if (sensor1DetectedColor == Robot.ArtifactColor.NONE){
+        else if (sensor1DetectedColor == ArtifactColor.NONE){
             return  sensor2DetectedColor;
         }
         else {
-            return  Robot.ArtifactColor.UNKNOWN;
+            return  ArtifactColor.UNKNOWN;
         }
     }
 
@@ -220,11 +221,11 @@ public class Indexer {
             //telemetry.addData("updateBallColors index", i);
             //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
             //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
-            if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
+            if (artifactColorArray[i] == ArtifactColor.GREEN)
                     color[0]++;
-            else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
+            else if (artifactColorArray[i] == ArtifactColor.PURPLE)
                     color[1]++;
-            else if (artifactColorArray[i] == Robot.ArtifactColor.NONE)
+            else if (artifactColorArray[i] == ArtifactColor.NONE)
                     color[2]++;
             else color[3]++;
         }
@@ -239,11 +240,11 @@ public class Indexer {
                 //telemetry.addData("updateBallColors index", i);
                 //telemetry.addData("updateBallColors color2", artifactColorArray[i]);
                 //RobotLog.d("updateBallColors color2 %s",artifactColorArray[i]);
-                if (artifactColorArray[i] == Robot.ArtifactColor.GREEN)
+                if (artifactColorArray[i] == ArtifactColor.GREEN)
                     color[0]++;
-                else if (artifactColorArray[i] == Robot.ArtifactColor.PURPLE)
+                else if (artifactColorArray[i] == ArtifactColor.PURPLE)
                     color[1]++;
-                else if (artifactColorArray[i] == Robot.ArtifactColor.NONE)
+                else if (artifactColorArray[i] == ArtifactColor.NONE)
                     color[2]++;
                 else color[3]++;
             }
@@ -255,19 +256,19 @@ public class Indexer {
             }
         }
         if (mostLikelyColor == 0)
-            artifactColorArray[i] = Robot.ArtifactColor.GREEN;
+            artifactColorArray[i] = ArtifactColor.GREEN;
         else if (mostLikelyColor == 1)
-            artifactColorArray[i] = Robot.ArtifactColor.PURPLE;
+            artifactColorArray[i] = ArtifactColor.PURPLE;
         else if (mostLikelyColor == 2)
-            artifactColorArray[i] = Robot.ArtifactColor.NONE;
+            artifactColorArray[i] = ArtifactColor.NONE;
         else {
-            artifactColorArray[i] = Robot.ArtifactColor.NONE;
+            artifactColorArray[i] = ArtifactColor.NONE;
             telemetry.addLine("ERROR: color UNKNOWN");
         }
         //RobotLog.d("updateBallColors color final %s",artifactColorArray[i]);
     }
 
-    public Robot.ArtifactColor[] getBallColors() {
+    public ArtifactColor[] getBallColors() {
 
         updateBallColors();
         return artifactColorArray.clone();
@@ -359,7 +360,7 @@ public class Indexer {
             for(int i=0; i<=2; i++){
                 telemetry.addData("array", i);
                 telemetry.addData("color:", artifactColorArray[i]);
-                if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
+                if(artifactColorArray[i] == ArtifactColor.NONE){
                     nextEmptySlot = i;
                     telemetry.addData("slot empty", i);
                     return true;
@@ -373,7 +374,7 @@ public class Indexer {
                 else j = i+1;
                 telemetry.addData("array", j);
                 telemetry.addData("color:", artifactColorArray[j]);
-                if(artifactColorArray[j] == Robot.ArtifactColor.NONE){
+                if(artifactColorArray[j] == ArtifactColor.NONE){
                     nextEmptySlot = j;
                     telemetry.addData("slot empty", j);
                     return true;
@@ -384,7 +385,7 @@ public class Indexer {
             for(int i=2; i>=0; i--){
                 telemetry.addData("array", i);
                 telemetry.addData("color:", artifactColorArray[i]);
-                if(artifactColorArray[i] == Robot.ArtifactColor.NONE){
+                if(artifactColorArray[i] == ArtifactColor.NONE){
                     nextEmptySlot = i;
                     telemetry.addData("slot empty", i);
                     return true;
@@ -418,7 +419,7 @@ public class Indexer {
         return false;
     }
 
-    public Boolean haveABall(Robot.ArtifactColor ballColor) {
+    public Boolean haveABall(ArtifactColor ballColor) {
         //telemetry.addLine("haveABall");
         //telemetry.addData("nextShootSlot:", nextShootSlot);
 
@@ -489,43 +490,43 @@ public class Indexer {
     public void updateAfterShoot(){
         // the ball has been shot in nextShootSlot
         //telemetry.addData("updateAfterShoot: next shoot slot", nextShootSlot);
-        artifactColorArray[nextShootSlot] = Robot.ArtifactColor.NONE;
+        artifactColorArray[nextShootSlot] = ArtifactColor.NONE;
     }
 
     public Boolean findABall(){
         if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT){
             //is there a ball at ZERO?
-            if (artifactColorArray[0] != Robot.ArtifactColor.NONE) {
+            if (artifactColorArray[0] != ArtifactColor.NONE) {
                 nextShootSlot = 0;
                 return true;
-            } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+            } else if (artifactColorArray[2] != ArtifactColor.NONE) {
                 nextShootSlot = 2;
                 return true;
-            }else if (artifactColorArray[1] != Robot.ArtifactColor.NONE){
+            }else if (artifactColorArray[1] != ArtifactColor.NONE){
                 nextShootSlot = 1;
                 return true;
             }
         } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT){
             //is there a ball at one?
-            if (artifactColorArray[1] != Robot.ArtifactColor.NONE) {
+            if (artifactColorArray[1] != ArtifactColor.NONE) {
                 nextShootSlot = 1;
                 return true;
-            } else if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+            } else if (artifactColorArray[2] != ArtifactColor.NONE) {
                 nextShootSlot = 2;
                 return true;
-            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE){
+            } else if (artifactColorArray[0] != ArtifactColor.NONE){
                 nextShootSlot = 0;
                 return true;
             }
         } else if (getIndexerPosition() == POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT) {
             //is there a ball at two?
-            if (artifactColorArray[2] != Robot.ArtifactColor.NONE) {
+            if (artifactColorArray[2] != ArtifactColor.NONE) {
                 nextShootSlot = 2;
                 return true;
-            } else if (artifactColorArray[1] != Robot.ArtifactColor.NONE) {
+            } else if (artifactColorArray[1] != ArtifactColor.NONE) {
                 nextShootSlot = 1;
                 return true;
-            } else if (artifactColorArray[0] != Robot.ArtifactColor.NONE) {
+            } else if (artifactColorArray[0] != ArtifactColor.NONE) {
                 nextShootSlot = 0;
                 return true;
             }

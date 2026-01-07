@@ -268,7 +268,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             //rumble gamepad 2 when empty
             //TODO: driver 2 would like the gamepad to rumble when the launcher is up to speed.
-            /*if(robot.getIndexer().artifactColorArray == new Robot.ArtifactColor[] {Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE, Robot.ArtifactColor.NONE} && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
+            /*if(robot.getIndexer().artifactColorArray == new ArtifactColor[] {ArtifactColor.NONE, ArtifactColor.NONE, ArtifactColor.NONE} && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
                 gamepad2.rumble(0.25, 0, 10);
                 gamepad2.rumble(0, 0.25, 10);
             }*/

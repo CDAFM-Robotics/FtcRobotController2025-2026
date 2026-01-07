@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
@@ -36,7 +37,7 @@ public class Auto_RR_MotorSetupTest extends LinearOpMode {
 //
 //        Action[] otherActions = autonomousTrajectoryBuilder.getOtherActions();
 //
-        Robot.ArtifactColor[] motif = null;
+        ArtifactColor[] motif = null;
 
         while(opModeInInit()) {
 //            motif = robot.getLauncher().getMotifPattern();

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Hud;
 import org.firstinspires.ftc.teamcode.common.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
+import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 
 import java.util.Arrays;
 import java.util.Queue;
@@ -58,13 +59,6 @@ public class Robot {
         this.hud = new Hud(this.hardwareMap, this.telemetry);
         telemetry.update();
 
-    }
-
-    public enum ArtifactColor {
-        PURPLE,
-        GREEN,
-        NONE,
-        UNKNOWN
     }
 
     public enum IndexerResetStates {

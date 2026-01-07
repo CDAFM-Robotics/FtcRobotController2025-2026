@@ -36,6 +36,8 @@ public class MeepMeepTesting{
     public static Pose2d blueSecondMarkEnd = new Pose2d(new Vector2d(11.5, -62), Math.toRadians(-90));
     public static Pose2d blueThirdMarkStart = new Pose2d(36, -30, Math.toRadians(-90));
     public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90));
+    public static Pose2d blueLoadingZoneStart = new Pose2d(60, -40, Math.toRadians(-70));
+    public static Pose2d blueLoadingZoneEnd = new Pose2d(59.5, -60, Math.toRadians(-70));
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(40);
     public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(20);
@@ -43,25 +45,28 @@ public class MeepMeepTesting{
     public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-10, 20);
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(600);
+        MeepMeep meepMeep = new MeepMeep(720);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
             // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
             .setDimensions(18, 17.5)
             .setDriveTrainType(DriveTrainType.MECANUM)
-            .setConstraints(50, 40, Math.toRadians(180), Math.toRadians(180)/4, 16)
+            .setConstraints(50, 40, Math.toRadians(180), Math.toRadians(180), 16)
             .build();
 
+        /** Compass Rose
+         * (-, +)   ^ 90   (+, +)
+         *          |
+         * 180 <---------> 0
+         *          |
+         * (-, -)  \/ -90  (+, -)
+         */
+
         myBot.runAction(myBot.getDrive()
-            .actionBuilder(blueCloseLaunchPose)
-            .setTangent(Math.toRadians(-10))
-            .splineToSplineHeading(blueSecondMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint, lowAccelConstraint)
-            .strafeToConstantHeading(blueSecondMarkEnd.position, slowTranslationalVelConstraint)
-            .setTangent(Math.toRadians(90))
-            .splineToSplineHeading(new Pose2d(11.5, -46, Math.toRadians(180)), Math.toRadians(90), normalTranslationalVelConstraint)
-            .splineToSplineHeading(new Pose2d(2, -56, Math.toRadians(180)), Math.toRadians(-90), normalTranslationalVelConstraint)
-            .setTangent(Math.toRadians(90))
-            .splineToSplineHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
+            .actionBuilder(blueFarLaunchPose)
+            .strafeToLinearHeading(blueLoadingZoneEnd.position, blueLoadingZoneEnd.heading)
+            .turn(Math.toRadians(-20))
+            .strafeToLinearHeading(blueFarLaunchPose.position, blueFarLaunchPose.heading)
             .build()
         );
 
