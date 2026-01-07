@@ -30,6 +30,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         boolean isAiming = false;
         boolean autoLaunch = true;
         boolean aprilTagInView = false;
+        double xAngle = 0.0;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -106,19 +107,23 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
             else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
+                isAiming = false;
             }
 
             telemetry.addData("limelight valid", robot.getLauncher().getLimelightResult().isValid());
-            telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
+            xAngle = robot.getLauncher().getLimelightResult().getTx();
+            telemetry.addData("limelight x", xAngle);
             telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
             telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
 
-            // Active Intake
+            // Active Intake or re-indexing
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
+                //start the intake rolling
                 robot.getIntake().startIntake();
+                //turn the indexer for intake
                 if (currentGamepad1.right_trigger != 0.0)
-                    robot.intakeWithIndexerTurn(gamepad1);
+                    robot.intakeWithIndexerTurn();
             }
             else if ((currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0)
                     || (currentGamepad2.left_trigger == 0.0 && previousGamepad2.left_trigger != 0)){
@@ -206,8 +211,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.left_bumper) {
-                if (robot.getLauncher().getLimelightResult().getTx() < 3.0
+                if (xAngle < 3.0
                     || aimTimer.milliseconds() > 800){
+                    isAiming = false;
                     robot.launchAColorBall();
                 }
             }
@@ -224,8 +230,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_bumper) {
-                if (robot.getLauncher().getLimelightResult().getTx() < 3.0
+                if (xAngle < 3.0
                     || aimTimer.milliseconds() > 800){
+                    isAiming = false;
                     robot.launchAColorBall();
                 }
             }
@@ -237,8 +244,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.right_trigger != 0) {
-                if (robot.getLauncher().getLimelightResult().getTx() < 3.0
+                if (xAngle < 3.0
                     || aimTimer.milliseconds() > 800){
+                    isAiming = false;
                     robot.shootAllBalls();
                 }
             }
@@ -259,12 +267,22 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }*/
 
             //TODO: driver 1 would like the gamepad 1 to rumble when the robot pick up a ball
+/*            if (robot.isIntake1Ball()) {
+                gamepad1.rumble(250);
+                robot.setIntak1BallOff();
+            }
+
+            if (robot.isIntake3Balls()) {
+                gamepad1.rumble(500);
+                robot.setIntak3BallsOff();
+            }*/
 
             //change gamepad 2 light barwhen sped up all the way
             //TODO: driver 2 would like the gamepad 2 to rumble when the launcher is up to speed. Maybe there should be a torlance about 20 tick/second
-            if(robot.getLauncher().getLauncherVelocity() == robot.getLauncher().getLauncherTargetVelocity() && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
+            /*if(robot.getLauncher().getLauncherVelocity() == robot.getLauncher().getLauncherTargetVelocity() && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
                 gamepad2.setLedColor(255, 255, 0, 20);
-            }
+            }*/
+
 
             //rumble gamepad 2 when empty
             //TODO: driver 2 would like the gamepad to rumble when the launcher is up to speed.
@@ -276,6 +294,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
             telemetry.addData("launcher velocity:", robot.getLauncher().getLauncherVelocity());
+            telemetry.addData("launcher velocity2:", robot.getLauncher().getLauncherVelocity2());
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
             telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);

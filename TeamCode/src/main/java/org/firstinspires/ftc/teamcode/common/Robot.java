@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.common;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -29,6 +28,9 @@ public class Robot {
     private ElapsedTime timeSinceKick = new ElapsedTime();
     private ElapsedTime timeSinceKickReset  = new ElapsedTime();
 
+    //indicators for driver
+    public Boolean intake3Balls = false; //Picked up all three balls
+    public Boolean intake1Ball = false; //Picked up one ball
 
     private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
     private ArtifactColor ballColor = ArtifactColor.NONE;
@@ -59,6 +61,14 @@ public class Robot {
         this.hud = new Hud(this.hardwareMap, this.telemetry);
         telemetry.update();
 
+    }
+
+    public enum AutoIntakeStates {
+        INIT,
+        RESET_KICKER,
+        WAIT_KICKER,
+        TURN_EMPTY_SLOT_TO_INTAKE,
+        WAIT_FOR_BALL
     }
 
     public enum IndexerResetStates {
@@ -103,6 +113,7 @@ public class Robot {
 
     IndexerResetStates indexerResetState = IndexerResetStates.INIT;
     LaunchBallStates launchState = LaunchBallStates.IDLE;
+    AutoIntakeStates autoIntakeState = AutoIntakeStates.INIT;
 
     public DriveBase getDriveBase() {
         return driveBase;
@@ -233,34 +244,74 @@ public class Robot {
     }
 
      // Auto-Indexing for intake
-     public void intakeWithIndexerTurn(Gamepad gamepad){
-        //telemetry.addLine("intakeWithIndexerTurn");
-        //check to see if kicker is up. If yes, move it down.
-         double kickerPosition = launcher.getKickerPosition();
-        if (kickerPosition == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
-            launcher.resetKicker();
-            timeSinceKickReset.reset();
-        }
-        else if(kickerPosition == launcher.POSITION_KICKER_SERVO_INIT
-                && timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
-            if (indexer.checkEmptySlot()){
-                telemetry.addLine("Robot: found empty slot");
-                //RobotLog.d("RRobot: found empty slot");
-                indexer.turnEmptySlotToIntake();
-                // replace waiting for timer with Axon servo position checking
-                // if ( timeSinceIndex.milliseconds() > 550 ) {
-                if (indexer.indexerFinishedTurning()) {
-                    telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
-                    //RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
-                    indexer.updateBallColors();
-                    gamepad.rumble(0.3, 0.15, 60);
-                }
-            }
-            else {
-                //no empty slot, turn on the shooter at lowest shooting speed
-                //launcher.startLauncherWithVelocity(1550);
-            }
-        }
+     public void intakeWithIndexerTurn(){
+         telemetry.addData("intakeWithIndexerTurn", autoIntakeState);
+
+         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+             launcher.resetKicker();
+             timeSinceKickReset.reset();
+         }
+
+         switch (autoIntakeState) {
+             case INIT:
+                 if (indexer.checkEmptySlot()) {
+                     RobotLog.d("RRobot: found empty slot");
+                     autoIntakeState = AutoIntakeStates.RESET_KICKER;
+                 }
+                 else {
+                     //No empty slot
+                     intake3Balls = true;
+                     autoIntakeState = AutoIntakeStates.INIT;
+                 }
+             case RESET_KICKER:
+                 if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
+                     launcher.resetKicker();
+                     timeSinceKickReset.reset();
+                 }
+                 autoIntakeState = AutoIntakeStates.WAIT_KICKER;
+             case WAIT_KICKER:
+                 if(timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
+                     autoIntakeState = AutoIntakeStates.TURN_EMPTY_SLOT_TO_INTAKE;
+                 }
+             case TURN_EMPTY_SLOT_TO_INTAKE:
+                 indexer.turnEmptySlotToIntake();
+                 autoIntakeState = AutoIntakeStates.WAIT_FOR_BALL;
+                 break;
+             case WAIT_FOR_BALL:
+                 if (indexer.indexerFinishedTurning()) {
+                     if (indexer.isBallAtIntake()) {
+                         intake1Ball = true;
+                         indexer.updateBallColorAtIntake();
+                         autoIntakeState = AutoIntakeStates.INIT;
+                         break;
+                     }
+                 }
+                 break;
+             default:
+                 throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
+
+         }
+
+//             if (indexer.checkEmptySlot()){
+//                telemetry.addLine("Robot: found empty slot");
+//                //RobotLog.d("RRobot: found empty slot");
+//                indexer.turnEmptySlotToIntake();
+//                // replace waiting for timer with Axon servo position checking
+//                // if ( timeSinceIndex.milliseconds() > 550 ) {
+//                if (indexer.indexerFinishedTurning()) {
+//                    telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
+//                    //RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
+//                    indexer.updateBallColors();
+//                    //this rumble will be called very almost every loop
+//                    //gamepad.rumble(0.3, 0.15, 60);
+//                }
+//              }
+//              else {
+//                //TODO: no empty slot, turn on the shooter at lowest shooting speed
+//                //launcher.startLauncherWithVelocity(1550);
+//            }
+            // Improve intake efficiency
+            // Check to see if there is a ball in the intake position
     }
 
     public void startLaunchAGreenBall(){
@@ -525,4 +576,21 @@ public class Robot {
         // indexer.updateBallColors();
         intake.stopIntake();
     }
+
+    public Boolean isIntake3Balls () {
+        return intake3Balls;
+    }
+
+    public void setIntak3BallsOff () {
+        intake3Balls = false;
+    }
+
+    public Boolean isIntake1Ball () {
+        return intake1Ball;
+    }
+
+    public void setIntak1BallOff () {
+        intake1Ball = false;
+    }
+
 }
