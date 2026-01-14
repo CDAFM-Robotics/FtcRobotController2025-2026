@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @TeleOp(name = "Servo Test", group = "testing")
 public class ServoTestOpMode extends LinearOpMode {
@@ -21,6 +26,9 @@ public class ServoTestOpMode extends LinearOpMode {
         // x = pos / 3.3 * 360
 
         telemetry.setMsTransmissionInterval(50);
+        AutonomousActionBuilder autonomousActionBuilder;
+        MecanumDrive md = new MecanumDrive(hardwareMap, /*new Pose2d(new Vector2d(61, 11.5), Math.toRadians(180))*/ new Pose2d(new Vector2d(61, -11.75), Math.toRadians(-90)));
+        autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 
         double position = 0;
         double mpos = 0;
@@ -70,7 +78,8 @@ public class ServoTestOpMode extends LinearOpMode {
                 position -= 0.1;
             }
 
-            // X/Y Kick Stand   (Left = ControlHub P5 / Right = ExpHub P0
+            // X/Y Kick Stand   (Left = ControlHub P5 / Right = ExpHub P0)
+            // SQ TRI ps5 controller
             if (currentGamepad1.x != previousGamepad1.x) {
                 robot.getDriveBase().setKickStand();
             }
@@ -110,6 +119,18 @@ public class ServoTestOpMode extends LinearOpMode {
                 robot.getDriveBase().adjustKickStandLight(led_power);
             }
 
+            // Kicker Activate
+            if (currentGamepad2.x && !previousGamepad2.x)
+            {
+                Actions.runBlocking(autonomousActionBuilder.getKickBall());
+            }
+
+            // Kicker deactivate
+            if (currentGamepad2.y && !previousGamepad2.y)
+            {
+
+            }
+
 
 
             /*
@@ -140,11 +161,14 @@ public class ServoTestOpMode extends LinearOpMode {
 
             robot.getIndexer().rotateToPosition(position);
             mpos = (axon_position_V.getVoltage() - voltageOffset) * voltageScaler;
-            telemetry.addLine("A/B: Indexer,  X/Y: KickStand,  Up/Dn: kickStandLight,  RT: Kicker");
+            telemetry.addLine("GP1 A/B: Indexer,  X/Y: KickStand,  Up/Dn: kickStandLight,  RT: Kicker");
             telemetry.addData("Axon set position: ", position * 270);
             telemetry.addData("measured position: ", mpos);
             telemetry.addData("Voltage: ", axon_position_V.getVoltage());
             telemetry.addData("light power: ", led_power);
+            telemetry.addLine("GP2 SQ/TRI Kicker Act/Deact");
+            telemetry.addData("Kicker position: ", robot.getLauncher().getKickerPosition());
+
             telemetry.update();
         }
     }
