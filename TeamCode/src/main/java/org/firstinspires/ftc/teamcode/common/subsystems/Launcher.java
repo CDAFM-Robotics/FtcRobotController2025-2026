@@ -43,7 +43,7 @@ public class Launcher {
 
     Servo kickerServo;
     
-    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.88;
+    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.87; // 0.88
     public final double POSITION_KICKER_SERVO_INIT = 0.6;
 
     public final double LAUNCH_POWER_FAR = 0.9;
