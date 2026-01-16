@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
@@ -14,7 +15,7 @@ import java.util.Random;
 
 
 @TeleOp (group = "testing", name = "LEDStickTest")
-
+@Disabled
 public class LEDStickTest extends LinearOpMode {
   private Blinker control_Hub;
   public ElapsedTime elapsedTime = new ElapsedTime();

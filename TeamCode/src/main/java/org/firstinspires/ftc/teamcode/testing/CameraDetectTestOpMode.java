@@ -1,34 +1,27 @@
 package org.firstinspires.ftc.teamcode.testing;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionPortalImpl;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.opencv.core.Mat;
 
 import android.util.Size;
 
 
-import java.util.Collections;
 import java.util.List;
 
 @Config
-@TeleOp(name = "cameraTest", group = "0testing")
-public class cameraDetectTestOpMode extends LinearOpMode {
+@TeleOp(name = "Camera Test", group = "Testing")
+public class CameraDetectTestOpMode extends LinearOpMode {
     private VisionPortal visionPortal;
     private ColorBlobLocatorProcessor colorBlobLocatorProcessor;
 

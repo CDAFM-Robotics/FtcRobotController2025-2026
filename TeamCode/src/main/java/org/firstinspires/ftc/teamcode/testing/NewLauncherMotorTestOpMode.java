@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "New Intake Test", group = "Testing")
-public class NewIntakeMotorTestOpMode extends LinearOpMode {
+@TeleOp(name = "New Launcher Test", group = "Testing")
+public class NewLauncherMotorTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotorEx launcherMotor1 = hardwareMap.get(DcMotorEx.class, "launcherMotor1");

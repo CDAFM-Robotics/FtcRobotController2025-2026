@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.sun.tools.javac.code.Scope;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
 
 @TeleOp(name = "Axon Servo Test", group = "testing")
+@Disabled
 public class AxonPowerServoTestOpMode extends LinearOpMode {
 
     @Override

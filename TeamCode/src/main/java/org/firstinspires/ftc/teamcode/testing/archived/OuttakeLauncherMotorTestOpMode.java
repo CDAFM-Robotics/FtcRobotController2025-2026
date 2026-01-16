@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.common.Robot;
-
 @TeleOp(name = "Outtake and Intake Test", group = "testing")
+@Disabled
 public class OuttakeLauncherMotorTestOpMode extends LinearOpMode {
 
     DcMotor outtakeMotorLeft = null;

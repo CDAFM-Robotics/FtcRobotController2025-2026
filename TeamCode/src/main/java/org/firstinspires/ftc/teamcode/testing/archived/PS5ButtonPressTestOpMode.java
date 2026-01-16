@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name = "PS5 Button Test", group = "testing")
-
+@Disabled
 public class PS5ButtonPressTestOpMode extends LinearOpMode {
 
     Gamepad.LedEffect ledEffect = new Gamepad.LedEffect.Builder()
