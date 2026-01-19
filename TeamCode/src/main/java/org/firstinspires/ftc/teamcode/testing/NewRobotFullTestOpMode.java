@@ -6,10 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "New Launcher Test", group = "Testing")
-public class NewLauncherMotorTestOpMode extends LinearOpMode {
+@TeleOp(name = "New Robot Test", group = "Testing")
+public class NewRobotFullTestOpMode extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         DcMotorEx launcherMotor1 = hardwareMap.get(DcMotorEx.class, "launcherMotor1");
         DcMotorEx launcherMotor2 = hardwareMap.get(DcMotorEx.class, "launcherMotor2");
 
@@ -24,24 +29,32 @@ public class NewLauncherMotorTestOpMode extends LinearOpMode {
 
         waitForStart();
 
-        double power = 0;
+        double intakePower = 0;
+
+        double outtakePower = 0;
 
         while (opModeIsActive()) {
+            intakePower = -gamepad2.left_stick_y;
+            intakeMotor.setPower(intakePower);
 
-            power = -gamepad2.right_stick_y;
+            telemetry.addData("Intake Power", intakePower);
 
-            launcherMotor1.setPower(power);
-            launcherMotor2.setPower(power);
+            outtakePower = -gamepad2.right_stick_y;
 
-            if (gamepad2.right_bumper) {
-                rollerMotor.setPower(-1);
+            launcherMotor1.setPower(outtakePower);
+            launcherMotor2.setPower(outtakePower);
+
+            if (gamepad1.right_bumper) {
+                rollerMotor.setPower(1);
             }
             else {
                 rollerMotor.setPower(0);
             }
 
-            telemetry.addData("Power", power);
-            telemetry.addData("Rolling", gamepad2.right_bumper);
+            telemetry.addData("Outtake Power", outtakePower);
+            telemetry.addData("Rolling", gamepad1.a);
+
+
             telemetry.update();
         }
     }
