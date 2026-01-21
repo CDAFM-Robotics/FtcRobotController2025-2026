@@ -99,9 +99,6 @@ public class Launcher {
                 initialized = true;
             }
 
-            // TODO: 11/2/2025 ADD FAIL-SAFE FOR MOTOR ENCODERS BEING UNPLUGGED
-            // TODO: maybe... if motor1 or 2 velocity = setpoint AND opposite motor ~0.0
-            // TODO: THEN assume enc broken: shoot anyway, and FLASH BALL 1 or 2 red to notify
 
             // Add some Debugging Helpers
             double measuredVelocity1 =  launcherMotor1.getVelocity();
@@ -110,6 +107,10 @@ public class Launcher {
             // Logging
             if (measuredVelocity1 != 0.0 || measuredVelocity2 != 0.0) {
                 //RobotLog.d("m1: %f m2: %f", measuredVelocity1, measuredVelocity2);
+            }
+
+            if (measuredVelocity1 == 0 && measuredVelocity2 > velocity/2 || measuredVelocity2 == 0 && measuredVelocity1 > velocity/2) {
+                measuredVelocityTotal = (measuredVelocity1 + measuredVelocity2) * 2;
             }
             return measuredVelocityTotal < velocity * 2;
         }
@@ -198,9 +199,7 @@ public class Launcher {
 
     public Action getSpinLauncherAction(double velocity) {
         return new SequentialAction(
-            new SpinLauncherAction(velocity),
-            new SleepAction(1)
-        );
+            new SpinLauncherAction(velocity));
     }
 
     public Action getWaitUntilVelocityAction(double velocity, double timeout) {
@@ -213,7 +212,7 @@ public class Launcher {
     public Action getRotateKickerAction(double position) {
         return new SequentialAction(
             new SetKickerPositionAction(position),
-            new SleepAction(0.3)
+            new SleepAction(0.125)
         );
     }
 
