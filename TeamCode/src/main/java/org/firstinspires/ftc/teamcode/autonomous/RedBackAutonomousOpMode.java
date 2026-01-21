@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-@Autonomous(name = "Red Back Autonomous", group = "0competition")
+@Autonomous(name = "Red Back Autonomous", group = "Competition")
 public class RedBackAutonomousOpMode extends LinearOpMode {
 
     Supplier<Action>[] otherActions;

@@ -63,10 +63,8 @@ public class MeepMeepTesting{
          */
 
         myBot.runAction(myBot.getDrive()
-            .actionBuilder(blueFarLaunchPose)
-            .strafeToLinearHeading(blueLoadingZoneEnd.position, blueLoadingZoneEnd.heading)
-            .turn(Math.toRadians(-20))
-            .strafeToLinearHeading(blueFarLaunchPose.position, blueFarLaunchPose.heading)
+            .actionBuilder(new Pose2d(-50.5, -50.5, Math.toRadians(-37)))
+            .strafeToLinearHeading(blueCloseLaunchPose.position, blueCloseLaunchPose.heading, normalTranslationalVelConstraint)
             .build()
         );
 

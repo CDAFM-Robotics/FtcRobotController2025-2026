@@ -18,7 +18,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 
-@Autonomous(name = "Blue Front Autonomous", group = "0competition")
+@Autonomous(name = "Blue Front Autonomous", group = "Competition")
 public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     Action[] trajectories;
@@ -27,7 +27,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
@@ -47,10 +47,12 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         names.add(0, "First Mark");
         names.add(1, "First And Second Mark");
         names.add(2, "Second Mark And Gate And First Mark");
+        names.add(3, "Twelve ball, Corner Pocket");
 
         boolean secondMarkGate = false;
         boolean firstMark = true;
         boolean secondMark = true;
+        boolean thirdMark = false;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -65,14 +67,14 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
             if ((currentGamepad1.dpad_down && !previousGamepad1.dpad_down) || (currentGamepad2.dpad_down && !previousGamepad2.dpad_down)) {
                 selectedRow++;
-                if (selectedRow > 4) {
+                if (selectedRow > 5) {
                     selectedRow = 0;
                 }
             }
             if ((currentGamepad1.dpad_up && !previousGamepad1.dpad_up) || (currentGamepad2.dpad_up && !previousGamepad2.dpad_up)) {
                 selectedRow--;
                 if (selectedRow < 0) {
-                    selectedRow = 4;
+                    selectedRow = 5;
                 }
             }
 
@@ -86,23 +88,32 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
                 if (selectedRow == 1) {
                     play++;
-                    if (play > 2) {
+                    if (play > 3) {
                         play = 0;
                     }
                     if (play == 0) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 1) {
                         firstMark = true;
                         secondMark = true;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 2) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = true;
+                        thirdMark = false;
+                    }
+                    if (play == 3) {
+                        firstMark = true;
+                        secondMark = false;
+                        secondMarkGate = true;
+                        thirdMark = true;
                     }
                 }
 
@@ -120,6 +131,9 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                     if (secondMark && secondMarkGate) {
                         secondMark = false;
                     }
+                }
+                else if (selectedRow == 5) {
+                    thirdMark = !thirdMark;
                 }
             }
 
@@ -134,22 +148,31 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                 if (selectedRow == 1) {
                     play--;
                     if (play < 0) {
-                        play = 2;
+                        play = 3;
                     }
                     if (play == 0) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 1) {
                         firstMark = true;
                         secondMark = true;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 2) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = true;
+                        thirdMark = false;
+                    }
+                    if (play == 3) {
+                        firstMark = true;
+                        secondMark = false;
+                        secondMarkGate = true;
+                        thirdMark = true;
                     }
                 }
 
@@ -167,6 +190,9 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                     if (secondMark && secondMarkGate) {
                         secondMark = false;
                     }
+                }
+                else if (selectedRow == 5) {
+                    thirdMark = !thirdMark;
                 }
             }
 
@@ -184,7 +210,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("    Play", play);
             }
 
-            telemetry.addData("Play Name", names.get(play));
+            telemetry.addData("    Play Name", names.get(play));
 
             if (selectedRow == 2) {
                 telemetry.addData("> Pickup Second Mark And Hit Gate", secondMarkGate);
@@ -207,7 +233,12 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("    Pickup Second Mark", secondMark);
             }
 
-
+            if (selectedRow == 5) {
+                telemetry.addData("> Pickup Third Mark", thirdMark);
+            }
+            else {
+                telemetry.addData("    Pickup Third Mark", thirdMark);
+            }
 
             telemetry.update();
 
@@ -248,7 +279,10 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
         Actions.runBlocking(new ParallelAction(
             trajectories[1],
-            autonomousActionBuilder.getSpinLauncherClose()
+            new ParallelAction(
+                autonomousActionBuilder.getSpinLauncherClose(),
+                (motif[0] == ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(0) : autonomousActionBuilder.getIndexOutputAction(1))
+            )
         ));
 
         launchInMotifOrder(motif, 0);
@@ -260,16 +294,19 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[5],
-                    autonomousActionBuilder.getIndexIntakeAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(2),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexIntakeAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexIntakeAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
+                        autonomousActionBuilder.getIndexIntakeAction(0),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
                         autonomousActionBuilder.getStopIntake(),
-                        autonomousActionBuilder.getSpinLauncherClose()
+                        new ParallelAction(
+                            autonomousActionBuilder.getSpinLauncherClose(),
+                            (autonomousActionBuilder.getIndexOutputAction(motif[0] == ArtifactColor.GREEN ? 1 : 0))
+                        )
                     )
                 )
             ));
@@ -286,23 +323,26 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[2],
-                    autonomousActionBuilder.getIndexIntakeAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(2),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexIntakeAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexIntakeAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
+                        autonomousActionBuilder.getIndexIntakeAction(0),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
                         autonomousActionBuilder.getStopIntake(),
-                        autonomousActionBuilder.getSpinLauncherClose()
+                        new ParallelAction(
+                            autonomousActionBuilder.getSpinLauncherClose(),
+                            (autonomousActionBuilder.getIndexOutputAction(motif[0] == ArtifactColor.GREEN ? 0 : 1))
+                        )
                     )
                 )
             ));
 
             //Actions.runBlocking(trajectories[1]);
 
-            launchInMotifOrder(motif, 2);
+            launchInMotifOrder(motif, 0);
         }
 
         if (secondMark) {
@@ -311,24 +351,53 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                     trajectories[3],
-                    autonomousActionBuilder.getIndexIntakeAction(0),
+                    autonomousActionBuilder.getIndexIntakeAction(2),
                     new SequentialAction(
                         autonomousActionBuilder.getStartIntake(),
                         autonomousActionBuilder.getWaitUntilBallInIndexer(4),
                         autonomousActionBuilder.getIndexIntakeAction(1),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
-                        autonomousActionBuilder.getIndexIntakeAction(2),
-                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.5),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
+                        autonomousActionBuilder.getIndexIntakeAction(0),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
                         autonomousActionBuilder.getStopIntake(),
-                        autonomousActionBuilder.getSpinLauncherClose()
+                        new ParallelAction(
+                            autonomousActionBuilder.getSpinLauncherClose(),
+                            (autonomousActionBuilder.getIndexOutputAction(motif[0] == ArtifactColor.GREEN ? 1 : 0))
+                        )
                     )
                 )
             ));
 
-            //Actions.runBlocking(trajectories[1]);
-
             launchInMotifOrder(motif, 1);
         }
+
+        // third mark
+
+        if (thirdMark) {
+
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[6],
+                    autonomousActionBuilder.getIndexIntakeAction(2),
+                    new SequentialAction(
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
+                        autonomousActionBuilder.getIndexIntakeAction(0),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1),
+                        autonomousActionBuilder.getStopIntake(),
+                        new ParallelAction(
+                            autonomousActionBuilder.getSpinLauncherClose(),
+                            (autonomousActionBuilder.getIndexOutputAction(motif[0] == ArtifactColor.GREEN ? 2 : 0))
+                        )
+                    )
+                )
+            ));
+
+            launchInMotifOrder(motif, 2);
+        }
+
 
         // Leave
 

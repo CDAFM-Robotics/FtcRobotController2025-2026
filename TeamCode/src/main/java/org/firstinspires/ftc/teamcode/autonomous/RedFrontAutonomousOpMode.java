@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Red Front Autonomous", group = "0competition")
+@Autonomous(name = "Red Front Autonomous", group = "Competition")
 public class RedFrontAutonomousOpMode extends LinearOpMode {
 
     Action[] trajectories;
