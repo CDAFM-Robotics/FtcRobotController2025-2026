@@ -51,7 +51,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.TwoDeadWheelLocalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-@Disabled
+// @Disabled
 public final class TuningOpModes {
 
     // TODO: change this to TankDrive.class if you're using tank
@@ -289,7 +289,7 @@ public final class TuningOpModes {
             throw new RuntimeException();
         }
 
-        /*
+
 
         manager.register(metaForClass(AngularRampLogger.class), new AngularRampLogger(dvf));
         manager.register(metaForClass(ForwardPushTest.class), new ForwardPushTest(dvf));
@@ -309,7 +309,7 @@ public final class TuningOpModes {
         manager.register(metaForClass(OTOSHeadingOffsetTuner.class), new OTOSHeadingOffsetTuner(dvf));
         manager.register(metaForClass(OTOSPositionOffsetTuner.class), new OTOSPositionOffsetTuner(dvf));
 
-         */
+
 
         FtcDashboard.getInstance().withConfigRoot(configRoot -> {
             for (Class<?> c : Arrays.asList(

@@ -212,7 +212,7 @@ public class Launcher {
     public Action getRotateKickerAction(double position) {
         return new SequentialAction(
             new SetKickerPositionAction(position),
-            new SleepAction(0.125)
+            new SleepAction(0.100) // TODO 125 / 300
         );
     }
 
