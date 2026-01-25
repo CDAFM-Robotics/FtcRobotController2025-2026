@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.testing.archived;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -10,14 +9,21 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name = "Color Sensor Test", group = "Testing")
-@Disabled
+// @Disabled
 public class ColorSensorTestOpMode extends LinearOpMode {
 
-    NormalizedColorSensor colorSensor1;
-    NormalizedColorSensor colorSensor2;
+    NormalizedColorSensor colorSensorIntakeLeft;
+    NormalizedColorSensor colorSensorIntakeRight;
 
-    NormalizedRGBA colorSensor1NormalizedColors;
-    NormalizedRGBA colorSensor2NormalizedColors;
+    NormalizedColorSensor colorSensorOutputFront;
+    NormalizedColorSensor colorSensorOutputB;
+
+    NormalizedColorSensor colorSensorAltFront;
+    NormalizedColorSensor colorSensorAltB;
+
+
+    NormalizedRGBA colorSensorANormalizedColors;
+    NormalizedRGBA colorSensorBNormalizedColors;
 
     enum ArtifactColor {
         PURPLE,
@@ -26,95 +32,107 @@ public class ColorSensorTestOpMode extends LinearOpMode {
         UNKNOWN
     }
 
-    ArtifactColor colorSensor1DetectedColor = null;
-    ArtifactColor colorSensor2DetectedColor = null;
+    ArtifactColor colorSensorADetectedColor = null;
+    ArtifactColor colorSensorBDetectedColor = null;
 
-    double sensor2Distance;
-    double sensor1Distance;
+    ArtifactColor predictedColor = null;
+
+
+    double sensorADistance = 0.0;
+    double sensorBDistance = 0.0;
+    float gain = 8;
+
 
     @Override
     public void runOpMode() {
 
-        float gain = 8;
 
-        colorSensor1 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Left");
-        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Right");
+        colorSensorIntakeLeft = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Left");
+        colorSensorIntakeRight = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Right");
+        colorSensorOutputFront = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutputFront");
+        colorSensorOutputB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutputB");
+        colorSensorAltFront = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltFront");
+        colorSensorAltB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltB");
+
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            colorSensor1.setGain(gain);
-            colorSensor2.setGain(gain);
 
-            telemetry.addLine("Color Sensor 1");
-
-            colorSensor1NormalizedColors = colorSensor1.getNormalizedColors();
-
-            telemetry.addLine()
-              .addData("Red", "%.3f", colorSensor1NormalizedColors.red)
-              .addData("Green", "%.3f", colorSensor1NormalizedColors.green)
-              .addData("Blue", "%.3f", colorSensor1NormalizedColors.blue);
-            telemetry.addData("Alpha", "%.3f", colorSensor1NormalizedColors.alpha);
-
-            sensor1Distance = ((DistanceSensor) colorSensor1).getDistance(DistanceUnit.CM);
-            telemetry.addData("Distance (cm)", "%.3f", sensor1Distance);
-
-            if (sensor1Distance > 3) {
-                colorSensor1DetectedColor = ArtifactColor.NONE;
-            }
-            else if (colorSensor1NormalizedColors.blue > colorSensor1NormalizedColors.green) {
-                colorSensor1DetectedColor = ArtifactColor.PURPLE;
-            }
-            else {
-                colorSensor1DetectedColor = ArtifactColor.GREEN;
-            }
-
-            telemetry.addData("Detected Color", colorSensor1DetectedColor);
+            telemetry.addLine("Color Sensor Intake");
+            getColorSensor(colorSensorIntakeLeft, colorSensorIntakeRight);
+            telemetry.addLine();
+            telemetry.addLine("Color Sensor Output");
+            getColorSensor(colorSensorOutputFront, colorSensorOutputB);
 
             telemetry.addLine();
-
-            telemetry.addLine("Color Sensor 2");
-
-            colorSensor2NormalizedColors = colorSensor2.getNormalizedColors();
-
-            telemetry.addLine()
-              .addData("Red", "%.3f", colorSensor2NormalizedColors.red)
-              .addData("Green", "%.3f", colorSensor2NormalizedColors.green)
-              .addData("Blue", "%.3f", colorSensor2NormalizedColors.blue);
-            telemetry.addData("Alpha", "%.3f", colorSensor2NormalizedColors.alpha);
-
-            sensor2Distance = ((DistanceSensor) colorSensor2).getDistance(DistanceUnit.CM);
-            telemetry.addData("Distance (cm)", "%.3f", sensor2Distance);
-
-            if (sensor2Distance > 3) {
-                colorSensor2DetectedColor = ArtifactColor.NONE;
-            }
-            else if (colorSensor2NormalizedColors.blue > colorSensor2NormalizedColors.green) {
-                colorSensor2DetectedColor = ArtifactColor.PURPLE;
-            }
-            else {
-                colorSensor2DetectedColor = ArtifactColor.GREEN;
-            }
-
-            telemetry.addData("Detected Color", colorSensor2DetectedColor);
-
-            telemetry.addLine();
-
-            if (colorSensor1DetectedColor == colorSensor2DetectedColor) {
-                telemetry.addData("Predicted Color", colorSensor1DetectedColor);
-            }
-            else if (colorSensor2DetectedColor == ArtifactColor.NONE) {
-                telemetry.addData("Predicted Color", colorSensor1DetectedColor);
-            }
-            else if (colorSensor1DetectedColor == ArtifactColor.NONE){
-                telemetry.addData("Predicted Color", colorSensor2DetectedColor);
-            }
-            else {
-                telemetry.addData("Predicted Color", ArtifactColor.UNKNOWN);
-            }
+            telemetry.addLine("Color Sensor Alt");
+            getColorSensor(colorSensorAltFront, colorSensorAltB);
 
             telemetry.update();
+
+
         }
+    }
+
+    public void getColorSensor(NormalizedColorSensor colorSensorA, NormalizedColorSensor colorSensorB)
+    {
+        colorSensorA.setGain(gain);
+        colorSensorB.setGain(gain);
+
+        colorSensorANormalizedColors = colorSensorA.getNormalizedColors();
+        sensorADistance = ((DistanceSensor) colorSensorA).getDistance(DistanceUnit.CM);
+
+        // TODO Changed "Detect Distance to 6.5 for both (Output and Alternate Sensor Distance in real program)
+        // TODO: ~15 = Black Divider wall
+        // TODO: ~15 = No Ball
+        // TODO: BUT having detect distance too high may cause false-trigger on intake slot causing ball-stuck (sugg: ~3-4.5)
+
+        if (sensorADistance > 6.5) {
+            colorSensorADetectedColor = ArtifactColor.NONE;
+        }
+        else if (colorSensorANormalizedColors.blue > colorSensorANormalizedColors.green) {
+            colorSensorADetectedColor = ArtifactColor.PURPLE;
+        }
+        else { // telemetry.addData("Predicted Color", ArtifactColor.UNKNOWN);
+            colorSensorADetectedColor = ArtifactColor.GREEN;
+        }
+
+        colorSensorBNormalizedColors = colorSensorB.getNormalizedColors();
+        sensorBDistance = ((DistanceSensor) colorSensorB).getDistance(DistanceUnit.CM);
+
+        if (sensorBDistance > 6.5) {
+            colorSensorBDetectedColor = ArtifactColor.NONE;
+        }
+        else if (colorSensorBNormalizedColors.blue > colorSensorBNormalizedColors.green) {
+            colorSensorBDetectedColor = ArtifactColor.PURPLE;
+        }
+        else {
+            colorSensorBDetectedColor = ArtifactColor.GREEN;
+        }
+
+        // Predicted Color
+        if (colorSensorADetectedColor == colorSensorBDetectedColor) {
+            predictedColor =  colorSensorADetectedColor;
+        }
+        else if (colorSensorBDetectedColor == ArtifactColor.NONE) {
+            predictedColor = colorSensorADetectedColor;
+        }
+        else if (colorSensorADetectedColor == ArtifactColor.NONE){
+            predictedColor = colorSensorBDetectedColor;
+        }
+        else {
+            predictedColor = ArtifactColor.UNKNOWN;
+        }
+
+        telemetry.addLine()
+                .addData("RGBA", "%.2f, %.2f, %.2f, %.2f / %.2f, %.2f, %.2f, %.2f",
+                        colorSensorANormalizedColors.red, colorSensorANormalizedColors.green, colorSensorANormalizedColors.blue, colorSensorANormalizedColors.alpha,
+                        colorSensorBNormalizedColors.red, colorSensorBNormalizedColors.green, colorSensorBNormalizedColors.blue, colorSensorBNormalizedColors.alpha);
+        telemetry.addData("Distance (cm)", "%.2f / %.2f", sensorADistance, sensorBDistance);
+        telemetry.addData("Detected Color",  "%s / %s", colorSensorADetectedColor, colorSensorBDetectedColor);
+        telemetry.addData("Predicted Color", predictedColor);
+
     }
 }
