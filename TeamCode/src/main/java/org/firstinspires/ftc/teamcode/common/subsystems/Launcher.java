@@ -53,6 +53,7 @@ public class Launcher {
     public final double LAUNCH_VELOCITY_FULL= 1500;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
+    public final double LIMELIGHT_HEIGHT_OFFSET = 436;
 
     // Teleop AutoAIM PID Constants
     public static double aimKp = 0.016; // 0.02
@@ -600,7 +601,7 @@ public class Launcher {
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
         if (llresult.isValid()) {
-            distance = 448 / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
+            distance = LIMELIGHT_HEIGHT_OFFSET / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
         }
         return distance;
     }
