@@ -152,7 +152,7 @@ public class Indexer {
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
 
-        if (sensor1Distance > 5) {;//w
+        if (sensor1Distance > 3.5) {//5 // 3
             sensor1DetectedColor = ArtifactColor.NONE;
         }
         else if (sensor1RGBA.blue > sensor1RGBA.green) {
@@ -164,7 +164,7 @@ public class Indexer {
 
         ArtifactColor sensor2DetectedColor;
 
-        if (sensor2Distance > 5) {
+        if (sensor2Distance > 3) {
             sensor2DetectedColor = ArtifactColor.NONE;
         }
         else if (sensor2RGBA.blue > sensor2RGBA.green) {

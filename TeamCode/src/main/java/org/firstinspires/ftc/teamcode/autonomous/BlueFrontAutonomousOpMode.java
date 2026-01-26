@@ -11,12 +11,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
+import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Arrays;
 
 @Autonomous(name = "Blue Front Autonomous", group = "Competition")
 public class BlueFrontAutonomousOpMode extends LinearOpMode {
@@ -28,7 +29,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
+        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(-37))); //new Pose2d(-50.5, -50.5, Math.toRadians(143))
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
@@ -252,47 +253,57 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
         //start always with PGP
 
         // Go to the Launch Pose and april tag
+        if (!secondMarkGate) {
+            Actions.runBlocking(new ParallelAction(
+                trajectories[0]
+            ));
 
-        Actions.runBlocking(new ParallelAction(
-            trajectories[0]
-        ));
+            for (int i = 0; i < 1000; i++) {
+                motif = robot.getLauncher().getMotifPattern();
 
-        for(int i = 0; i < 1000; i++) {
-            motif = robot.getLauncher().getMotifPattern();
+                if (motif == null) {
+                    telemetry.addData("Motif Pattern", "Not Detected");
+                } else {
+                    telemetry.addData("Motif Pattern", motif[0].toString() + ", " + motif[1].toString() + ", " + motif[2].toString());
+                }
+                telemetry.update();
+            }
 
             if (motif == null) {
-                telemetry.addData("Motif Pattern", "Not Detected");
+                motif = new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
             }
-            else {
-                telemetry.addData("Motif Pattern", motif[0].toString() + ", " + motif[1].toString() + ", " + motif[2].toString());
+
+            if (motif[0] != ArtifactColor.GREEN) {
+                Actions.runBlocking(autonomousActionBuilder.getIndexOutputAction(1));
             }
-            telemetry.update();
+
+            Actions.runBlocking(new ParallelAction(
+                trajectories[1],
+                new ParallelAction(
+                    autonomousActionBuilder.getSpinLauncherClose(),
+                    (motif[0] == ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(0) : autonomousActionBuilder.getIndexOutputAction(1))
+                )
+            ));
+
+            launchInMotifOrder(motif, 0);
         }
-
-        if (motif == null) {
-            motif = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
+        else {
+            Actions.runBlocking(new ParallelAction(
+                trajectories[7],
+                autonomousActionBuilder.getSpinLauncherClose()
+            ));
+            launchInMotifOrder(new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE}, 0);
         }
-
-        if (motif[0] != ArtifactColor.GREEN) {
-            Actions.runBlocking(autonomousActionBuilder.getIndexOutputAction(1));
-        }
-
-        Actions.runBlocking(new ParallelAction(
-            trajectories[1],
-            new ParallelAction(
-                autonomousActionBuilder.getSpinLauncherClose(),
-                (motif[0] == ArtifactColor.GREEN ? autonomousActionBuilder.getIndexOutputAction(0) : autonomousActionBuilder.getIndexOutputAction(1))
-            )
-        ));
-
-        launchInMotifOrder(motif, 0);
 
 
         if (secondMarkGate) {
 
+            Action aprilTagAction = autonomousActionBuilder.getAprilTagAction();
+
             // Pickup second mark
             Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
+                    aprilTagAction,
                     trajectories[5],
                     autonomousActionBuilder.getIndexIntakeAction(2),
                     new SequentialAction(
@@ -305,11 +316,20 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
                         autonomousActionBuilder.getStopIntake(),
                         new ParallelAction(
                             autonomousActionBuilder.getSpinLauncherClose(),
-                            (autonomousActionBuilder.getIndexOutputAction(motif[0] == ArtifactColor.GREEN ? 1 : 0))
+                            (autonomousActionBuilder.getIndexOutputAction(motif != null ? (motif[0] == ArtifactColor.GREEN ? 1 : 0) : 0))
                         )
                     )
                 )
             ));
+
+            motif = ((Launcher.AprilTagAction) ((RunTimeoutAction) aprilTagAction).getAction()).getPattern();
+
+            if (motif == null) {
+                motif = new ArtifactColor[] {ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
+            }
+
+            telemetry.addData("Motif Pattern", Arrays.toString(motif));
+            telemetry.update();
 
             //Actions.runBlocking(trajectories[1]);
 

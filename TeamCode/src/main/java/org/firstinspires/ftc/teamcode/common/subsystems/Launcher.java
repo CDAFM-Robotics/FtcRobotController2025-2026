@@ -12,11 +12,9 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -55,6 +53,7 @@ public class Launcher {
     public final double LAUNCH_VELOCITY_FULL= 1500;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
+    public final double LIMELIGHT_HEIGHT_OFFSET = 436;
 
     // Teleop AutoAIM PID Constants
     public static double aimKp = 0.016; // 0.02
@@ -170,29 +169,16 @@ public class Launcher {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            LLResult result = limelight.getLatestResult();
+            ArtifactColor[] result = getMotifPattern();
 
-            if (result.isValid()) {
-                List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-                for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                    if (fr.getFiducialId() == 21) {
-                        motifPattern = new ArtifactColor[] {ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
-                        return false;
-                    }
-                    else if (fr.getFiducialId() == 22) {
-                        motifPattern = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
-                        return false;
-                    }
-                    else if (fr.getFiducialId() == 23) {
-                        motifPattern = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
-                        return false;
-                    }
-                }
+            if (result != null) {
+                motifPattern = result;
+                return false;
             }
             return true;
         }
 
-        public ArtifactColor[] getMotifPattern() {
+        public ArtifactColor[] getPattern() {
             return motifPattern;
         }
     }
@@ -233,7 +219,7 @@ public class Launcher {
     }
 
     public Action getAprilTagAction () {
-        return new AprilTagAction(7);
+        return new RunTimeoutAction(new AprilTagAction(7), 8);
     }
 
     public Launcher(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -320,9 +306,11 @@ public class Launcher {
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     if (fr.getFiducialId() == 21) {
                         return new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
-                    } else if (fr.getFiducialId() == 22) {
+                    }
+                    else if (fr.getFiducialId() == 22) {
                         return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
-                    } else if (fr.getFiducialId() == 23) {
+                    }
+                    else if (fr.getFiducialId() == 23) {
                         return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
                     }
                 }
@@ -613,7 +601,7 @@ public class Launcher {
         LLResult llresult = limelight.getLatestResult();
         double distance = 0;
         if (llresult.isValid()) {
-            distance = 448 / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
+            distance = LIMELIGHT_HEIGHT_OFFSET / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
         }
         return distance;
     }

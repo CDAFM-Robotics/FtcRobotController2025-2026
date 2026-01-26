@@ -30,4 +30,8 @@ public class RunTimeoutAction implements Action {
         }
         return action.run(telemetryPacket) && sleepAction.run(telemetryPacket);
     }
+
+    public Action getAction() {
+        return action;
+    }
 }
