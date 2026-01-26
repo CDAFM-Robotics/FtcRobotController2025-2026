@@ -65,14 +65,15 @@ public class AutonomousActionBuilder {
     public static Pose2d blueSecondMarkEndClose = new Pose2d(new Vector2d(12.5, -62), Math.toRadians(-90)); // -59 -> -53 // goes 3 inches less far
     public static Pose2d blueSecondMarkStartFar = new Pose2d(new Vector2d(12, -30), Math.toRadians(-90));
     public static Pose2d blueSecondMarkEndFar = new Pose2d(new Vector2d(12, -62), Math.toRadians(-90));
-    public static Pose2d blueThirdMarkStart = new Pose2d(36, -30, Math.toRadians(-90));
-    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -62), Math.toRadians(-90)); // 59->54  // goes 3 inches less far
+    public static Pose2d blueThirdMarkStart = new Pose2d(34, -34, Math.toRadians(-90)); // x:36->34 TODO y: was -30 bluenear 12ball
+    public static Pose2d blueThirdMarkEnd = new Pose2d(new Vector2d(36, -63), Math.toRadians(-90)); // 62->63 // 59->54  // goes 3 inches less far
     public static Pose2d blueLoadingZoneStart = new Pose2d(58, -40, Math.toRadians(-90));
     public static Pose2d blueLoadingZoneEnd = new Pose2d(58, -62, Math.toRadians(-90));
 
     public static VelConstraint normalTranslationalVelConstraint = new TranslationalVelConstraint(62);
     public static VelConstraint slowTranslationalVelConstraint = new TranslationalVelConstraint(35); // was 25 (27Dec25)
 
+    public static AccelConstraint slightLowAccelConstraint = new ProfileAccelConstraint(-40,36);
     public static AccelConstraint lowAccelConstraint = new ProfileAccelConstraint(-20, 30);
 
     public static TurnConstraints turnConstraints = new TurnConstraints(Math.PI, -Math.PI, Math.PI);
@@ -216,16 +217,16 @@ public class AutonomousActionBuilder {
             .strafeToConstantHeading(blueSecondMarkEndClose.position, normalTranslationalVelConstraint)
             .setTangent(Math.toRadians(90)) //TODO HITTING Gate way too hard -56 -> -52
             .splineToSplineHeading(new Pose2d(12.5, -43, Math.toRadians(180)), Math.toRadians(90), normalTranslationalVelConstraint)
-            .splineToSplineHeading(new Pose2d(2, -55, Math.toRadians(180)), Math.toRadians(-90), normalTranslationalVelConstraint)
-            .waitSeconds(1.5)
+            .splineToSplineHeading(new Pose2d(2, -56, Math.toRadians(180)), Math.toRadians(-90), normalTranslationalVelConstraint)
+            .waitSeconds(0.75)
             .setTangent(Math.toRadians(90)) // TODO is this causing the misfire? of second set? very strange rotation after gate wait
             .splineToLinearHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
             // .waitSeconds(0.5) // TODO not getting off mark at end
             .build();
         blueCloseLaunchPickupThirdMark = md.actionBuilder(blueCloseLaunchPose)
             .setTangent(Math.toRadians(-10))
-            .splineToSplineHeading(blueThirdMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint) // TODO 25jan
-            .strafeToConstantHeading(blueThirdMarkEnd.position, slowTranslationalVelConstraint) // TODO 25Jan normalTranslation
+            .splineToSplineHeading(blueThirdMarkStart, Math.toRadians(-90), normalTranslationalVelConstraint, slightLowAccelConstraint) // TODO 25jan low -> slightlow
+            .strafeToConstantHeading(blueThirdMarkEnd.position, normalTranslationalVelConstraint) // TODO 25Jan normalTranslation
             .setTangent(Math.toRadians(90))
             .splineToLinearHeading(blueCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
             .build();
