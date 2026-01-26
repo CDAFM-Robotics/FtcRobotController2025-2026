@@ -53,7 +53,7 @@ public class ColorSensorTestOpMode extends LinearOpMode {
         colorSensorOutputB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutputB");
         colorSensorAltFront = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltFront");
         colorSensorAltB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltB");
-
+        // TODO
 
         waitForStart();
 
