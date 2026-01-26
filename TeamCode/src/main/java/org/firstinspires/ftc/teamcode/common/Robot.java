@@ -250,29 +250,29 @@ public class Robot {
          if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
              launcher.resetKicker();
              timeSinceKickReset.reset();
+             autoIntakeState = AutoIntakeStates.WAIT_KICKER;
          }
 
          switch (autoIntakeState) {
              case INIT:
                  if (indexer.checkEmptySlot()) {
+                     telemetry.addLine("Robot: found empty slot");
                      RobotLog.d("RRobot: found empty slot");
-                     autoIntakeState = AutoIntakeStates.RESET_KICKER;
+                     autoIntakeState = AutoIntakeStates.TURN_EMPTY_SLOT_TO_INTAKE;
+                     break;
                  }
                  else {
                      //No empty slot
                      intake3Balls = true;
+                     indexer.updateUnknowBall();
                      autoIntakeState = AutoIntakeStates.INIT;
+                     break;
                  }
-             case RESET_KICKER:
-                 if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
-                     launcher.resetKicker();
-                     timeSinceKickReset.reset();
-                 }
-                 autoIntakeState = AutoIntakeStates.WAIT_KICKER;
              case WAIT_KICKER:
                  if(timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
-                     autoIntakeState = AutoIntakeStates.TURN_EMPTY_SLOT_TO_INTAKE;
+                     autoIntakeState = AutoIntakeStates.INIT;
                  }
+                 break;
              case TURN_EMPTY_SLOT_TO_INTAKE:
                  indexer.turnEmptySlotToIntake();
                  autoIntakeState = AutoIntakeStates.WAIT_FOR_BALL;
@@ -280,6 +280,7 @@ public class Robot {
              case WAIT_FOR_BALL:
                  if (indexer.indexerFinishedTurning()) {
                      if (indexer.isBallAtIntake()) {
+                         indexer.updateUnknowBall();
                          intake1Ball = true;
                          indexer.updateBallColorAtIntake();
                          autoIntakeState = AutoIntakeStates.INIT;
