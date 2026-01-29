@@ -12,10 +12,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
+import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Autonomous(name = "Red Front Autonomous", group = "Competition")
 public class RedFrontAutonomousOpMode extends LinearOpMode {
@@ -29,12 +32,14 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(37)));
+
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
+        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(-143)));
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 
         trajectories = autonomousActionBuilder.getRedCloseTrajectories();
+
 
 
 
@@ -50,10 +55,12 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
         names.add(0, "First Mark");
         names.add(1, "First And Second Mark");
         names.add(2, "Second Mark And Gate And First Mark");
+        names.add(3, "12 ball, other corner pocket");
 
         boolean secondMarkGate = false;
         boolean firstMark = true;
         boolean secondMark = true;
+        boolean thirdMark = false;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -68,14 +75,14 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
             if ((currentGamepad1.dpad_down && !previousGamepad1.dpad_down) || (currentGamepad2.dpad_down && !previousGamepad2.dpad_down)) {
                 selectedRow++;
-                if (selectedRow > 4) {
+                if (selectedRow > 5) {
                     selectedRow = 0;
                 }
             }
             if ((currentGamepad1.dpad_up && !previousGamepad1.dpad_up) || (currentGamepad2.dpad_up && !previousGamepad2.dpad_up)) {
                 selectedRow--;
                 if (selectedRow < 0) {
-                    selectedRow = 4;
+                    selectedRow = 5;
                 }
             }
 
@@ -89,23 +96,32 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
                 if (selectedRow == 1) {
                     play++;
-                    if (play > 2) {
+                    if (play > 3) {
                         play = 0;
                     }
                     if (play == 0) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 1) {
                         firstMark = true;
                         secondMark = true;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 2) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = true;
+                        thirdMark = false;
+                    }
+                    if (play == 3) {
+                        firstMark = true;
+                        secondMark = true;
+                        secondMarkGate = false;
+                        thirdMark = true;
                     }
                 }
 
@@ -137,22 +153,31 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                 if (selectedRow == 1) {
                     play--;
                     if (play < 0) {
-                        play = 2;
+                        play = 3;
                     }
                     if (play == 0) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 1) {
                         firstMark = true;
                         secondMark = true;
                         secondMarkGate = false;
+                        thirdMark = false;
                     }
                     if (play == 2) {
                         firstMark = true;
                         secondMark = false;
                         secondMarkGate = true;
+                        thirdMark = false;
+                    }
+                    if (play == 3) {
+                        firstMark = true;
+                        secondMark = true;
+                        secondMarkGate = false;
+                        thirdMark = true;
                     }
                 }
 
@@ -187,7 +212,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("    Play", play);
             }
 
-            telemetry.addData("Play Name", names.get(play));
+            telemetry.addData("    Play Name", names.get(play));
 
             if (selectedRow == 2) {
                 telemetry.addData("> Pickup Second Mark And Hit Gate", secondMarkGate);
@@ -210,11 +235,25 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
                 telemetry.addData("    Pickup Second Mark", secondMark);
             }
 
+            if (selectedRow == 5) {
+                telemetry.addData("> Pickup Third Mark", thirdMark);
+            }
+            else {
+                telemetry.addData("    Pickup Third Mark", thirdMark);
+            }
+
 
 
             telemetry.update();
 
 
+        }
+        if (!thirdMark) {
+
+            md = new MecanumDrive(hardwareMap, !thirdMark ? new Pose2d(-50.5, 50.5, Math.toRadians(37)) : new Pose2d(-50.5, 50.5, Math.toRadians(-143)));
+            autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
+
+            trajectories = autonomousActionBuilder.getRedCloseTrajectories();
         }
 
         waitForStart();
@@ -225,37 +264,69 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
 
         // Go to the Launch Pose and april tag
 
-        Actions.runBlocking(new ParallelAction(
-            trajectories[0]
-        ));
+        if (!thirdMark) {
 
-        for(int i = 0; i < 50; i++) {
-            motif = robot.getLauncher().getMotifPattern();
+            Actions.runBlocking(new ParallelAction(
+                trajectories[0]
+            ));
+
+            for (int i = 0; i < 50; i++) {
+                motif = robot.getLauncher().getMotifPattern();
+
+                if (motif == null) {
+                    telemetry.addData("Motif Pattern", "Not Detected");
+                } else {
+                    telemetry.addData("Motif Pattern", motif[0].toString() + ", " + motif[1].toString() + ", " + motif[2].toString());
+                }
+                telemetry.update();
+                sleep(1);
+            }
 
             if (motif == null) {
-                telemetry.addData("Motif Pattern", "Not Detected");
+                motif = new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
+            }
+
+            if (motif[0] != ArtifactColor.GREEN) {
+                Actions.runBlocking(autonomousActionBuilder.getIndexOutputAction(1));
+            }
+
+            Actions.runBlocking(new ParallelAction(
+                trajectories[1],
+                autonomousActionBuilder.getSpinLauncherClose()
+            ));
+
+            launchInMotifOrder(motif, 0);
+        }
+        else {
+            Actions.runBlocking(new ParallelAction(
+                trajectories[6],
+                autonomousActionBuilder.getSpinLauncherClose()
+            ));
+            launchInMotifOrder(new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE}, 0);
+
+            RunTimeoutAction aprilTagAction = (RunTimeoutAction) autonomousActionBuilder.getAprilTagAction();
+
+            Actions.runBlocking(new ParallelAction(
+                trajectories[7],
+                aprilTagAction
+            ));
+
+            motif = ((Launcher.AprilTagAction) aprilTagAction.getAction()).getPattern();
+
+            if (motif != null) {
+
+                telemetry.addData("motif", Arrays.toString(motif));
+                telemetry.update();
             }
             else {
-                telemetry.addData("Motif Pattern", motif[0].toString() + ", " + motif[1].toString() + ", " + motif[2].toString());
+                telemetry.addData("motif", "not detected");
+                telemetry.update();
             }
-            telemetry.update();
-            sleep(1);
         }
 
-        if (motif == null) {
-            motif = new ArtifactColor[] {ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
+        if (motif==null) {
+            motif = new ArtifactColor[] {ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
         }
-
-        if (motif[0] != ArtifactColor.GREEN) {
-            Actions.runBlocking(autonomousActionBuilder.getIndexOutputAction(1));
-        }
-
-        Actions.runBlocking(new ParallelAction(
-            trajectories[1],
-            autonomousActionBuilder.getSpinLauncherClose()
-        ));
-
-        launchInMotifOrder(motif, 0);
 
         if (secondMarkGate) {
             Actions.runBlocking(
@@ -330,6 +401,35 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
             //Actions.runBlocking(trajectories[1]);
 
             launchInMotifOrder(motif, 1);
+        }
+
+        if (thirdMark) {
+
+            // Pickup third mark
+
+            Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                    trajectories[8],
+                    autonomousActionBuilder.getIndexIntakeAction(0),
+                    new SequentialAction(
+                        new SleepAction(0.5),
+                        autonomousActionBuilder.getStartIntake(),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(4),
+                        autonomousActionBuilder.getIndexIntakeAction(1),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.2),
+                        autonomousActionBuilder.getIndexIntakeAction(2),
+                        autonomousActionBuilder.getWaitUntilBallInIndexer(1.2),
+                        autonomousActionBuilder.getSpinLauncherClose(),
+                        autonomousActionBuilder.getStopIntake()
+                    )
+                )
+            ));
+
+            //Actions.runBlocking(trajectories[1]);
+
+
+
+            launchInMotifOrder(motif, 0);
         }
 
         // LEave

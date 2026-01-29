@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 
 import org.firstinspires.ftc.teamcode.common.Robot;
-import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class AutonomousActionBuilder {
@@ -30,6 +29,8 @@ public class AutonomousActionBuilder {
     public Action redCloseLaunchPickupSecondMark;
     public Action redCloseLaunchToLeaveLaunchZone;
     public Action redCloseLaunchPickupSecondMarkHitGate;
+    public Action redCloseLaunchTurnToAprilTag;
+    public Action redCloseLaunchPickupThirdMark;
 
     public Action blueFarStartToFarLaunch;
     public Action blueFarLaunchPickupThirdMark;
@@ -47,14 +48,17 @@ public class AutonomousActionBuilder {
     public Action blueCloseLaunchPickupThirdMark;
     public Action blueCloseLaunchToLeaveLaunchZone;
 
-    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-111.5)); // TODO 14nov25 -113
+    public static Pose2d redFarLaunchPose = new Pose2d(49, 12.5, Math.toRadians(-110.5)); // TODO 14nov25 -113
     public static Pose2d redCloseLaunchPose = new Pose2d(new Vector2d(-20, 20), Math.toRadians(-129));
     public static Pose2d redFirstMarkStart = new Pose2d(new Vector2d(-11.5, 30), Math.toRadians(90));
     public static Pose2d redFirstMarkEnd = new Pose2d(new Vector2d(-11.5, 54), Math.toRadians(90));
     public static Pose2d redSecondMarkStart = new Pose2d(new Vector2d(13.5, 30), Math.toRadians(90));
-    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(13.5, 61), Math.toRadians(90));
-    public static Pose2d redThirdMarkStart = new Pose2d(36, 30, Math.toRadians(90));
+    public static Pose2d redSecondMarkEnd = new Pose2d(new Vector2d(13.5, 58), Math.toRadians(90));
+    public static Pose2d redSecondMarkStartClose = new Pose2d(new Vector2d(12.5, 30), Math.toRadians(90));
+    public static Pose2d redSecondMarkEndClose = new Pose2d(new Vector2d(13.5, 58), Math.toRadians(90));
+    public static Pose2d redThirdMarkStart = new Pose2d(36, 28, Math.toRadians(90));
     public static Pose2d redThirdMarkEnd = new Pose2d(new Vector2d(36, 57), Math.toRadians(90));
+    public static Pose2d redThirdMarkEndClose = new Pose2d(new Vector2d(36, 60), Math.toRadians(90));
     public static Pose2d redLoadingZoneStart = new Pose2d(58, 40, Math.toRadians(120));
     public static Pose2d redLoadingZoneEnd = new Pose2d(58, 62, Math.toRadians(80));
 
@@ -96,23 +100,23 @@ public class AutonomousActionBuilder {
         redFarLaunchPickupThirdMark = md.actionBuilder(redFarLaunchPose)
           .setTangent(Math.toRadians(165))
           .splineToSplineHeading(redThirdMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
-          .strafeToConstantHeading(redThirdMarkEnd.position, normalTranslationalVelConstraint)
+          .strafeToConstantHeading(redThirdMarkEnd.position, normalTranslationalVelConstraint, lowAccelConstraint)
           .setTangent(Math.toRadians(-90))
-          .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+          .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
           .build();
         redFarLaunchPickupSecondMark = md.actionBuilder(redFarLaunchPose)
             .setTangent(Math.toRadians(180))
             .splineToSplineHeading(redSecondMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
-            .strafeToConstantHeading(redSecondMarkEnd.position, normalTranslationalVelConstraint)
+            .strafeToConstantHeading(redSecondMarkEnd.position, normalTranslationalVelConstraint, lowAccelConstraint)
             .setTangent(Math.toRadians(-90))
-            .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
         redFarLaunchPickupFirstMark = md.actionBuilder(redFarLaunchPose)
             .setTangent(Math.toRadians(180))
             .splineToSplineHeading(redFirstMarkStart, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
-            .strafeToConstantHeading(redFirstMarkEnd.position, normalTranslationalVelConstraint)
+            .strafeToConstantHeading(redFirstMarkEnd.position, normalTranslationalVelConstraint, lowAccelConstraint)
             .setTangent(Math.toRadians(-90))
-            .splineToSplineHeading(redFarLaunchPose, Math.toRadians(-15), normalTranslationalVelConstraint)
+            .strafeToLinearHeading(redFarLaunchPose.position, redFarLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
         redFarLaunchToLeaveLaunchZone = md.actionBuilder(redFarLaunchPose)
             .strafeTo(new Vector2d(47.5, 23.5), normalTranslationalVelConstraint)
@@ -126,7 +130,7 @@ public class AutonomousActionBuilder {
             .strafeToLinearHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
             .build();
         redCloseLaunchPickupFirstMark = md.actionBuilder(redCloseLaunchPose)
-            .turn(Math.toRadians(-141))
+            .turnTo(Math.toRadians(90))
             .setTangent(Math.toRadians(0))
             .splineToConstantHeading(redFirstMarkStart.position, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(redFirstMarkEnd.position, normalTranslationalVelConstraint)
@@ -134,10 +138,10 @@ public class AutonomousActionBuilder {
             .splineToSplineHeading(redCloseLaunchPose, Math.toRadians(-135), normalTranslationalVelConstraint)
             .build();
         redCloseLaunchPickupSecondMark = md.actionBuilder(redCloseLaunchPose)
-            .turn(Math.toRadians(-141))
+            .turnTo(Math.toRadians(90))
             .setTangent(Math.toRadians(0))
-            .splineToConstantHeading(redSecondMarkStart.position, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
-            .strafeToConstantHeading(redSecondMarkEnd.position, normalTranslationalVelConstraint)
+            .splineToConstantHeading(redSecondMarkStartClose.position, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
+            .strafeToConstantHeading(redSecondMarkEndClose.position, normalTranslationalVelConstraint)
             .setTangent(Math.toRadians(-90))
             .splineToSplineHeading(redCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
             .build();
@@ -145,7 +149,7 @@ public class AutonomousActionBuilder {
             .strafeToConstantHeading(new Vector2d( -10, 30))
             .build();
         redCloseLaunchPickupSecondMarkHitGate = md.actionBuilder(redCloseLaunchPose)
-            .turn(Math.toRadians(-141))
+            .turnTo(Math.toRadians(90))
             .setTangent(Math.toRadians(0))
             .splineToConstantHeading(redSecondMarkStart.position, Math.toRadians(90), normalTranslationalVelConstraint, lowAccelConstraint)
             .strafeToConstantHeading(redSecondMarkEnd.position, normalTranslationalVelConstraint)
@@ -156,6 +160,18 @@ public class AutonomousActionBuilder {
             .setTangent(Math.toRadians(-65))
             .splineToLinearHeading(redCloseLaunchPose, Math.toRadians(180), normalTranslationalVelConstraint)
             .build();
+        redCloseStartToCloseLaunch = md.actionBuilder(new Pose2d(-50.5, 50.5, Math.toRadians(-143)))
+            .strafeToLinearHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
+            .build();
+        redCloseLaunchTurnToAprilTag = md.actionBuilder(redCloseLaunchPose)
+            .turnTo(Math.toRadians(-90))
+            .build();
+        redCloseLaunchPickupThirdMark = md.actionBuilder(redCloseLaunchPose)
+            .strafeToLinearHeading(redThirdMarkStart.position, redThirdMarkStart.heading, normalTranslationalVelConstraint)
+            .strafeToConstantHeading(redThirdMarkEndClose.position, normalTranslationalVelConstraint)
+            .strafeToLinearHeading(redCloseLaunchPose.position, redCloseLaunchPose.heading, normalTranslationalVelConstraint)
+            .build();
+
 
 
         blueFarStartToFarLaunch = md.actionBuilder(new Pose2d(new Vector2d(61, -11.75), Math.toRadians(-90)))
@@ -276,7 +292,10 @@ public class AutonomousActionBuilder {
             redCloseLaunchPickupFirstMark,
             redCloseLaunchPickupSecondMark,
             redCloseLaunchToLeaveLaunchZone,
-            redCloseLaunchPickupSecondMarkHitGate
+            redCloseLaunchPickupSecondMarkHitGate,
+            redCloseStartToCloseLaunch,
+            redCloseLaunchTurnToAprilTag,
+            redCloseLaunchPickupThirdMark
         };
     }
 
