@@ -29,12 +29,9 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(-37))); //new Pose2d(-50.5, -50.5, Math.toRadians(143))
+
         Robot robot = new Robot(hardwareMap, telemetry);
         robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
-        autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
-
-        trajectories = autonomousActionBuilder.getBlueCloseTrajectories();
 
         ArtifactColor[] motif = null;
 
@@ -245,6 +242,11 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
 
 
         }
+
+        MecanumDrive md = new MecanumDrive(hardwareMap, secondMarkGate ? new Pose2d(-50.5, -50.5, Math.toRadians(-37)) : new Pose2d(-50.5, -50.5, Math.toRadians(143))); //new Pose2d(-50.5, -50.5, Math.toRadians(143))
+        autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
+
+        trajectories = autonomousActionBuilder.getBlueCloseTrajectories();
 
         waitForStart();
 

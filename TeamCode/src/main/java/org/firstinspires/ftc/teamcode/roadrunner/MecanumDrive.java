@@ -88,7 +88,7 @@ public final class MecanumDrive {
 
         // turn profile parameters (in radians)
         public double maxAngVel = 5.5; // PI*2 shared with path
-        public double maxAngAccel = 12; // PI*2
+        public double maxAngAccel = 9; // PI*2
         // path controller gains
         public double axialGain = 10;
         public double lateralGain = 15;
@@ -321,7 +321,8 @@ public final class MecanumDrive {
 
             Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
 
-            if (t >= timeTrajectory.duration && error.position.norm() < 1) {
+            if (t >= timeTrajectory.duration && error.position.norm() < 1
+            || t >= timeTrajectory.duration + 1) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
