@@ -184,6 +184,12 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getLauncher().toggleLauncher();
+                if (robot.getLauncher().isLauncherActive()){
+                    gamepad2.rumble(0.0,1.0,1000);
+                }
+                else{
+                    gamepad2.rumble(1.0,0.0,100);
+                }
                 autoLaunch = true;
             }
 
@@ -280,14 +286,12 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }*/
 
             //change gamepad 2 light barwhen sped up all the way
-            //TODO: driver 2 would like the gamepad 2 to rumble when the launcher is up to speed. Maybe there should be a torlance about 20 tick/second
             /*if(robot.getLauncher().getLauncherVelocity() == robot.getLauncher().getLauncherTargetVelocity() && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
                 gamepad2.setLedColor(255, 255, 0, 20);
             }*/
 
 
             //rumble gamepad 2 when empty
-            //TODO: driver 2 would like the gamepad to rumble when the launcher is up to speed.
             /*if(robot.getIndexer().artifactColorArray == new ArtifactColor[] {ArtifactColor.NONE, ArtifactColor.NONE, ArtifactColor.NONE} && robot.getLauncher().getLauncherTargetVelocity() != 0.0){
                 gamepad2.rumble(0.25, 0, 10);
                 gamepad2.rumble(0, 0.25, 10);
