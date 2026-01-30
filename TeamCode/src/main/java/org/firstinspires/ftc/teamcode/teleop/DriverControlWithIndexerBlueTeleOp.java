@@ -43,9 +43,11 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         ElapsedTime timeSinceLastIncident = new ElapsedTime();
         ElapsedTime initializedIndexerTimer  = new ElapsedTime();
         ElapsedTime aimTimer  = new ElapsedTime();
+        ElapsedTime rumbleLauncherTimer  = new ElapsedTime();
 
         initializedIndexerTimer.reset();
         aimTimer.reset();
+        rumbleLauncherTimer.reset();
 
         //Check the color of the balls at init
         while (initializedIndexerTimer.milliseconds()< 500){
@@ -185,12 +187,17 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getLauncher().toggleLauncher();
                 if (robot.getLauncher().isLauncherActive()){
-                    gamepad2.rumble(0.0,1.0,1000);
+                    gamepad2.rumble(0.0,1.0,500);
                 }
                 else{
-                    gamepad2.rumble(1.0,0.0,100);
+                    gamepad2.rumble(1.0,0.0,250);
                 }
                 autoLaunch = true;
+            }
+
+            if (robot.getLauncher().isLauncherActive() && rumbleLauncherTimer.milliseconds() > 1000){
+                gamepad2.rumble(0.0,1.0,500);
+                rumbleLauncherTimer.reset();
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
