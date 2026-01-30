@@ -48,11 +48,10 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
         aimTimer.reset();
 
         //Check the color of the balls at init
-        robot.resetIndexerColorStart();
-        //RobotLog.d("start indexing");
-        while (initializedIndexerTimer.milliseconds() < 1800.0) {
-            robot.resetIndexer();
+        while (initializedIndexerTimer.milliseconds()< 500){
+
         }
+        robot.updateColorAllSlots();
         //RobotLog.d("done indexing");
 
         robot.getLauncher().setLimelightPipeline(isRedSide);
@@ -121,16 +120,14 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
 
             // Active Intake or re-indexing
-            if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
+            if (currentGamepad1.right_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
                 //start the intake rolling
                 robot.getIntake().startIntake();
                 //turn the indexer for intake
-                if (currentGamepad1.right_trigger != 0.0)
-                    robot.intakeWithIndexerTurn();
+                robot.intakeWithIndexerTurn();
             }
-            else if ((currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0)
-                    || (currentGamepad2.left_trigger == 0.0 && previousGamepad2.left_trigger != 0)){
+            else if (currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0){
                 robot.getIntake().stopIntake();
             }
 
@@ -163,11 +160,12 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 
             // When indexer stuck or out of alignment, recover the color of the balls
             if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0){
-                robot.resetIndexerColorStart();
+                robot.updateColorAllSlots();
             }
 
-            if (currentGamepad2.left_trigger != 0)
-                robot.resetIndexer();
+            // reindexing deprecated
+            /*if (currentGamepad2.left_trigger != 0)
+                robot.resetIndexer();*/
 
             // TODO this line of code generates a call every 6-8ms
             // telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());

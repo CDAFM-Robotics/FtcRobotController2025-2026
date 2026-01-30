@@ -265,7 +265,6 @@ public class Robot {
                      //No empty slot
                      intake3Balls = true;
                      indexer.updateUnknowBall();
-                     autoIntakeState = AutoIntakeStates.INIT;
                      break;
                  }
              case WAIT_KICKER:
@@ -280,9 +279,9 @@ public class Robot {
              case WAIT_FOR_BALL:
                  if (indexer.indexerFinishedTurning()) {
                      if (indexer.isBallAtIntake()) {
-                         indexer.updateUnknowBall();
                          intake1Ball = true;
                          indexer.updateBallColorAtIntake();
+                         indexer.updateUnknowBall();
                          autoIntakeState = AutoIntakeStates.INIT;
                          break;
                      }
@@ -292,27 +291,6 @@ public class Robot {
                  throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
 
          }
-
-//             if (indexer.checkEmptySlot()){
-//                telemetry.addLine("Robot: found empty slot");
-//                //RobotLog.d("RRobot: found empty slot");
-//                indexer.turnEmptySlotToIntake();
-//                // replace waiting for timer with Axon servo position checking
-//                // if ( timeSinceIndex.milliseconds() > 550 ) {
-//                if (indexer.indexerFinishedTurning()) {
-//                    telemetry.addLine("Robot intakeWithIndexerTurn:updateBallColor");
-//                    //RobotLog.d("Robot intakeWithIndexerTurn:updateBallColor");
-//                    indexer.updateBallColors();
-//                    //this rumble will be called very almost every loop
-//                    //gamepad.rumble(0.3, 0.15, 60);
-//                }
-//              }
-//              else {
-//                //TODO: no empty slot, turn on the shooter at lowest shooting speed
-//                //launcher.startLauncherWithVelocity(1550);
-//            }
-            // Improve intake efficiency
-            // Check to see if there is a ball in the intake position
     }
 
     public void startLaunchAGreenBall(){
@@ -408,17 +386,17 @@ public class Robot {
             telemetry.addData("color:", indexer.artifactColorArray[0]);
             telemetry.addData("color:", indexer.artifactColorArray[1]);
             telemetry.addData("color:", indexer.artifactColorArray[2]);
-            RobotLog.d("shootAllBalls");
-            RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
-            RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
-            RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
+            //RobotLog.d("shootAllBalls");
+            //RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
+            //RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
+            //RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
 
 
             if (indexer.findABall()) {
                 switch (launchState) {
                     case IDLE:
                         telemetry.addLine("shootAllBalls: IDLE");
-                        RobotLog.d("shootAllBalls: IDLE");
+                        //RobotLog.d("shootAllBalls: IDLE");
                         launchState = LaunchBallStates.INIT;
                         if (launcher.getKickerPosition() == launcher.POSITION_KICKER_SERVO_KICK_BALL) {
                             launcher.resetKicker();
@@ -426,7 +404,7 @@ public class Robot {
                         }
                     case INIT:
                         telemetry.addLine("shootAllBalls: INIT");
-                        RobotLog.d("shootAllBalls: INIT");
+                        //RobotLog.d("shootAllBalls: INIT");
                         if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                             //If yes, turn it to launcher
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
@@ -475,6 +453,10 @@ public class Robot {
                         RobotLog.d("shootAllBalls Unexpected");
                         throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
                 }
+            }
+            else {
+                //robot think there's no more balls. verify
+                indexer.updateColorAllSlots();
             }
         }
     }
@@ -592,6 +574,10 @@ public class Robot {
 
     public void setIntak1BallOff () {
         intake1Ball = false;
+    }
+
+    public void updateColorAllSlots() {
+        indexer.updateColorAllSlots();
     }
 
 }

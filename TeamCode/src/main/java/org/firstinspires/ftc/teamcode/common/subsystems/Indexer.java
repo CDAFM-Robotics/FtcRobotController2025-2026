@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
+import org.firstinspires.ftc.teamcode.testing.archived.ColorSensorTestOpMode;
 
 public class Indexer {
 
@@ -567,7 +568,7 @@ public class Indexer {
             telemetry.addLine("ERROR: updateBallColors");
         }
 
-        artifactColorArray[i] = getPredictedColorTeleOp(
+        artifactColorArray[i] = getPredictedColor(
             colorSensor1Left.getNormalizedColors(),
             colorSensor1Right.getNormalizedColors(),
             ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
@@ -585,7 +586,7 @@ public class Indexer {
         //telemetry.addData("sensor2Distance", sensor2Distance);
 
         if (sensor1Distance > 6.5) {
-            sensor1DetectedColor = ArtifactColor.UNKNOWN;
+            sensor1DetectedColor = ArtifactColor.NONE;
         } else if (sensor1RGBA.blue > sensor1RGBA.green) {
             sensor1DetectedColor = ArtifactColor.PURPLE;
         } else {
@@ -595,7 +596,7 @@ public class Indexer {
         ArtifactColor sensor2DetectedColor;
 
         if (sensor2Distance > 6.5) {
-            sensor2DetectedColor = ArtifactColor.UNKNOWN;
+            sensor2DetectedColor = ArtifactColor.NONE;
         } else if (sensor2RGBA.blue > sensor2RGBA.green) {
             sensor2DetectedColor = ArtifactColor.PURPLE;
         } else {
@@ -604,9 +605,9 @@ public class Indexer {
 
         if (sensor1DetectedColor == sensor2DetectedColor) {
             return sensor1DetectedColor;
-        } else if (sensor2DetectedColor == ArtifactColor.UNKNOWN) {
+        } else if (sensor2DetectedColor == ArtifactColor.NONE) {
             return sensor1DetectedColor;
-        } else if (sensor1DetectedColor == ArtifactColor.UNKNOWN) {
+        } else if (sensor1DetectedColor == ArtifactColor.NONE) {
             return sensor2DetectedColor;
         } else {
             return ArtifactColor.UNKNOWN;
@@ -703,4 +704,11 @@ public class Indexer {
         //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
         //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
     }
+
+    public void updateColorAllSlots(){
+        updateBallColorAtIntake();
+        updateBallColorAtOuttake();
+        updateBallColorAtAlt();
+    }
+
 }
