@@ -31,7 +31,7 @@ public class BlueFrontAutonomousOpMode extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(hardwareMap, telemetry);
-        robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
+        //robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
 
         ArtifactColor[] motif = null;
 

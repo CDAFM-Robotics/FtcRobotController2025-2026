@@ -52,7 +52,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             robot.resetIndexer();
         }
 
-        robot.getLauncher().setLimelightPipeline(isRedSide);
+        //robot.getLauncher().setLimelightPipeline(isRedSide);
 
 
         waitForStart();
@@ -88,13 +88,13 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
                 aimTimer.reset();
             }
             telemetry.addData("left_bumper pushed: is aiming", isAiming);
-            telemetry.addData("Limelight valid", robot.getLauncher().limelightValid());
+            //telemetry.addData("Limelight valid", robot.getLauncher().limelightValid());
 
             if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
                 && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
-                telemetry.addData("aiming: motor power", power);
-                robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
+                //double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
+                //telemetry.addData("aiming: motor power", power);
+                //robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
             else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
@@ -104,7 +104,7 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             telemetry.addData("limelight valid", robot.getLauncher().getLimelightResult().isValid());
             telemetry.addData("limelight x", robot.getLauncher().getLimelightResult().getTx());
             telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
-            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
+            //telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
             // Active Intake
             if (currentGamepad1.right_trigger != 0.0 || currentGamepad2.left_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
@@ -155,87 +155,87 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
 
             //Launcher
 
-            if (currentGamepad2.b && !previousGamepad2.b) {
-                robot.getLauncher().toggleLauncherManualFar();
-                autoLaunch = true;
-            }
-
-            if (currentGamepad2.a && !previousGamepad2.a) {
-                robot.getLauncher().toggleLauncherManualNear();
-                autoLaunch = false;
-            }
-
-//            if (currentGamepad2.x && !previousGamepad2.x) {
-//                robot.getLauncher().startLauncher();
+//            if (currentGamepad2.b && !previousGamepad2.b) {
+//                robot.getLauncher().toggleLauncherManualFar();
+//                autoLaunch = true;
+//            }
+//
+//            if (currentGamepad2.a && !previousGamepad2.a) {
+//                robot.getLauncher().toggleLauncherManualNear();
 //                autoLaunch = false;
 //            }
-
-            if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().changeLauncherVelocity(10);
-            }
-
-            if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().changeLauncherVelocity(-10);
-            }
-
-            //set launcher velocity
-            if ( robot.getLauncher().limelightValid()
-                && robot.getLauncher().isLauncherActive()
-                && autoLaunch) {
-                robot.getLauncher().setLauncherVelocityDistance();
-            }
-
-            //launch a green ball
-            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
-                robot.startLaunchAGreenBall();
-            }
-
-            if (currentGamepad2.left_bumper) {
-                robot.launchAColorBall();
-            }
-
-            //launch a purple ball
-            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-                robot.startLaunchAPurpleBall();
-            }
-
-            if (currentGamepad2.right_bumper) {
-                robot.launchAColorBall();
-            }
-
-            //launch all balls in the robot
-            if (currentGamepad2.right_trigger != 0) {
-                robot.shootAllBalls();
-            }
-
-            if (currentGamepad2.x && !previousGamepad2.x) {
-                robot.getLauncher().setLaunchMotorPIDFCoefficients();
-            }
-
-            //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
-            telemetry.addData("launcher target velocity:", robot.getLauncher().targetVelocity);
-            telemetry.addData("launcher current velocity:", robot.getLauncher().getLauncherVelocity());
-            telemetry.addData("launcher current velocity2:", robot.getLauncher().getLauncherVelocity2());
-            telemetry.addData("launch motors p", robot.getLauncher().getLauncherMotorPIDFCoefficients().p);
-            telemetry.addData("launch motors i", robot.getLauncher().getLauncherMotorPIDFCoefficients().i);
-            telemetry.addData("launch motors d", robot.getLauncher().getLauncherMotorPIDFCoefficients().d);
-            telemetry.addData("launch motors f", robot.getLauncher().getLauncherMotorPIDFCoefficients().f);
-            telemetry.addData("shootKp", robot.getLauncher().shootKp);
-            telemetry.addData("shootKi", robot.getLauncher().shootKi);
-            telemetry.addData("shootKd", robot.getLauncher().shootKd);
-            telemetry.addData("shootKf", robot.getLauncher().shootKd);
-            telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
-            telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
-            telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
-            RobotLog.d("launcher velocity: %f",
-                robot.getLauncher().getLauncherVelocity());
-
-            // Refresh the indicator lights
-            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
-            robot.getHud().setAimIndicator(isAiming);
-            robot.getHud().UpdateBallUI();
-
-            // TODO Add timing Log at end of loop
+//
+////            if (currentGamepad2.x && !previousGamepad2.x) {
+////                robot.getLauncher().startLauncher();
+////                autoLaunch = false;
+////            }
+//
+//            if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
+//                robot.getLauncher().changeLauncherVelocity(10);
+//            }
+//
+//            if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
+//                robot.getLauncher().changeLauncherVelocity(-10);
+//            }
+//
+//            //set launcher velocity
+//            if ( robot.getLauncher().limelightValid()
+//                && robot.getLauncher().isLauncherActive()
+//                && autoLaunch) {
+//                robot.getLauncher().setLauncherVelocityDistance();
+//            }
+//
+//            //launch a green ball
+//            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+//                robot.startLaunchAGreenBall();
+//            }
+//
+//            if (currentGamepad2.left_bumper) {
+//                robot.launchAColorBall();
+//            }
+//
+//            //launch a purple ball
+//            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+//                robot.startLaunchAPurpleBall();
+//            }
+//
+//            if (currentGamepad2.right_bumper) {
+//                robot.launchAColorBall();
+//            }
+//
+//            //launch all balls in the robot
+//            if (currentGamepad2.right_trigger != 0) {
+//                robot.shootAllBalls();
+//            }
+//
+//            if (currentGamepad2.x && !previousGamepad2.x) {
+//                robot.getLauncher().setLaunchMotorPIDFCoefficients();
+//            }
+//
+//            //telemetry.addData("launcher power:", robot.getLauncher().getLaunchPower());
+//            telemetry.addData("launcher target velocity:", robot.getLauncher().targetVelocity);
+//            telemetry.addData("launcher current velocity:", robot.getLauncher().getLauncherVelocity());
+//            telemetry.addData("launcher current velocity2:", robot.getLauncher().getLauncherVelocity2());
+//            telemetry.addData("launch motors p", robot.getLauncher().getLauncherMotorPIDFCoefficients().p);
+//            telemetry.addData("launch motors i", robot.getLauncher().getLauncherMotorPIDFCoefficients().i);
+//            telemetry.addData("launch motors d", robot.getLauncher().getLauncherMotorPIDFCoefficients().d);
+//            telemetry.addData("launch motors f", robot.getLauncher().getLauncherMotorPIDFCoefficients().f);
+//            telemetry.addData("shootKp", robot.getLauncher().shootKp);
+//            telemetry.addData("shootKi", robot.getLauncher().shootKi);
+//            telemetry.addData("shootKd", robot.getLauncher().shootKd);
+//            telemetry.addData("shootKf", robot.getLauncher().shootKd);
+//            telemetry.addData("color:", robot.getIndexer().artifactColorArray[0]);
+//            telemetry.addData("color:", robot.getIndexer().artifactColorArray[1]);
+//            telemetry.addData("color:", robot.getIndexer().artifactColorArray[2]);
+//            RobotLog.d("launcher velocity: %f",
+//                robot.getLauncher().getLauncherVelocity());
+//
+//            // Refresh the indicator lights
+//            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
+//            robot.getHud().setAimIndicator(isAiming);
+//            robot.getHud().UpdateBallUI();
+//
+//            // TODO Add timing Log at end of loop
 //            RobotLog.d("c0: %s c1: %s c2: %s",
 //                    robot.getIndexer().artifactColorArray[0],
 //                    robot.getIndexer().artifactColorArray[1],

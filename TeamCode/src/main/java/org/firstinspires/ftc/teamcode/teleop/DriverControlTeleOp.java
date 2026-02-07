@@ -86,11 +86,11 @@ public class DriverControlTeleOp extends LinearOpMode {
             //Launcher
 
             if (currentGamepad2.b && !previousGamepad2.b) {
-                robot.getLauncher().toggleLauncherManualFar();
+                //robot.getLauncher().toggleLauncherManualFar();
             }
 
             if (currentGamepad2.a && !previousGamepad2.a) {
-              robot.getLauncher().toggleLauncherManualNear();
+              //robot.getLauncher().toggleLauncherManualNear();
             }
 
             if (currentGamepad2.right_bumper) {
