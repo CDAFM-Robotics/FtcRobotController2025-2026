@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -20,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
@@ -44,8 +46,6 @@ public class Launcher {
     private Limelight3A limelight;
 
     Servo kickerServo;
-    Servo turretServo;
-    Servo hoodServo;
     CRServo turretServo;
     Servo hoodServo;
     AnalogInput RSFeedback;
@@ -282,7 +282,6 @@ public class Launcher {
 
         kickerPosition = POSITION_KICKER_SERVO_INIT;
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
-        turretServo.setPosition(POSITION_TUREET_SERVO_INIT);
         hoodPosition = POSITION_HOOD_SERVO_INIT;
         hoodServo.setPosition(hoodPosition);
 
@@ -382,14 +381,14 @@ public class Launcher {
        }
     }
 
-    public void toggleLauncherManualFar() {
-        if (launcherMotor1.getPower() == 0) {
-            startLauncherManualFar();
-        }
-        else {
-            stopLauncher();
-        }
-    }
+//    public void toggleLauncherManualFar() {
+//        if (launcherMotor1.getPower() == 0) {
+//            startLauncherManualFar();
+//        }
+//        else {
+//            stopLauncher();
+//        }
+//    }
 
     /***********************************
      ***********ROTATOR SERVO***********
@@ -758,10 +757,6 @@ public class Launcher {
         }
 
         hoodServo.setPosition(hoodPosition);
-    }
-
-    public double getHoodServoPosition() {
-        return hoodServo.getPosition();
     }
 
     public void changeKicker(double change) {
