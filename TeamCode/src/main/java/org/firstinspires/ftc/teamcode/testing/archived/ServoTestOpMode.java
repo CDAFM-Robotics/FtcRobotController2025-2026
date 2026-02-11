@@ -82,25 +82,25 @@ public class ServoTestOpMode extends LinearOpMode {
 
             // X/Y Kick Stand   (Left = ControlHub P5 / Right = ExpHub P0)
             // SQ TRI ps5 controller
-            if (currentGamepad1.x != previousGamepad1.x) {
-                robot.getDriveBase().setKickStand();
-            }
-
-            if (currentGamepad1.y != previousGamepad1.y) {
-                robot.getDriveBase().resetKickStand();
-            }
+//            if (currentGamepad1.x != previousGamepad1.x) {
+//                robot.getDriveBase().setKickStand();
+//            }
+//
+//            if (currentGamepad1.y != previousGamepad1.y) {
+//                robot.getDriveBase().resetKickStand();
+//            }
 
 
             // U/D Kick Stand Lights
-            if (currentGamepad1.dpad_up != previousGamepad1.dpad_up) {
-                robot.getDriveBase().setKickStandLight();
-                led_power = 1.0;
-            }
-
-            if (currentGamepad1.dpad_down != previousGamepad1.dpad_down) {
-                robot.getDriveBase().resetKickStandLight();
-                led_power = 0.0;
-            }
+//            if (currentGamepad1.dpad_up != previousGamepad1.dpad_up) {
+//                robot.getDriveBase().setKickStandLight();
+//                led_power = 1.0;
+//            }
+//
+//            if (currentGamepad1.dpad_down != previousGamepad1.dpad_down) {
+//                robot.getDriveBase().resetKickStandLight();
+//                led_power = 0.0;
+//            }
 
             // L/R Kick Stand Lights
             if (currentGamepad1.dpad_right != previousGamepad1.dpad_right) {
@@ -109,7 +109,7 @@ public class ServoTestOpMode extends LinearOpMode {
                 {
                     led_power = 1.0;
                 }
-                robot.getDriveBase().adjustKickStandLight(led_power);
+                //robot.getDriveBase().adjustKickStandLight(led_power);
             }
 
             if (currentGamepad1.dpad_left != previousGamepad1.dpad_left) {
@@ -118,7 +118,7 @@ public class ServoTestOpMode extends LinearOpMode {
                 {
                     led_power = 0.0;
                 }
-                robot.getDriveBase().adjustKickStandLight(led_power);
+                //robot.getDriveBase().adjustKickStandLight(led_power);
             }
 
             // Kicker Activate

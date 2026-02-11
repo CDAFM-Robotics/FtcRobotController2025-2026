@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class Robot {
+public class RobotOld {
 
     private DriveBase driveBase;
     private Indexer indexer;
@@ -40,7 +40,7 @@ public class Robot {
 
     public final int WAIT_TIME_KICKER = 100; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
 
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
+    public RobotOld(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -58,7 +58,7 @@ public class Robot {
         this.indexer = new Indexer(this.hardwareMap, this.telemetry);
         this.launcher = new Launcher(this.hardwareMap, this.telemetry);
         this.intake = new Intake(this.hardwareMap, this.telemetry);
-        //this.hud = new Hud(this.hardwareMap, this.telemetry);
+        this.hud = new Hud(this.hardwareMap, this.telemetry);
         telemetry.update();
 
     }

@@ -7,22 +7,19 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,19 +33,29 @@ public class Launcher {
     DcMotorEx launcherMotor2;
     public double launchPower;
     double launcherVelocity;
+    double hoodPosition;
+    double kickerPosition;
 
     private Limelight3A limelight;
 
     Servo kickerServo;
+    Servo turretServo;
+    Servo hoodServo;
     
-    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.87; // 0.88
-    public final double POSITION_KICKER_SERVO_INIT = 0.6;
+    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.26; // 0.88
+    public final double POSITION_KICKER_SERVO_INIT = 0.51;
+    public final double POSITION_TUREET_SERVO_INIT = 0.5;
+
+    // Hood Servo
+    public final double POSITION_HOOD_SERVO_INIT = 0.5;
+    public final double POSITION_HOOD_SERVO_HIGH = 0.0;
+    public final double POSITION_HOOD_SERVO_LOW = 0.85;
 
     public final double LAUNCH_POWER_FAR = 0.9;
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR = 1380;
+    public final double LAUNCH_VELOCITY_FAR = 6000;
     public final double LAUNCH_VELOCITY_NEAR= 1300;
     public final double LAUNCH_VELOCITY_FULL= 1500;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
@@ -163,7 +170,7 @@ public class Launcher {
         private ArtifactColor[] motifPattern;
 
         public AprilTagAction(int pipeline) {
-            limelight.pipelineSwitch(pipeline);
+            //limelight.pipelineSwitch(pipeline);
         }
 
 
@@ -235,7 +242,7 @@ public class Launcher {
 
         launcherMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         launcherMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-       // launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
        // launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -245,13 +252,19 @@ public class Launcher {
         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
+        turretServo = hardwareMap.get(Servo.class, "turretServo");
+        hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
+        kickerPosition = POSITION_KICKER_SERVO_INIT;
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+        turretServo.setPosition(POSITION_TUREET_SERVO_INIT);
+        hoodPosition = POSITION_HOOD_SERVO_INIT;
+        hoodServo.setPosition(hoodPosition);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        //limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        //limelight.pipelineSwitch(0);
 
-        limelight.start();
+        //limelight.start();
 
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
@@ -299,39 +312,30 @@ public class Launcher {
 
 
     public ArtifactColor[] getMotifPattern() {
-        LLResult result = limelight.getLatestResult();
-        if (result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            if (fiducialResults != null) {
-                for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                    if (fr.getFiducialId() == 21) {
-                        return new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
-                    }
-                    else if (fr.getFiducialId() == 22) {
-                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
-                    }
-                    else if (fr.getFiducialId() == 23) {
-                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
-                    }
-                }
-            }
-        }
+//        LLResult result = limelight.getLatestResult();
+//        if (result.isValid()) {
+//            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+//            if (fiducialResults != null) {
+//                for (LLResultTypes.FiducialResult fr : fiducialResults) {
+//                    if (fr.getFiducialId() == 21) {
+//                        return new ArtifactColor[]{ArtifactColor.GREEN, ArtifactColor.PURPLE, ArtifactColor.PURPLE};
+//                    }
+//                    else if (fr.getFiducialId() == 22) {
+//                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.GREEN, ArtifactColor.PURPLE};
+//                    }
+//                    else if (fr.getFiducialId() == 23) {
+//                        return new ArtifactColor[]{ArtifactColor.PURPLE, ArtifactColor.PURPLE, ArtifactColor.GREEN};
+//                    }
+//                }
+//            }
+//        }
         return null;
     }
 
     private boolean launcherActive = false;
 
-    public void toggleKicker() {
-        if (kickerServo.getPosition() == POSITION_KICKER_SERVO_INIT && launcherActive) {
-            kickBall();
-        }
-        else {
-            resetKicker();
-        }
-    }
-    
     public void kickBall() {
-        if (launcherActive) {
+        if (isLauncherActive()) {
             kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
         }
     }
@@ -371,13 +375,7 @@ public class Launcher {
         }
     }
     public void startLauncher() {
-        //Auto shooting velocity
-        if ( limelightValid() ) {
-            launcherVelocity = getVelocityDistance(getGoalDistance());
-        }
-        else {
-            launcherVelocity = LAUNCH_VELOCITY_FAR;
-        }
+        launcherVelocity = LAUNCH_VELOCITY_FAR;
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
@@ -391,31 +389,6 @@ public class Launcher {
     public void startLauncherManualFar(){
         launcherVelocity = LAUNCH_VELOCITY_FAR;
         setLauncherVelocity(launcherVelocity);
-        launcherActive = true;
-    }
-
-    public void reduceLauncherPower() {
-        if (launchPower >= 0.1) {
-            launchPower -= 0.1;
-            launcherActive = true;
-        }
-        else{
-            launchPower = 0;
-            launcherActive = false;
-        }
-        setLauncherPower(launchPower);
-    }
-
-    public void increaseLauncherPower() {
-        if (launchPower < LAUNCH_POWER_FULL) {
-            launchPower += 0.1;
-            if (launchPower > LAUNCH_POWER_FULL)
-                launchPower=LAUNCH_POWER_FULL;
-        }
-        else{
-            launchPower = 1;
-        }
-        setLauncherPower(launchPower);
         launcherActive = true;
     }
 
@@ -433,19 +406,19 @@ public class Launcher {
         launcherActive = (launchPower != 0.0);
     }
 
-    public void startLauncherPartialPower() {
-        //launchPower = LAUNCH_POWER_NEAR;
-        //setLauncherPower(launchPower);
-        //start launcher with velocity
-        if ( limelightValid() ) {
-            launcherVelocity = getVelocityDistance(getGoalDistance());
-        }
-        else {
-            launcherVelocity = LAUNCH_VELOCITY_NEAR;
-        }
-        setLauncherVelocity(launcherVelocity);
-        launcherActive = true;
-    }
+//    public void startLauncherPartialPower() {
+//        //launchPower = LAUNCH_POWER_NEAR;
+//        //setLauncherPower(launchPower);
+//        //start launcher with velocity
+//        if ( limelightValid() ) {
+//            launcherVelocity = getVelocityDistance(getGoalDistance());
+//        }
+//        else {
+//            launcherVelocity = LAUNCH_VELOCITY_NEAR;
+//        }
+//        setLauncherVelocity(launcherVelocity);
+//        launcherActive = true;
+//    }
 
     public void stopLauncher() {
         launchPower = 0;
@@ -480,9 +453,9 @@ public class Launcher {
         return launcherActive;
     }
 
-    public LLResult getLimelightResult(){
-        return limelight.getLatestResult();
-    }
+//    public LLResult getLimelightResult(){
+//        return limelight.getLatestResult();
+//    }
 
 /*    public double getRedAimingPower(){
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
@@ -505,86 +478,86 @@ public class Launcher {
         return answer;
     }
 */
-    public Boolean limelightValid() {
-        return limelight.getLatestResult().isValid();
-    }
+//    public Boolean limelightValid() {
+//        return limelight.getLatestResult().isValid();
+//    }
 
-    public void setLimelightPipeline(int pipeline) {
-        limelight.pipelineSwitch(pipeline);
-    }
+//    public void setLimelightPipeline(int pipeline) {
+//        limelight.pipelineSwitch(pipeline);
+//    }
 
-    public void setLimelightPipeline(boolean isRed) {
-        if (isRed) {
-            limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        } else {
-            limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
-        }
-    }
+//    public void setLimelightPipeline(boolean isRed) {
+//        if (isRed) {
+//            limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
+//        } else {
+//            limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
+//        }
+//    }
 
-    public double getAimingPower(){
-        LLResult result = limelight.getLatestResult();
-        double answer = 0;
-        if(result.isValid()){
-            if(Math.abs(result.getTx()) > 3){
-                if(result.getTx() < 1){
-                    answer = -0.2;
-                }
-                if(result.getTx() > 1){
-                    answer = 0.2;
-                }
-            }
-            else{
-                answer = 0;
-            }
-        }
-        return answer;
-    }
+//    public double getAimingPower(){
+//        LLResult result = limelight.getLatestResult();
+//        double answer = 0;
+//        if(result.isValid()){
+//            if(Math.abs(result.getTx()) > 3){
+//                if(result.getTx() < 1){
+//                    answer = -0.2;
+//                }
+//                if(result.getTx() > 1){
+//                    answer = 0.2;
+//                }
+//            }
+//            else{
+//                answer = 0;
+//            }
+//        }
+//        return answer;
+//    }
 
-    public double setAimPowerPID (double time, boolean isRed) {
-        double currentTime = time;
-        double deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-
-        LLResult result = limelight.getLatestResult();
-        double power = 0;
-        if(result.isValid()) {
-            double currentX = result.getTx();
-            if (!isRed) {
-                currentX -= 1.25;
-            }
-
-            // Proportional term
-            double proportional = 0.0;
-            proportional = aimKp * currentX;
-
-            // Integral term
-            integralSum += currentX * deltaTime;
-            // Clamp integral sum to prevent windup
-            if (integralSum > integralSumMax) {
-                integralSum = integralSumMax;
-            } else if (integralSum < integralSumMin) {
-                integralSum = integralSumMin;
-            }
-            double integral = aimKi * integralSum;
-
-            // Derivative term
-            double derivative = aimKd * ((currentX - lastError) / deltaTime);
-            lastError = currentX;
-
-            // Feedforward term (can be used to counteract gravity or apply a base power)
-            double feedforward = 0.0;
-            if (currentX < 0) {
-                feedforward = 0 - powerStatic; // Or kF * signum(target - currentPosition) for simple direction
-            }
-            else{
-                feedforward = powerStatic;
-            }
-
-            // Combine all terms
-            power = proportional + integral + derivative + feedforward;
-        }
-        return power;
-    }
+//    public double setAimPowerPID (double time, boolean isRed) {
+//        double currentTime = time;
+//        double deltaTime = currentTime - lastTime;
+//        lastTime = currentTime;
+//
+//        LLResult result = limelight.getLatestResult();
+//        double power = 0;
+//        if(result.isValid()) {
+//            double currentX = result.getTx();
+//            if (!isRed) {
+//                currentX -= 1.25;
+//            }
+//
+//            // Proportional term
+//            double proportional = 0.0;
+//            proportional = aimKp * currentX;
+//
+//            // Integral term
+//            integralSum += currentX * deltaTime;
+//            // Clamp integral sum to prevent windup
+//            if (integralSum > integralSumMax) {
+//                integralSum = integralSumMax;
+//            } else if (integralSum < integralSumMin) {
+//                integralSum = integralSumMin;
+//            }
+//            double integral = aimKi * integralSum;
+//
+//            // Derivative term
+//            double derivative = aimKd * ((currentX - lastError) / deltaTime);
+//            lastError = currentX;
+//
+//            // Feedforward term (can be used to counteract gravity or apply a base power)
+//            double feedforward = 0.0;
+//            if (currentX < 0) {
+//                feedforward = 0 - powerStatic; // Or kF * signum(target - currentPosition) for simple direction
+//            }
+//            else{
+//                feedforward = powerStatic;
+//            }
+//
+//            // Combine all terms
+//            power = proportional + integral + derivative + feedforward;
+//        }
+//        return power;
+//    }
 
 /*    public double getREDGoalDistance() {
         limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
@@ -597,14 +570,14 @@ public class Launcher {
     }
 */
 
-    public double getGoalDistance () {
-        LLResult llresult = limelight.getLatestResult();
-        double distance = 0;
-        if (llresult.isValid()) {
-            distance = LIMELIGHT_HEIGHT_OFFSET / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
-        }
-        return distance;
-    }
+//    public double getGoalDistance () {
+//        LLResult llresult = limelight.getLatestResult();
+//        double distance = 0;
+//        if (llresult.isValid()) {
+//            distance = LIMELIGHT_HEIGHT_OFFSET / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
+//        }
+//        return distance;
+//    }
 
     public void setLauncherVelocity(double velocity) {
         launcherMotor2.setVelocity(launcherVelocity);
@@ -612,7 +585,7 @@ public class Launcher {
     }
 
     public void setLauncherVelocityDistance() {
-        launcherVelocity = getVelocityDistance(getGoalDistance());
+//        launcherVelocity = getVelocityDistance(getGoalDistance());
         setLauncherVelocity(launcherVelocity);
         targetVelocity = launcherVelocity;
     }
@@ -635,6 +608,40 @@ public class Launcher {
 
         setLauncherVelocity(launcherVelocity);
         launcherActive = (launcherVelocity != 0.0);
+    }
+
+    public void changeHood(double change) {
+        hoodPosition += change;
+
+        if (hoodPosition > 1.0) {
+            hoodPosition = 1.0;
+        }
+        else if (hoodPosition < 0.0) {
+            hoodPosition = 0.0;
+        }
+
+        hoodServo.setPosition(hoodPosition);
+    }
+
+    public double getHoodServoPosition() {
+        return hoodServo.getPosition();
+    }
+
+    public void changeKicker(double change) {
+        kickerPosition += change;
+
+        if (kickerPosition > 1.0) {
+            kickerPosition = 1.0;
+        }
+        else if (kickerPosition < 0.0) {
+            kickerPosition = 0.0;
+        }
+
+        kickerServo.setPosition(kickerPosition);
+    }
+
+    public double getKickerServoPosition() {
+        return kickerServo.getPosition();
     }
 
     public double getVelocityDistance(double currentDistance) {

@@ -34,7 +34,7 @@ public class RedFrontAutonomousOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Robot robot = new Robot(hardwareMap, telemetry);
-        robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
+        //robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, 50.5, Math.toRadians(-143)));
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 

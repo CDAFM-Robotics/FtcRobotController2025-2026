@@ -61,17 +61,17 @@ public class Hud {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        initializeHUD();
+        //initializeHUD();
     }
 
     public void initializeHUD() {
-        ledstripRear = hardwareMap.get(QwiicLEDStick.class, "ledstrip");
-        ledstripRear.changeLength(LED_STICK_TOTAL_LEDS); // limit addressable LED to number of LED installed
-        ledstripRear.setBrightness(LED_STICK_BRIGHTNESS);// 10 LEDs at brightness 31 generates 660ma current
-        ledstripFront = hardwareMap.get(QwiicLEDStick.class, "ledstripFront");
-        ledstripFront.changeLength(LED_STICK_TOTAL_LEDS);
-        ledstripFront.setBrightness(LED_STICK_BRIGHTNESS);
-        timeSinceLastHUDChange.reset();
+//        ledstripRear = hardwareMap.get(QwiicLEDStick.class, "ledstrip");
+//        ledstripRear.changeLength(LED_STICK_TOTAL_LEDS); // limit addressable LED to number of LED installed
+//        ledstripRear.setBrightness(LED_STICK_BRIGHTNESS);// 10 LEDs at brightness 31 generates 660ma current
+//        ledstripFront = hardwareMap.get(QwiicLEDStick.class, "ledstripFront");
+//        ledstripFront.changeLength(LED_STICK_TOTAL_LEDS);
+//        ledstripFront.setBrightness(LED_STICK_BRIGHTNESS);
+//        timeSinceLastHUDChange.reset();
 
         // Set LAST to an unused and different color to ensure it gets updated once at init to clear carry-over.
         last1 = ColorTable.WHITE;

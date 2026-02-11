@@ -12,7 +12,8 @@ import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCapt
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 
-@TeleOp(name = "RED Driver Control With Indexer Teleop", group = "0teleop")
+@TeleOp(name = "RED Bot2" +
+    "", group = "0teleop")
 public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
     public boolean isRedSide = true;
 
@@ -56,7 +57,7 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
         robot.updateColorAllSlots();
         //RobotLog.d("done indexing");
 
-        robot.getLauncher().setLimelightPipeline(isRedSide);
+        //robot.getLauncher().setLimelightPipeline(isRedSide);
         //telemetry.update();
 
         waitForStart();
@@ -105,21 +106,21 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
 //            }
 //            else {
             if (isAiming) {
-                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
-                    telemetry.addData("aiming: motor power", power);
-                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
+//                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
+//                    telemetry.addData("aiming: motor power", power);
+//                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
             else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
                 isAiming = false;
             }
 
-            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
-            telemetry.addData("limelight valid", llLastIsValid);
-            xAngle = robot.getLauncher().getLimelightResult().getTx();
-            telemetry.addData("limelight x", xAngle);
-            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
-            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
+//            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
+//            telemetry.addData("limelight valid", llLastIsValid);
+//            xAngle = robot.getLauncher().getLimelightResult().getTx();
+//            telemetry.addData("limelight x", xAngle);
+//            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
+//            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
 
             // Active Intake or re-indexing
             if (currentGamepad1.right_trigger != 0.0) {
@@ -140,15 +141,15 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
                 robot.getIntake().stopIntake();
             }
 
-            if (currentGamepad1.a != previousGamepad1.a) {
-                robot.getDriveBase().setKickStand();
-                robot.getDriveBase().setKickStandLight();
-            }
-
-            if (currentGamepad1.b != previousGamepad1.b) {
-                robot.getDriveBase().resetKickStand();
-                robot.getDriveBase().resetKickStandLight();
-            }
+//            if (currentGamepad1.a != previousGamepad1.a) {
+//                robot.getDriveBase().setKickStand();
+//                robot.getDriveBase().setKickStandLight();
+//            }
+//
+//            if (currentGamepad1.b != previousGamepad1.b) {
+//                robot.getDriveBase().resetKickStand();
+//                robot.getDriveBase().resetKickStandLight();
+//            }
 
             // Manual Indexer control. (deprecated)
             // removed the manual indexer control after auto indexer control is implemented
@@ -209,11 +210,11 @@ public class DriverControlWithIndexerRedTeleOp extends LinearOpMode {
             }
 
             //set launcher velocity
-            if ( robot.getLauncher().limelightValid()
-                    && robot.getLauncher().isLauncherActive()
-                    && autoLaunch) {
-                robot.getLauncher().setLauncherVelocityDistance();
-            }
+//            if ( robot.getLauncher().limelightValid()
+//                    && robot.getLauncher().isLauncherActive()
+//                    && autoLaunch) {
+//                robot.getLauncher().setLauncherVelocityDistance();
+//            }
 
             //launch a green ball
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){

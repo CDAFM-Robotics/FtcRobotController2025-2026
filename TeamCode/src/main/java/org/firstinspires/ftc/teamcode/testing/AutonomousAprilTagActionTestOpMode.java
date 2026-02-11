@@ -25,7 +25,7 @@ public class AutonomousAprilTagActionTestOpMode extends LinearOpMode {
     public void runOpMode() {
         MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(-50.5, -50.5, Math.toRadians(143)));
         Robot robot = new Robot(hardwareMap, telemetry);
-        robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
+        //robot.getLauncher().setLimelightPipeline(Robot.LLPipelines.OBELISK.ordinal());
         autonomousActionBuilder = new AutonomousActionBuilder(md, robot);
 
         Action aprilTagAction = autonomousActionBuilder.getAprilTagAction();

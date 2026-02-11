@@ -64,7 +64,7 @@ public class Intake {
     public void initializeIntakeDevices() {
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void toggleIntake() {
@@ -100,16 +100,6 @@ public class Intake {
     }
     public double getIntakeMotorPower() {
         return intakeMotor.getPower();
-    }
-
-    public void startActiveIntake(){
-        startIntake();
-        activeIntake = true;
-    }
-
-    public void stopActiveIntake(){
-        stopIntake();
-        activeIntake = false;
     }
 
     public Boolean isActive(){
