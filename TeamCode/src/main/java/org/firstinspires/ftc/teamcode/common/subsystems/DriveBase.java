@@ -44,9 +44,9 @@ public class DriveBase {
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
-        leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
-        kickStandLight = hardwareMap.get(Servo.class, "kickStandLight");
+        //rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
+        //leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
+        //kickStandLight = hardwareMap.get(Servo.class, "kickStandLight");
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -59,11 +59,11 @@ public class DriveBase {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // initialize the kick stand servos
-        rightKickStand.setPosition(0.5);
-        leftKickStand.setPosition(0.5);
+        //rightKickStand.setPosition(0.5);
+        //leftKickStand.setPosition(0.5);
 
         // ground lights OFF
-        kickStandLight.setPosition(0.0);
+        //kickStandLight.setPosition(0.0);
 
 
         // Get a reference to the sensor
@@ -144,7 +144,7 @@ public class DriveBase {
         backLeftMotor.setPower(backLeftPower);
     }
 
-    public void setKickStand() {
+/*    public void setKickStand() {
         rightKickStand.setPosition(0.0);
         leftKickStand.setPosition(1.0);
     }
@@ -164,6 +164,6 @@ public class DriveBase {
 
     public void adjustKickStandLight(double power){
         kickStandLight.setPosition(power);
-    }
+    }*/
 
 }

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCapt
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 
-@TeleOp(name = "BLUE Driver Control With Indexer Teleop", group = "0teleop")
+@TeleOp(name = "BLUE Bot2", group = "0teleop")
 public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
     public boolean isRedSide = false;
 
@@ -50,13 +50,13 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         rumbleLauncherTimer.reset();
 
         //Check the color of the balls at init
-        while (initializedIndexerTimer.milliseconds()< 500){
-
-        }
-        robot.updateColorAllSlots();
+//        while (initializedIndexerTimer.milliseconds()< 500){
+//
+//        }
+//        robot.updateColorAllSlots();
         //RobotLog.d("done indexing");
 
-        robot.getLauncher().setLimelightPipeline(isRedSide);
+        //robot.getLauncher().setLimelightPipeline(isRedSide);
         //telemetry.update();
 
         waitForStart();
@@ -105,21 +105,21 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 //            }
 //            else {
             if (isAiming) {
-                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
-                    telemetry.addData("aiming: motor power", power);
-                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
+//                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
+//                    telemetry.addData("aiming: motor power", power);
+//                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
             }
             else {
                 robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
                 isAiming = false;
             }
 
-            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
-            telemetry.addData("limelight valid", llLastIsValid);
-            xAngle = robot.getLauncher().getLimelightResult().getTx();
-            telemetry.addData("limelight x", xAngle);
-            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
-            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
+//            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
+//            telemetry.addData("limelight valid", llLastIsValid);
+//            xAngle = robot.getLauncher().getLimelightResult().getTx();
+//            telemetry.addData("limelight x", xAngle);
+//            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
+//            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
 
             // Active Intake or re-indexing
             if (currentGamepad1.right_trigger != 0.0) {
@@ -140,15 +140,15 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.getIntake().stopIntake();
             }
 
-            if (currentGamepad1.a != previousGamepad1.a) {
-                robot.getDriveBase().setKickStand();
-                robot.getDriveBase().setKickStandLight();
-            }
-
-            if (currentGamepad1.b != previousGamepad1.b) {
-                robot.getDriveBase().resetKickStand();
-                robot.getDriveBase().resetKickStandLight();
-            }
+//            if (currentGamepad1.a != previousGamepad1.a) {
+//                robot.getDriveBase().setKickStand();
+//                robot.getDriveBase().setKickStandLight();
+//            }
+//
+//            if (currentGamepad1.b != previousGamepad1.b) {
+//                robot.getDriveBase().resetKickStand();
+//                robot.getDriveBase().resetKickStandLight();
+//            }
 
             // Manual Indexer control. (deprecated)
             // removed the manual indexer control after auto indexer control is implemented
@@ -165,24 +165,10 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.updateColorAllSlots();
             }
 
-            // reindexing deprecated
-            /*if (currentGamepad2.left_trigger != 0)
-                robot.resetIndexer();*/
-
             // TODO this line of code generates a call every 6-8ms
             // telemetry.addData("index position: ", robot.getIndexer().getIndexerPosition());
 
             //Launcher
-
-            /*if (currentGamepad2.b && !previousGamepad2.b) {
-                robot.getLauncher().toggleLauncherManualFar();
-                autoLaunch = false;
-            }*/
-
-            /*if (currentGamepad2.a && !previousGamepad2.a) {
-                robot.getLauncher().toggleLauncherManualNear();
-                autoLaunch = false;
-            }*/
 
             if (currentGamepad2.x && !previousGamepad2.x) {
                 robot.getLauncher().toggleLauncher();
@@ -208,12 +194,32 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.getLauncher().changeLauncherVelocity(-50);
             }
 
-            //set launcher velocity
-            if ( robot.getLauncher().limelightValid()
-                    && robot.getLauncher().isLauncherActive()
-                    && autoLaunch) {
-                robot.getLauncher().setLauncherVelocityDistance();
+            if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
+                robot.getLauncher().changeHood(-0.05);
             }
+
+            if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right) {
+                robot.getLauncher().changeHood(0.05);
+            }
+
+            if (currentGamepad2.a && !previousGamepad2.a) {
+                robot.getLauncher().changeKicker(-0.05);
+            }
+
+            if (currentGamepad2.b && !previousGamepad2.b) {
+                robot.getLauncher().changeKicker(0.05);
+            }
+
+            telemetry.addData("hoodServo postion", robot.getLauncher().getHoodServoPosition());
+            telemetry.addData("kickerServo postion", robot.getLauncher().getKickerServoPosition());
+            telemetry.addData("isLauncher active", robot.getLauncher().isLauncherActive());
+
+            //set launcher velocity
+//            if ( robot.getLauncher().limelightValid()
+//                    && robot.getLauncher().isLauncherActive()
+//                    && autoLaunch) {
+//                robot.getLauncher().setLauncherVelocityDistance();
+//            }
 
             //launch a green ball
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
@@ -235,9 +241,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
             //launch a purple ball
             if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-                isAiming = true;
-                aimTimer.reset();
-                robot.startLaunchAPurpleBall();
+//                isAiming = true;
+//                aimTimer.reset();
+                robot.getLauncher().kickBall();
             }
 
             if (!currentGamepad2.right_bumper && previousGamepad2.right_bumper){
@@ -256,6 +262,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             if (currentGamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0) {
                 isAiming = true;
                 aimTimer.reset();
+                robot.getLauncher().kickBall();
             }
 
             if (currentGamepad2.right_trigger != 0) {
@@ -316,19 +323,19 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 
 
             // Refresh the indicator lights
-            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
-            if (llLastIsValid == true)
-            {
-                // RobotLog.d("Aim PID X: %f", xAngle);
-                if (xAngle < Launcher.aimErrorTolerance)
-                {
-                    robot.getHud().setAimIndicator(true);
-                }
-            }
-            else {
-                robot.getHud().setAimIndicator(false);
-            }
-            robot.getHud().UpdateBallUI();
+//            robot.getHud().setBalls(robot.getIndexer().artifactColorArray[0], robot.getIndexer().artifactColorArray[1],robot.getIndexer().artifactColorArray[2]);
+//            if (llLastIsValid == true)
+//            {
+//                // RobotLog.d("Aim PID X: %f", xAngle);
+//                if (xAngle < Launcher.aimErrorTolerance)
+//                {
+//                    robot.getHud().setAimIndicator(true);
+//                }
+//            }
+//            else {
+//                robot.getHud().setAimIndicator(false);
+//            }
+//            robot.getHud().UpdateBallUI();
 
             // TODO Add timing Log at end of loop
 //            RobotLog.d("c0: %s c1: %s c2: %s",

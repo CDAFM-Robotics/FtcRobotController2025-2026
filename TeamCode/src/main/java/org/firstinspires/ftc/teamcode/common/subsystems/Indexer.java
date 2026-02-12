@@ -11,15 +11,12 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
-import org.firstinspires.ftc.teamcode.testing.archived.ColorSensorTestOpMode;
 
 public class Indexer {
 
@@ -32,12 +29,12 @@ public class Indexer {
     private int nextShootSlot;
     private double targetIdexerPosition;
 
-    NormalizedColorSensor colorSensor1Left = null;
-    NormalizedColorSensor colorSensor1Right = null;
-    NormalizedColorSensor colorSensorOutputFront = null;
-    NormalizedColorSensor colorSensorOutputB = null;
-    NormalizedColorSensor colorSensorAltFront = null;
-    NormalizedColorSensor colorSensorAltB = null;
+    NormalizedColorSensor colorSensorIntakeLL = null;
+    NormalizedColorSensor colorSensorIntakeLR = null;
+    NormalizedColorSensor colorSensorIntakeRL = null;
+    NormalizedColorSensor colorSensorIntakeRR = null;
+    NormalizedColorSensor colorSensorOutL = null;
+    NormalizedColorSensor colorSensorOutR = null;
 
 
     AnalogInput indexerServoVoltage = null;
@@ -48,7 +45,7 @@ public class Indexer {
     public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.47; // 0.51 (pre29Dec) was 0.5 zero is at intake; two is at wait
     public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.84; // 0.89 (pre29Dec) was as 0.93 zero is at wait; one is at intake
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.82; // 0.89 (pre29Dec) was as 0.93 zero is at wait; one is at intake
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
 
     public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;
@@ -109,10 +106,10 @@ public class Indexer {
         return new RunTimeoutAction(
             new WaitUntilAction(
                 () -> getPredictedColor(
-                    colorSensor1Left.getNormalizedColors(),
-                    colorSensor1Right.getNormalizedColors(),
-                    ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-                    ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM)) != ArtifactColor.NONE),
+                    colorSensorIntakeLL.getNormalizedColors(),
+                    colorSensorIntakeLR.getNormalizedColors(),
+                    ((DistanceSensor) colorSensorIntakeLL).getDistance(DistanceUnit.CM),
+                    ((DistanceSensor) colorSensorIntakeLR).getDistance(DistanceUnit.CM)) != ArtifactColor.NONE),
 
             timeout
         );
@@ -127,23 +124,23 @@ public class Indexer {
     public void initializeIndexerDevices() {
         indexerServo = hardwareMap.get(Servo.class, "indexerServo");
 
-        colorSensor1Left = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Left");
-        colorSensor1Right = hardwareMap.get(NormalizedColorSensor.class, "colorSensor1Right");
-        colorSensorOutputFront = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutputFront");
-        colorSensorOutputB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutputB");
-        colorSensorAltFront = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltFront");
-        colorSensorAltB = hardwareMap.get(NormalizedColorSensor.class, "colorSensorAltB");
+        colorSensorIntakeLL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeLeftLeft");
+        colorSensorIntakeLR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeLeftRight");
+        colorSensorIntakeRL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightLeft");
+        colorSensorIntakeRR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightRight");
+        colorSensorOutL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutLeft");
+        colorSensorOutR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutRight");
 
-        colorSensor1Left.setGain(8);
-        colorSensor1Right.setGain(8);
-        colorSensorOutputFront.setGain(8);
-        colorSensorOutputB.setGain(8);
-        colorSensorAltFront.setGain(8);
-        colorSensorAltB.setGain(8);
+        colorSensorIntakeLL.setGain(8);
+        colorSensorIntakeLR.setGain(8);
+        colorSensorIntakeRL.setGain(8);
+        colorSensorIntakeRR.setGain(8);
+        colorSensorOutL.setGain(8);
+        colorSensorOutR.setGain(8);
 
-        indexerServoVoltage = hardwareMap.get(AnalogInput.class, "analog0");
+        indexerServoVoltage = hardwareMap.get(AnalogInput.class, "indexerAnalog");
 
-        rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
+        //rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
     }
 
     private ArtifactColor getPredictedColor(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
@@ -206,10 +203,10 @@ public class Indexer {
 
         for (int j = 0; j < 5; j++) {
             artifactColorArray[i] = getPredictedColor(
-                colorSensor1Left.getNormalizedColors(),
-                colorSensor1Right.getNormalizedColors(),
-                ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-                ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+                colorSensorIntakeLL.getNormalizedColors(),
+                colorSensorIntakeLR.getNormalizedColors(),
+                ((DistanceSensor) colorSensorIntakeLL).getDistance(DistanceUnit.CM),
+                ((DistanceSensor) colorSensorIntakeLR).getDistance(DistanceUnit.CM));
             //telemetry.addData("updateBallColors index", i);
             //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
             //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
@@ -225,10 +222,10 @@ public class Indexer {
         if (!(color[0] == 5 || color[1] == 5 || color[2] == 5)) {
             for (int j = 0; j < 5; j++) {
                 artifactColorArray[i] = getPredictedColor(
-                    colorSensor1Left.getNormalizedColors(),
-                    colorSensor1Right.getNormalizedColors(),
-                    ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-                    ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+                    colorSensorIntakeLL.getNormalizedColors(),
+                    colorSensorIntakeLR.getNormalizedColors(),
+                    ((DistanceSensor) colorSensorIntakeLL).getDistance(DistanceUnit.CM),
+                    ((DistanceSensor) colorSensorIntakeLR).getDistance(DistanceUnit.CM));
                 //telemetry.addData("updateBallColors index", i);
                 //telemetry.addData("updateBallColors color2", artifactColorArray[i]);
                 //RobotLog.d("updateBallColors color2 %s",artifactColorArray[i]);
@@ -540,8 +537,8 @@ public class Indexer {
 
     // Check to see if there is any ball by distance sensing
     public boolean isBallAtIntake() {
-        if (((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM) < 3.25
-            || ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM) < 3.25) {
+        if (((DistanceSensor) colorSensorIntakeLL).getDistance(DistanceUnit.CM) < 3.25
+            || ((DistanceSensor) colorSensorIntakeLR).getDistance(DistanceUnit.CM) < 3.25) {
             return true;
         } else {
             return false;
@@ -569,10 +566,10 @@ public class Indexer {
         }
 
         artifactColorArray[i] = getPredictedColor(
-            colorSensor1Left.getNormalizedColors(),
-            colorSensor1Right.getNormalizedColors(),
-            ((DistanceSensor) colorSensor1Left).getDistance(DistanceUnit.CM),
-            ((DistanceSensor) colorSensor1Right).getDistance(DistanceUnit.CM));
+            colorSensorIntakeLL.getNormalizedColors(),
+            colorSensorIntakeLR.getNormalizedColors(),
+            ((DistanceSensor) colorSensorIntakeLL).getDistance(DistanceUnit.CM),
+            ((DistanceSensor) colorSensorIntakeLR).getDistance(DistanceUnit.CM));
         //telemetry.addData("updateBallColors index", i);
         //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
         //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
@@ -665,10 +662,10 @@ public class Indexer {
         }
 
         artifactColorArray[i] = getPredictedColorTeleOp(
-            colorSensorOutputFront.getNormalizedColors(),
-            colorSensorOutputB.getNormalizedColors(),
-            ((DistanceSensor) colorSensorOutputFront).getDistance(DistanceUnit.CM),
-            ((DistanceSensor) colorSensorOutputB).getDistance(DistanceUnit.CM));
+            colorSensorOutL.getNormalizedColors(),
+            colorSensorOutR.getNormalizedColors(),
+            ((DistanceSensor) colorSensorOutL).getDistance(DistanceUnit.CM),
+            ((DistanceSensor) colorSensorOutR).getDistance(DistanceUnit.CM));
         //telemetry.addData("updateBallColors index", i);
         //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
         //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
@@ -696,10 +693,10 @@ public class Indexer {
         }
 
         artifactColorArray[i] = getPredictedColorTeleOp(
-            colorSensorAltFront.getNormalizedColors(),
-            colorSensorAltB.getNormalizedColors(),
-            ((DistanceSensor) colorSensorAltFront).getDistance(DistanceUnit.CM),
-            ((DistanceSensor) colorSensorAltB).getDistance(DistanceUnit.CM));
+            colorSensorIntakeRL.getNormalizedColors(),
+            colorSensorIntakeRR.getNormalizedColors(),
+            ((DistanceSensor) colorSensorIntakeRL).getDistance(DistanceUnit.CM),
+            ((DistanceSensor) colorSensorIntakeRL).getDistance(DistanceUnit.CM));
         //telemetry.addData("updateBallColors index", i);
         //telemetry.addData("updateBallColors color1", artifactColorArray[i]);
         //RobotLog.d("updateBallColors color1 %s",artifactColorArray[i]);
