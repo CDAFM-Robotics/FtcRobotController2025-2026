@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedropathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -14,7 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-        .mass(11.33981);
+        .mass(11.33981)
+        .forwardZeroPowerAcceleration(-38.1641)
+        .lateralZeroPowerAcceleration(-81.5006)
+        .translationalPIDFCoefficients(new PIDFCoefficients(0.08, 0.0, 0.01, 0.02))
+        .headingPIDFCoefficients(new PIDFCoefficients(2.0, 0.0, 0.1, 0.022))
+        .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.03, 0.0, 0.001, 0.6, 0.0))
+        .centripetalScaling(0.0005);
 
     public static MecanumConstants mecanumConstants = new MecanumConstants()
         .maxPower(1)
@@ -25,7 +33,9 @@ public class Constants {
         .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
         .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
         .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-        .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+        .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+        .xVelocity(66.4477)
+        .yVelocity(42.1582);
 
     public static PinpointConstants pinpointConstants = new PinpointConstants()
         .forwardPodY(8)
@@ -34,7 +44,7 @@ public class Constants {
         .hardwareMapName("pinpoint")
         .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
         .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-        .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
