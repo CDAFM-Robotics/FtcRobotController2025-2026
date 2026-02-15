@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Config
 @TeleOp(name = "Camera Test", group = "Testing")
+@Disabled
 public class CameraDetectTestOpMode extends LinearOpMode {
     private VisionPortal visionPortal;
     private ColorBlobLocatorProcessor colorBlobLocatorProcessor;
