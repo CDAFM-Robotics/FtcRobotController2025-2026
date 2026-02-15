@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -49,6 +50,10 @@ public class Launcher {
     CRServo turretServo;
     Servo hoodServo;
     AnalogInput RSFeedback;
+
+    // turret servo
+    CRServo launcherServo;
+    AnalogInput launcherAnalogInput;
 
     public enum QuadrantRotatorServo{
         POSITIVE, NEGATIVE, ZERO
@@ -110,6 +115,35 @@ public class Launcher {
     // keys sorted, allowing easy finding of surrounding points.
     private final TreeMap<Double, Double> distanceToVelocityMap = new TreeMap<>();
 
+    // Turret control variables
+    public static double turretkF = 0.12;
+    public static double turretkP = 0.01;
+    public static double turretkI = 0;
+    public static double turretkD = 0;
+    public static double turretTarget = 0;
+
+    private double currentVoltage;
+    private double currentAngle;
+    private double currentAngleOffset = 0;
+
+    private double lastVoltage = 0;
+    private double lastAngle = 0;
+
+    private double actualAngle;
+
+    private double turretPower = 0;
+
+    private double diff;
+    private double greatestDiff = -0x80000000;
+
+    private boolean firstLoop = true;
+
+    private double turretIntegralSum = 0;
+    private double turretLastError = 0;
+    private double turretLastTime = 0;
+    private double turretTime = 0;
+
+    // Autonomous Actions
     public class SpinLauncherAction implements Action {
 
         private boolean initialized = false;
@@ -275,15 +309,45 @@ public class Launcher {
         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
-        turretServo = hardwareMap.get(CRServo.class, "turretServo");
-        RSFeedback = hardwareMap.get(AnalogInput.class, "turretAnalog");
+        //turretServo = hardwareMap.get(CRServo.class, "turretServo");
+        //RSFeedback = hardwareMap.get(AnalogInput.class, "turretAnalog");
+
+        launcherServo = hardwareMap.get(CRServo.class, "turretServo");
+        launcherAnalogInput = hardwareMap.get(AnalogInput.class, "turretAnalog");
+
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
 
         kickerPosition = POSITION_KICKER_SERVO_INIT;
-        kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+        //kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
         hoodPosition = POSITION_HOOD_SERVO_INIT;
         hoodServo.setPosition(hoodPosition);
+
+        // initialized turret variables
+        currentVoltage = launcherAnalogInput.getVoltage();
+        currentAngle = currentVoltage / 3.3 * 360;
+        //348.55 is max with no power
+        // 378.33 with power
+        //369 with -power
+
+        // min is 0
+        // 38.84 with power
+        // 25 with - power
+
+        actualAngle = currentAngle + currentAngleOffset;
+
+        telemetry.addData("Servo Voltage", "%.2f", currentVoltage);
+        telemetry.addData("Servo Angle Raw", "%.2f", currentAngle);
+        telemetry.addLine();
+        telemetry.addData("Last Servo Voltage", "%.2f", lastVoltage);
+        telemetry.addData("Last Servo Angle Raw", "%.2f", lastAngle);
+        telemetry.addLine();
+        telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
+
+        telemetry.update();
+
+        lastAngle = currentAngle;
+        lastVoltage = currentVoltage;
 
         //limelight = hardwareMap.get(Limelight3A.class, "limelight");
         //limelight.pipelineSwitch(0);
@@ -360,12 +424,12 @@ public class Launcher {
 
     public void kickBall() {
         if (isLauncherActive()) {
-            kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
+            //kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
         }
     }
 
     public void resetKicker() {
-        kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+        //kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
     }
 
     public double getKickerPosition() {
@@ -769,7 +833,7 @@ public class Launcher {
             kickerPosition = 0.0;
         }
 
-        kickerServo.setPosition(kickerPosition);
+        //kickerServo.setPosition(kickerPosition);
     }
 
     public double getKickerServoPosition() {
@@ -816,5 +880,88 @@ public class Launcher {
     public PIDFCoefficients getLauncherMotorPIDFCoefficients() {
         return launcherMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    // Turret Methods
+    public void setTurretRelativeAngle(double relativeTargetAngle){
+        turretTarget = relativeTargetAngle * 2;
+        // Find the voltage returned and the angle of the servo
+
+        currentVoltage = launcherAnalogInput.getVoltage();
+        currentAngle = currentVoltage / 3.3 * 360;
+
+        // Find out whether the angle looped around
+
+        diff = Math.abs(currentAngle - lastAngle);
+
+        if (!firstLoop) {
+            if (currentAngle > 180 && lastAngle < 180 && diff > 30) {
+                currentAngleOffset -= 360;
+            }
+
+            if (currentAngle < 180 && lastAngle > 180 && diff > 30) {
+                currentAngleOffset += 360;
+            }
+        }
+
+        actualAngle = currentAngle + currentAngleOffset;
+
+        greatestDiff = Math.max(greatestDiff, diff);
+
+        // Set Servo power
+        turretPower = updateTurretPID(turretTarget, actualAngle);
+        launcherServo.setPower(turretPower);
+
+        // Add telemetry data for debugging
+
+        telemetry.addData("Power", turretPower);
+        telemetry.addLine();
+        telemetry.addData("Servo Voltage", "%.2f", currentVoltage);
+        telemetry.addData("Servo Angle Raw", "%.2f", currentAngle);
+        telemetry.addLine();
+        telemetry.addData("Last Servo Voltage", "%.2f", lastVoltage);
+        telemetry.addData("Last Servo Angle Raw", "%.2f", lastAngle);
+        telemetry.addLine();
+        telemetry.addData("Difference", "%.2f", diff);
+        telemetry.addData("Angle Offset", "%.2f", currentAngleOffset);
+
+        telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
+
+        telemetry.update();
+
+        // Logging
+
+        RobotLog.d("Power: %.2f, Servo Angle: %.2f, Last Servo Angle: %.2f, Difference: %.2f, Angle Offset: %.2f, Actual Servo Angle: %.2f", turretPower, currentAngle, lastAngle, diff, currentAngleOffset, actualAngle);
+
+        // Set last variables for next loop
+
+        lastAngle = currentAngle;
+        lastVoltage = currentVoltage;
+
+        firstLoop = false;
+    }
+
+    public double updateTurretPID(double target, double current) {
+        turretLastTime = turretTime;
+        turretTime = System.nanoTime() / 1000000000.0;
+        double dt = turretTime - turretLastTime;
+
+        double error = target - current;
+
+        if (Math.abs(error) < 2.5) {
+            return 0;
+        }
+
+        turretIntegralSum += error * dt;
+
+        double derivative = (error - turretLastError) / dt;
+
+        telemetry.addData("Error", "%.2f", error);
+        telemetry.addData("Integral", "%.2f", turretIntegralSum);
+        telemetry.addData("Derivative", "%.2f", derivative);
+        telemetry.addLine();
+
+        return Math.max(Math.min((error * turretkP) + (turretIntegralSum * turretkI) + (derivative * turretkD) + (turretkF * Math.signum(error)), 1), -1);
+    }
+
 
 }

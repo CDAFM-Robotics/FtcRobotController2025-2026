@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveBase;
 import org.firstinspires.ftc.teamcode.common.subsystems.Hud;
 import org.firstinspires.ftc.teamcode.common.subsystems.Indexer;
@@ -218,11 +219,43 @@ public class Robot {
     //updating the turret every loop
     public void updateTurretAngle(){
         //read the current pose
-
+        double robotX = driveBase.getPinPointPosX();
+        double robotY = driveBase.getPinPointPosY();
         //read the current robot heading
+        double pinPointHeading = driveBase.getPinPointHeading();
+        double robotHeading = Math.toDegrees(pinPointHeading);
 
         //calculate the relative angle of the turret to the robot
+        // coordinates of the blue goal
+        double blueGoalX = -64;
+        double blueGoalY = -64;
 
+        // calculate vector to blue goal
+        double deltaX = blueGoalX - robotX;
+        double deltaY = blueGoalY - robotY;
+
+        //calculates the angle in radians between the positive x-axis and a point
+        double absoluteAngleRadians = Math.atan2(deltaX, deltaY);
+        double absoluteAngleDegree = Math.toDegrees(absoluteAngleRadians);
+
+        double relativeAngle = absoluteAngleDegree - robotHeading;
+
+        telemetry.addData("Robot Heading Real", robotHeading);
+
+        relativeAngle = normalizeAngle(relativeAngle);
+
+        telemetry.addData("updateTurretAngle",relativeAngle);
+        launcher.setTurretRelativeAngle(relativeAngle);
+    }
+
+    public double normalizeAngle (double angle) {
+        while (angle > 180.0) {
+            angle -= 360.0;
+        }
+        while (angle < -180.0) {
+            angle += 360.0;
+        }
+        return angle;
     }
 
 }

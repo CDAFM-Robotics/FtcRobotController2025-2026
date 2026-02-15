@@ -155,14 +155,15 @@ public class LauncherRotatePositionTestOpMode extends LinearOpMode {
         }
     }
 
-    public double integralSum = 0;
-    public double lastError = 0;
-    public double lastTime = 0;
+    private double integralSum = 0;
+    private double lastError = 0;
+    private double lastTime = 0;
+    private double turretTime = 0;
 
     public double updatePID(double target, double current) {
-        lastTime = time;
-        double time = System.nanoTime() / 1000000000.0;
-        double dt = time - lastTime;
+        lastTime = turretTime;
+        turretTime = System.nanoTime() / 1000000000.0;
+        double dt = turretTime - lastTime;
 
         double error = target - current;
 

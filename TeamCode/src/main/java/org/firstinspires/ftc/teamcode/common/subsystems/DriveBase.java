@@ -166,4 +166,15 @@ public class DriveBase {
         kickStandLight.setPosition(power);
     }*/
 
+    public double getPinPointPosX() {
+        return pinpoint.getPosX(DistanceUnit.INCH);
+    }
+
+    public double getPinPointPosY() {
+        return pinpoint.getPosY(DistanceUnit.INCH);
+    }
+
+    public double getPinPointHeading() {
+        return pinpoint.getHeading(AngleUnit.RADIANS);
+    }
 }

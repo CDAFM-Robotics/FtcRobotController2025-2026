@@ -343,6 +343,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 //                    robot.getIndexer().artifactColorArray[1],
 //                    robot.getIndexer().artifactColorArray[2]);
 
+            // Update turret angle so that it always point to the goal
+            robot.updateTurretAngle();
+
             telemetry.update();
         }
     }
