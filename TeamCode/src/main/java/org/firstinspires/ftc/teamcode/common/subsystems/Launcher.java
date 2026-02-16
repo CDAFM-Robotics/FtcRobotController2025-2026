@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
+import org.firstinspires.ftc.teamcode.common.RobotStaticValuesClass;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
@@ -46,7 +47,7 @@ public class Launcher {
 
     private Limelight3A limelight;
 
-    Servo kickerServo;
+    public Servo kickerServo;
     CRServo turretServo;
     Servo hoodServo;
     AnalogInput RSFeedback;
@@ -63,7 +64,7 @@ public class Launcher {
 
     double lastServoPosition;
 
-    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.26; // 0.88
+    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.22; // 0.26
     public final double POSITION_KICKER_SERVO_INIT = 0.51;
     public final double POSITION_TUREET_SERVO_INIT = 0.5;
 
@@ -120,7 +121,6 @@ public class Launcher {
     public static double turretkP = 0.01;
     public static double turretkI = 0;
     public static double turretkD = 0;
-    public static double turretTarget = 0;
 
     private double currentVoltage;
     private double currentAngle;
@@ -128,19 +128,14 @@ public class Launcher {
 
     private double lastVoltage = 0;
     private double lastAngle = 0;
+    private double turretLastError = 0;
 
     private double actualAngle;
-
-    private double turretPower = 0;
-
-    private double diff;
     private double greatestDiff = -0x80000000;
 
     private boolean firstLoop = true;
 
     private double turretIntegralSum = 0;
-    private double turretLastError = 0;
-    private double turretLastTime = 0;
     private double turretTime = 0;
 
     // Autonomous Actions
@@ -317,15 +312,18 @@ public class Launcher {
 
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
-
         kickerPosition = POSITION_KICKER_SERVO_INIT;
-        //kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
-        hoodPosition = POSITION_HOOD_SERVO_INIT;
+        kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+        hoodPosition = POSITION_HOOD_SERVO_HIGH;
         hoodServo.setPosition(hoodPosition);
 
         // initialized turret variables
         currentVoltage = launcherAnalogInput.getVoltage();
         currentAngle = currentVoltage / 3.3 * 360;
+        // set the offset to the value from Autonomous
+        if (RobotStaticValuesClass.autoCompleted) {
+            currentAngleOffset = RobotStaticValuesClass.turretAngleOffset;
+        }
         //348.55 is max with no power
         // 378.33 with power
         //369 with -power
@@ -424,12 +422,12 @@ public class Launcher {
 
     public void kickBall() {
         if (isLauncherActive()) {
-            //kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
+            kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
         }
     }
 
     public void resetKicker() {
-        //kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+        kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
     }
 
     public double getKickerPosition() {
@@ -883,7 +881,7 @@ public class Launcher {
 
     // Turret Methods
     public void setTurretRelativeAngle(double relativeTargetAngle){
-        turretTarget = relativeTargetAngle * 2;
+        double turretTarget = relativeTargetAngle * 2;
         // Find the voltage returned and the angle of the servo
 
         currentVoltage = launcherAnalogInput.getVoltage();
@@ -891,7 +889,7 @@ public class Launcher {
 
         // Find out whether the angle looped around
 
-        diff = Math.abs(currentAngle - lastAngle);
+        double diff = Math.abs(currentAngle - lastAngle);
 
         if (!firstLoop) {
             if (currentAngle > 180 && lastAngle < 180 && diff > 30) {
@@ -908,7 +906,7 @@ public class Launcher {
         greatestDiff = Math.max(greatestDiff, diff);
 
         // Set Servo power
-        turretPower = updateTurretPID(turretTarget, actualAngle);
+        double turretPower = updateTurretPID(turretTarget, actualAngle);
         launcherServo.setPower(turretPower);
 
         // Add telemetry data for debugging
@@ -930,7 +928,7 @@ public class Launcher {
 
         // Logging
 
-        RobotLog.d("Power: %.2f, Servo Angle: %.2f, Last Servo Angle: %.2f, Difference: %.2f, Angle Offset: %.2f, Actual Servo Angle: %.2f", turretPower, currentAngle, lastAngle, diff, currentAngleOffset, actualAngle);
+        RobotLog.d("Power: %.2f, Servo Angle: %.2f, Last Servo Angle: %.2f, Difference: %.2f, Angle Offset: %.2f, Actual Servo Angle: %.2f, target angle: %.2f", turretPower, currentAngle, lastAngle, diff, currentAngleOffset, actualAngle, turretTarget);
 
         // Set last variables for next loop
 
@@ -941,7 +939,7 @@ public class Launcher {
     }
 
     public double updateTurretPID(double target, double current) {
-        turretLastTime = turretTime;
+        double turretLastTime = turretTime;
         turretTime = System.nanoTime() / 1000000000.0;
         double dt = turretTime - turretLastTime;
 
@@ -954,13 +952,19 @@ public class Launcher {
         turretIntegralSum += error * dt;
 
         double derivative = (error - turretLastError) / dt;
+        turretLastError = error;
 
-        telemetry.addData("Error", "%.2f", error);
-        telemetry.addData("Integral", "%.2f", turretIntegralSum);
-        telemetry.addData("Derivative", "%.2f", derivative);
+        double turretPower = Math.max(Math.min((error * turretkP) + (turretIntegralSum * turretkI) + (derivative * turretkD) + (turretkF * Math.signum(error)), 1), -1);
+
+        telemetry.addData("turret target angle", "%.2f", target);
+        telemetry.addData("turret current angle", "%.2f", current);
+        telemetry.addData("turret Error", "%.2f", error);
+        telemetry.addData("turret Integral", "%.2f", turretIntegralSum);
+        telemetry.addData("turret Derivative", "%.2f", derivative);
+        telemetry.addData("turret Power", "%.2f", turretPower);
         telemetry.addLine();
 
-        return Math.max(Math.min((error * turretkP) + (turretIntegralSum * turretkI) + (derivative * turretkD) + (turretkF * Math.signum(error)), 1), -1);
+        return turretPower;
     }
 
 

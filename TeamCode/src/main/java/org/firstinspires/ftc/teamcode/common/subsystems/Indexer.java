@@ -26,26 +26,28 @@ public class Indexer {
     private ElapsedTime timeSinceTurnIndex = new ElapsedTime();
     private int nextEmptySlot;
     private int nextShootSlot;
-    private double targetIdexerPosition;
+    private double targetIndexerPosition;
 
+    //after indexer HW change, this is the left color sensor on the intake
     NormalizedColorSensor colorSensorIntakeLL = null;
     NormalizedColorSensor colorSensorIntakeLR = null;
+    //after indexer HW change, this is the left color sensor on the back left
     NormalizedColorSensor colorSensorIntakeRL = null;
     NormalizedColorSensor colorSensorIntakeRR = null;
+    //after indexer HW change, this is the left color sensor on the back right
     NormalizedColorSensor colorSensorOutL = null;
     NormalizedColorSensor colorSensorOutR = null;
-
 
     AnalogInput indexerServoVoltage = null;
 
     public ArtifactColor[] artifactColorArray = new ArtifactColor[]{ArtifactColor.NONE, ArtifactColor.NONE, ArtifactColor.NONE};
 
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.898; // 0.10 (pre29Dec) was 0.07 one is at wait; two is at intake
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.140; // 0.51 (pre29Dec) was 0.5 zero is at intake; two is at wait
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.525; // 0.89 (pre29Dec) was as 0.93 zero is at wait; one is at intake
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT;
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT;
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.190;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.948;
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.569;
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = 0.758;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = 0.379;
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = 0.0;
 
     public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;
     public final double AXON_SERVO_VOLTAGE_SCALER = 0.1 / 0.2815;
@@ -82,7 +84,7 @@ public class Indexer {
 
         timeSinceTurnIndex.reset();
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
-        while(!indexerFinishedTurning() || timeSinceTurnIndex.milliseconds() < 800) {
+        while(!indexerFinishedTurning() || timeSinceTurnIndex.milliseconds() < 1200) {
             //wait for indexer
         }
         updateColorAllSlots();
@@ -187,14 +189,14 @@ public class Indexer {
     public boolean indexerFinishedTurning() {
         //telemetry.addData("indexerFinishedTurning start", targetIdexerPosition);
         //TODO: 0.02 is used to start with. Is 0.02 the best value to use here?
-        if (getIndexerServoAtPosition(targetIdexerPosition, 0.01))
+        if (getIndexerServoAtPosition(targetIndexerPosition, 0.01))
             return true;
         else
             return false;
     }
 
     public void rotateToPosition(double position) {
-        targetIdexerPosition = position;
+        targetIndexerPosition = position;
         indexerServo.setPosition(position);
     }
 
@@ -328,6 +330,9 @@ public class Indexer {
         updateBallColorAtIntakeLeft(position);
         updateBallColorAtIntakeRight(position);
         updateBallColorAtOuttake(position);
+        telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
+        telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
+        telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
     }
 
 //    public void updateBallColors() {

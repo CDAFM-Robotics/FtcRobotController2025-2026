@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.common.RobotStaticValuesClass;
 
 public class DriveBase {
 
@@ -65,15 +66,23 @@ public class DriveBase {
         // ground lights OFF
         //kickStandLight.setPosition(0.0);
 
-
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // Configure the sensor
         configurePinpoint();
+        double startX = 0;
+        double startY = 0;
+        double startHeading = 0;
+        // if the auto completed, use the value from end of auto
+        if (RobotStaticValuesClass.autoCompleted) {
+            startX = RobotStaticValuesClass.robotStaticX;
+            startY = RobotStaticValuesClass.robotStaticY;
+            startHeading = RobotStaticValuesClass.robotStaticHeading;
+        }
 
         // Set the location of the robot - this should be the place you are starting the robot from
-        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0));
+            pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
 
     }
 
