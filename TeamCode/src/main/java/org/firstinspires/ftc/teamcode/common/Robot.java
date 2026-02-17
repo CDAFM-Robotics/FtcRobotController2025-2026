@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.subsystems.DriveBase;
 import org.firstinspires.ftc.teamcode.common.subsystems.Hud;
 import org.firstinspires.ftc.teamcode.common.subsystems.Indexer;
@@ -13,7 +12,6 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -30,8 +28,9 @@ public class Robot {
     private ElapsedTime timeSinceKickReset  = new ElapsedTime();
 
     //indicators for driver
-    public Boolean intake3Balls = false; //Picked up all three balls
-    public Boolean intake1Ball = false; //Picked up one ball
+    public boolean intake3Balls = false; //Picked up all three balls
+    public boolean intake1Ball = false; //Picked up one ball
+    private boolean safeToStop = true; //if kicker is down
 
     private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
     private ArtifactColor ballColor = ArtifactColor.NONE;
@@ -66,10 +65,10 @@ public class Robot {
 
     public enum AutoIntakeStates {
         INIT,
-        RESET_KICKER,
-        WAIT_KICKER,
         TURN_EMPTY_SLOT_TO_INTAKE,
-        WAIT_FOR_BALL
+        WAIT_FOR_BALL,
+        POSITION_FOR_OUTTAKE,
+        READY_TO_SHOOT
     }
 
     public enum IndexerResetStates {
@@ -138,9 +137,49 @@ public class Robot {
 
      // Auto-Indexing for intake
      public void intakeWithIndexerTurn(){
-        //Check if the front two slot are empty if yes, no turning
+         telemetry.addData("intakeWithIndexerTurn", autoIntakeState);
 
-
+         switch (autoIntakeState) {
+             case INIT:
+                 if (indexer.checkEmptySlot()) {
+                     telemetry.addLine("Robot: found empty slot");
+                     RobotLog.d("RRobot: found empty slot");
+                     autoIntakeState = AutoIntakeStates.TURN_EMPTY_SLOT_TO_INTAKE;
+                 } else {
+                     //No empty slot
+                     // - update color double check
+                     // This line is removed to save time.
+                     indexer.updateUnknowBall();
+                     intake3Balls = true;
+                     autoIntakeState = AutoIntakeStates.POSITION_FOR_OUTTAKE;
+                     break;
+                 }
+             case TURN_EMPTY_SLOT_TO_INTAKE:
+                 indexer.turnEmptySlotToIntake();
+                 autoIntakeState = AutoIntakeStates.WAIT_FOR_BALL;
+                 break;
+             case WAIT_FOR_BALL:
+                 telemetry.addLine("Robot: WAIT_FOR_BALL");
+                 if (indexer.indexerFinishedTurning()) {
+                     telemetry.addLine("Robot: indexerFinishedTurning");
+                     if (indexer.isBallAtIntake()) {
+                         telemetry.addLine("Robot: isBallAtIntake");
+                         intake1Ball = true;
+                         indexer.updateBallColorAtIntake(indexer.getIndexerPosition());
+                         autoIntakeState = AutoIntakeStates.INIT;
+                         break;
+                     }
+                 }
+                 break;
+             case POSITION_FOR_OUTTAKE:
+                 indexer.positionForOuttake();
+                 autoIntakeState = AutoIntakeStates.READY_TO_SHOOT;
+                 break;
+             case READY_TO_SHOOT:
+                 break;
+             default:
+                 throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
+         }
      }
 
     public void startLaunchAGreenBall(){
@@ -177,6 +216,79 @@ public class Robot {
     }
 
     public void shootAllBalls() {
+        telemetry.addLine("shootAllBalls");
+        if (indexer.atIntake()) {
+            indexer.updateColorAllSlots();
+        }
+        telemetry.addData("color:", indexer.artifactColorArray[0]);
+        telemetry.addData("color:", indexer.artifactColorArray[1]);
+        telemetry.addData("color:", indexer.artifactColorArray[2]);
+
+        // check to see if flywheel motors are running
+        if(launcher.isLauncherActive()) {
+            //RobotLog.d("shootAllBalls");
+            //RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
+            //RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
+            //RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
+
+            if (indexer.findABall()) {
+                switch (launchState) {
+                    case INIT:
+                        telemetry.addLine("shootAllBalls: INIT");
+                        //RobotLog.d("shootAllBalls: INIT");
+                        launchState = LaunchBallStates.TURN_TO_LAUNCH;
+                        break;
+                    case TURN_TO_LAUNCH:
+                        telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
+                        RobotLog.d("shootAllBalls: TURN_TO_LAUNCH");
+                        indexer.moveToOuttake();
+                        launchState = LaunchBallStates.KICK_BALL;
+                        break;
+                    case KICK_BALL:
+                        telemetry.addLine("shootAllBalls: KICK_BALL");
+                        RobotLog.d("shootAllBalls: KICK_BALL");
+                        if (indexer.indexerFinishedTurning()) {
+                            safeToStop = false;
+                            launcher.kickBall();
+                            timeSinceKick.reset();
+                            launchState = LaunchBallStates.RESET_KICKER;
+                            break;
+                        } else {
+                            break;
+                        }
+                    case RESET_KICKER:
+                        telemetry.addLine("shootAllBalls: RESET_KICKER");
+                        RobotLog.d("shootAllBalls: RESET_KICKER");
+                        if (timeSinceKick.milliseconds() > WAIT_TIME_KICKER) {
+                            launcher.resetKicker();
+                            timeSinceKickReset.reset();
+                            launchState = LaunchBallStates.UPDATE_INDEXER;
+                            break;
+                        } else {
+                            break;
+                        }
+                    case UPDATE_INDEXER:
+                        telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                        RobotLog.d("shootAllBalls: UPDATE_INDEXER");
+                        indexer.updateAfterShoot();
+                        if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
+                            safeToStop = true;
+                        }
+                        launchState = LaunchBallStates.INIT;
+                        break;
+                    default:
+                        RobotLog.d("shootAllBalls Unexpected");
+                        throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
+                }
+            }
+            else {
+                //robot think there's no more balls. verify
+                // to update color need to position for intake first
+                // This may create a racing condition
+                indexer.positionForIntake();
+            }
+        }
+
     }
 
     public void resetIndexerColorStart(){
@@ -258,4 +370,7 @@ public class Robot {
         return angle;
     }
 
+    public boolean isSafeToStop() {
+        return safeToStop;
+    }
 }

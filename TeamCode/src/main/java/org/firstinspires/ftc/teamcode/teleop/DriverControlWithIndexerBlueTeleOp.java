@@ -130,6 +130,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.intakeWithIndexerTurn();
             }
             else if (currentGamepad1.right_trigger == 0.0 && previousGamepad1.right_trigger != 0){
+                //robot update artifact colors
                 robot.getIntake().stopIntake();
             }
 
@@ -202,14 +203,14 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.getLauncher().changeHood(0.05);
             }
 
-            if (currentGamepad2.a && !previousGamepad2.a) {
-                robot.getLauncher().changeKicker(-0.05);
-            }
-
-            if (currentGamepad2.b && !previousGamepad2.b) {
-                robot.getLauncher().changeKicker(0.05);
-            }
-
+//            if (currentGamepad2.a && !previousGamepad2.a) {
+//                robot.getLauncher().changeKicker(-0.05);
+//            }
+//
+//            if (currentGamepad2.b && !previousGamepad2.b) {
+//                robot.getLauncher().changeKicker(0.05);
+//            }
+//
             telemetry.addData("hoodServo postion", robot.getLauncher().getHoodServoPosition());
             telemetry.addData("kickerServo postion", robot.getLauncher().getKickerServoPosition());
             telemetry.addData("isLauncher active", robot.getLauncher().isLauncherActive());
@@ -222,60 +223,30 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
 //            }
 
             //launch a green ball
-            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
-                isAiming = true;
-                aimTimer.reset();
-                robot.startLaunchAGreenBall();
-            }
-            if (!currentGamepad2.left_bumper && previousGamepad2.left_bumper){
-                isAiming = false;
-            }
-
-            if (currentGamepad2.left_bumper) {
-                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
-                    || aimTimer.milliseconds() > Launcher.aimTimeout){
-                    isAiming = false;
-                    robot.launchAColorBall();
-                }
-            }
-
-            //launch a purple ball
-            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-//                isAiming = true;
-//                aimTimer.reset();
-                robot.getLauncher().kickBall();
-            }
-
-            if (!currentGamepad2.right_bumper && previousGamepad2.right_bumper){
-                isAiming = false;
-            }
-
-            if (currentGamepad2.right_bumper) {
-                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
-                    || aimTimer.milliseconds() > Launcher.aimTimeout){
-                    isAiming = false;
-                    robot.launchAColorBall();
-                }
-            }
+//            if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+//                robot.startLaunchAGreenBall();
+//            }
+//            if (currentGamepad2.left_bumper) {
+//                    robot.launchAColorBall();
+//            }
+//
+//            //launch a purple ball
+//            if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+//                robot.startLaunchAPurpleBall();
+//            }
+//
+//            if (currentGamepad2.right_bumper) {
+//                    robot.launchAColorBall();
+//            }
 
             //Launch all balls in the robot. And also, aim when the right trigger is pushed.
-            if (currentGamepad2.right_trigger != 0 && previousGamepad2.right_trigger == 0) {
-                isAiming = true;
-                aimTimer.reset();
-                robot.getLauncher().kickBall();
-            }
-
             if (currentGamepad2.right_trigger != 0) {
-                if (Math.abs(xAngle) < Launcher.aimErrorTolerance
-                    || aimTimer.milliseconds() > Launcher.aimTimeout){
-                    isAiming = false;
-                    robot.shootAllBalls();
-                }
+                robot.shootAllBalls();
             }
 
-            if (currentGamepad2.right_trigger == 0 && previousGamepad2.right_trigger != 0) {
-                isAiming = false;
-            }
+//            if (currentGamepad2.right_trigger == 0 && !robot.isSafeToStop()) {
+//                robot.shootAllBalls();
+//            }
 
             //rumble gamepad 2 when apriltag is in view
             /*if(robot.getLauncher().getLimelightResult().isValid() && !aprilTagInView && robot.getLauncher().getLauncherTargetVelocity() == 0.0){

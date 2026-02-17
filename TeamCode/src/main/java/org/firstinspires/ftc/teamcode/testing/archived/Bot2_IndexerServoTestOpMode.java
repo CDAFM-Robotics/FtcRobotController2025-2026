@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.autonomous.actions.AutonomousActionBuilder;
 import org.firstinspires.ftc.teamcode.common.Robot;
@@ -152,6 +153,7 @@ public class Bot2_IndexerServoTestOpMode extends LinearOpMode {
             telemetry.addData("Axon set position: ", position);
             telemetry.addData("measured position: ", mpos);
             telemetry.addData("Voltage: ", axon_position_V.getVoltage());
+            RobotLog.d("axon pos/meas/volt: %.2f,%.2f,%.2f",position,mpos,axon_position_V.getVoltage());
             telemetry.update();
         }
     }
