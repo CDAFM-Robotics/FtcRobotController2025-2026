@@ -71,9 +71,13 @@ public class DriveBase {
 
         // Configure the sensor
         configurePinpoint();
-        double startX = 0;
-        double startY = 0;
-        double startHeading = 0;
+
+        // TODO FIX THIS (Setting to Blue FAR START ORIENATION) and it doesn't catch somehow..
+        double startX = 60;
+        double startY = -12;
+        double startHeading = Math.PI;
+
+
         // if the auto completed, use the value from end of auto
         if (RobotStaticValuesClass.autoCompleted) {
             startX = RobotStaticValuesClass.robotStaticX;
@@ -82,7 +86,8 @@ public class DriveBase {
         }
 
         // Set the location of the robot - this should be the place you are starting the robot from
-            pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
+        // TODO Changed to INCH need to understand what units come from auton.
+        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, startX, startY, AngleUnit.RADIANS, startHeading));
 
     }
 
