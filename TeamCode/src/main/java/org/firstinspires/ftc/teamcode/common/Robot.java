@@ -26,13 +26,14 @@ public class Robot {
     //private ElapsedTime timeSinceIndex = new ElapsedTime();
     private ElapsedTime timeSinceKick = new ElapsedTime();
     private ElapsedTime timeSinceKickReset  = new ElapsedTime();
+    private ElapsedTime reverseIntakeTimer  = new ElapsedTime();
 
     //indicators for driver
     public boolean intake3Balls = false; //Picked up all three balls
     public boolean intake1Ball = false; //Picked up one ball
     private boolean safeToStop = true; //if kicker is down
 
-    private Queue<ArtifactColor> queuedLaunches = new ArrayBlockingQueue<>(3);
+    private double shootingDistance = 0;
     private ArtifactColor ballColor = ArtifactColor.NONE;
 
     private HardwareMap hardwareMap;
@@ -44,23 +45,20 @@ public class Robot {
         // Create an instance of the hardware map and telemetry in the Robot class
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        //timeSinceIndex.startTime();
         timeSinceKick.startTime();
         timeSinceKickReset.startTime();
+        reverseIntakeTimer.startTime();
 
         initializeSubsystems();
     }
 
     public void initializeSubsystems() {
-
         // Create an instance of every subsystem in the Robot class
         this.driveBase = new DriveBase(this.hardwareMap, this.telemetry);
         this.indexer = new Indexer(this.hardwareMap, this.telemetry);
         this.launcher = new Launcher(this.hardwareMap, this.telemetry);
         this.intake = new Intake(this.hardwareMap, this.telemetry);
         //this.hud = new Hud(this.hardwareMap, this.telemetry);
-        telemetry.update();
-
     }
 
     public enum AutoIntakeStates {
@@ -173,9 +171,13 @@ public class Robot {
                  break;
              case POSITION_FOR_OUTTAKE:
                  indexer.positionForOuttake();
+                 intake.reverseIntake();
+                 reverseIntakeTimer.reset();
                  autoIntakeState = AutoIntakeStates.READY_TO_SHOOT;
                  break;
              case READY_TO_SHOOT:
+                 if (reverseIntakeTimer.milliseconds() > 1000)
+                     intake.stopIntake();
                  break;
              default:
                  throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
@@ -335,6 +337,7 @@ public class Robot {
         double robotY = driveBase.getPinPointPosY();
         //read the current robot heading
         double pinPointHeading = driveBase.getPinPointHeading();
+        pinPointHeading = normalizeAngle(pinPointHeading);
         double robotHeading = Math.toDegrees(pinPointHeading);
 
         //calculate the relative angle of the turret to the robot
@@ -345,18 +348,25 @@ public class Robot {
         // calculate vector to blue goal
         double deltaX = blueGoalX - robotX;
         double deltaY = blueGoalY - robotY;
+        shootingDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
         //calculates the angle in radians between the positive x-axis and a point
-        double absoluteAngleRadians = Math.atan2(deltaX, deltaY);
+        double absoluteAngleRadians = Math.atan2(deltaY, deltaX);
         double absoluteAngleDegree = Math.toDegrees(absoluteAngleRadians);
 
         double relativeAngle = absoluteAngleDegree - robotHeading;
 
-        telemetry.addData("Robot Heading Real", robotHeading);
-
         relativeAngle = normalizeAngle(relativeAngle);
 
-        telemetry.addData("updateTurretAngle",relativeAngle);
+        telemetry.addData("deltaX:", deltaX);
+        telemetry.addData("deltaY:", deltaY);
+        telemetry.addData("robotX:", robotX);
+        telemetry.addData("robotY:", robotY);
+        telemetry.addData("absoluteAngleRadians:", absoluteAngleRadians);
+        telemetry.addData("absoluteAngleDegree:", absoluteAngleDegree);
+        telemetry.addData("pinPointHeading:", pinPointHeading);
+        telemetry.addData("relativeAngle:", relativeAngle);
+        telemetry.addData("relativeAngle",relativeAngle);
         launcher.setTurretRelativeAngle(relativeAngle);
     }
 

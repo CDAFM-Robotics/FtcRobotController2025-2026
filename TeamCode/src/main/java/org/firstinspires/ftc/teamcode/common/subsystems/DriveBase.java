@@ -80,10 +80,8 @@ public class DriveBase {
             startY = RobotStaticValuesClass.robotStaticY;
             startHeading = RobotStaticValuesClass.robotStaticHeading;
         }
-
         // Set the location of the robot - this should be the place you are starting the robot from
-            pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
-
+        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
     }
 
     public void resetIMU(){

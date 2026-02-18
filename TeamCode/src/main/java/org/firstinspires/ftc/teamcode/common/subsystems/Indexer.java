@@ -66,14 +66,10 @@ public class Indexer {
 
     public void initializeIndexerDevices() {
         indexerServo = hardwareMap.get(Servo.class, "indexerServo");
+        indexerServoVoltage = hardwareMap.get(AnalogInput.class, "indexerAnalog");
 
         colorSensorIntakeL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeLeftLeft");
         colorSensorIntakeR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeLeftRight");
-//        colorSensorIntakeRL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightLeft");
-//        colorSensorIntakeRR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightRight");
-//        colorSensorOutL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutLeft");
-//        colorSensorOutR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutRight");
-
         colorSensorBackLL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightLeft");
         colorSensorBackLR = hardwareMap.get(NormalizedColorSensor.class, "colorSensorIntakeRightRight");
         colorSensorBackRL = hardwareMap.get(NormalizedColorSensor.class, "colorSensorOutLeft");
@@ -85,8 +81,6 @@ public class Indexer {
         colorSensorBackRR.setGain(8);
         colorSensorBackLL.setGain(8);
         colorSensorBackLR.setGain(8);
-
-        indexerServoVoltage = hardwareMap.get(AnalogInput.class, "indexerAnalog");
 
         timeSinceTurnIndex.reset();
         rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE);

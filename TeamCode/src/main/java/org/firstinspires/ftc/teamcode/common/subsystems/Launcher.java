@@ -304,16 +304,13 @@ public class Launcher {
         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
 
         kickerServo = hardwareMap.get(Servo.class, "kickerServo");
-        //turretServo = hardwareMap.get(CRServo.class, "turretServo");
-        //RSFeedback = hardwareMap.get(AnalogInput.class, "turretAnalog");
-
         launcherServo = hardwareMap.get(CRServo.class, "turretServo");
         launcherAnalogInput = hardwareMap.get(AnalogInput.class, "turretAnalog");
-
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
         kickerPosition = POSITION_KICKER_SERVO_INIT;
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
+
         hoodPosition = POSITION_HOOD_SERVO_HIGH;
         hoodServo.setPosition(hoodPosition);
 
@@ -336,13 +333,9 @@ public class Launcher {
 
         telemetry.addData("Servo Voltage", "%.2f", currentVoltage);
         telemetry.addData("Servo Angle Raw", "%.2f", currentAngle);
-        telemetry.addLine();
         telemetry.addData("Last Servo Voltage", "%.2f", lastVoltage);
         telemetry.addData("Last Servo Angle Raw", "%.2f", lastAngle);
-        telemetry.addLine();
         telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
-
-        telemetry.update();
 
         lastAngle = currentAngle;
         lastVoltage = currentVoltage;

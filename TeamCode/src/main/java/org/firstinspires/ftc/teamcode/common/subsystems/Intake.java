@@ -63,8 +63,6 @@ public class Intake {
 
     public void initializeIntakeDevices() {
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-
-        //intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void toggleIntake() {

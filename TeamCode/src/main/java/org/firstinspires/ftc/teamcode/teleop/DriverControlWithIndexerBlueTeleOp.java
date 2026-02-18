@@ -23,41 +23,21 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
         // FtcDashboard dashboard = FtcDashboard.getInstance();
         // telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-
         Robot robot = new Robot(hardwareMap, telemetry);
 
         double driveSpeed = 1;
         boolean fieldCentric = true;
-        double index_position = 0.5;
-        boolean isAiming = false;
-        boolean autoLaunch = true;
-        boolean aprilTagInView = false;
-        double xAngle = 0.0;
-        boolean llLastIsValid = false;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
-        ElapsedTime timeSinceLastIncident = new ElapsedTime();
-        ElapsedTime initializedIndexerTimer  = new ElapsedTime();
-        ElapsedTime aimTimer  = new ElapsedTime();
         ElapsedTime rumbleLauncherTimer  = new ElapsedTime();
-
-        initializedIndexerTimer.reset();
-        aimTimer.reset();
         rumbleLauncherTimer.reset();
 
-        //Check the color of the balls at init
-//        while (initializedIndexerTimer.milliseconds()< 500){
-//
-//        }
-//        robot.updateColorAllSlots();
-        //RobotLog.d("done indexing");
-
         //robot.getLauncher().setLimelightPipeline(isRedSide);
-        //telemetry.update();
+        telemetry.update();
 
         waitForStart();
 
@@ -67,10 +47,7 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
-            timeSinceLastIncident.reset();
-
-            // Drive Base
-
+            // Driving controls for the robot
             if (currentGamepad1.left_stick_button && !previousGamepad1.left_stick_button){
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
@@ -79,49 +56,20 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 fieldCentric = !fieldCentric;
             }
 
-            if (currentGamepad1.start && !previousGamepad1.start){
-                robot.getDriveBase().resetIMU();
-                gamepad1.rumble(300);
-            }
+            // Disabled the driver's ability to reset robot heading
+            // since we are keeping the heading from autonomous
+//            if (currentGamepad1.start && !previousGamepad1.start){
+//                robot.getDriveBase().resetIMU();
+//                gamepad1.rumble(300);
+//            }
 
             if (currentGamepad1.right_bumper != previousGamepad1.right_bumper) {
                 driveSpeed = driveSpeed == 1 ? 0.5 : 1;
             }
 
-// The drivers requested the aiming function to be merged with shooting
+            robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
 
-//            if(currentGamepad2.y && !previousGamepad2.y){
-//                isAiming = true;
-//                aimTimer.reset();
-//            }
-//            telemetry.addData("left_bumper pushed: is aiming", isAiming);
-//            telemetry.addData("Limelight valid", robot.getLauncher().limelightValid());
-
-//            if (currentGamepad1.left_stick_x == 0 && currentGamepad1.left_stick_y == 0
-//                    && currentGamepad1.right_stick_x ==0 && currentGamepad1.right_stick_y == 0 && isAiming){
-//                    double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
-//                    telemetry.addData("aiming: motor power", power);
-//                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
-//            }
-//            else {
-            if (isAiming) {
-//                double power = robot.getLauncher().setAimPowerPID(aimTimer.milliseconds(), isRedSide);
-//                    telemetry.addData("aiming: motor power", power);
-//                    robot.getDriveBase().setMotorPowers(0, 0, power, driveSpeed, fieldCentric);
-            }
-            else {
-                robot.getDriveBase().setMotorPowers(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, driveSpeed, fieldCentric);
-                isAiming = false;
-            }
-
-//            llLastIsValid = robot.getLauncher().getLimelightResult().isValid();
-//            telemetry.addData("limelight valid", llLastIsValid);
-//            xAngle = robot.getLauncher().getLimelightResult().getTx();
-//            telemetry.addData("limelight x", xAngle);
-//            telemetry.addData("limelight y", robot.getLauncher().getLimelightResult().getTy());
-//            telemetry.addData("Distance to AprilTag", robot.getLauncher().getGoalDistance());
-
-            // Active Intake or re-indexing
+            // Intake Balls
             if (currentGamepad1.right_trigger != 0.0) {
                 //telemetry.addLine("gameped 1 right trigger or 2 left trigger");
                 //start the intake rolling
@@ -179,7 +127,6 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 else{
                     gamepad2.rumble(1.0,0.0,250);
                 }
-                autoLaunch = true;
             }
 
             if (robot.getLauncher().isLauncherActive() && rumbleLauncherTimer.milliseconds() > 1000){
