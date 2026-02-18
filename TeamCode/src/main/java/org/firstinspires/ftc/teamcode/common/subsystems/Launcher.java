@@ -117,10 +117,10 @@ public class Launcher {
     private final TreeMap<Double, Double> distanceToVelocityMap = new TreeMap<>();
 
     // Turret control variables
-    public static double turretkF = 0.12;
-    public static double turretkP = 0.01;
+    public static double turretkF = 0.10;
+    public static double turretkP = 0.005;
     public static double turretkI = 0;
-    public static double turretkD = 0;
+    public static double turretkD = 0.00005;
 
     private double currentVoltage;
     private double currentAngle;
