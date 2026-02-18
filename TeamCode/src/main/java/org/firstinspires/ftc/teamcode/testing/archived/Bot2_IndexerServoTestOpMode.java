@@ -80,6 +80,12 @@ public class Bot2_IndexerServoTestOpMode extends LinearOpMode {
                 position -= 0.1;
             }
 
+            if (currentGamepad1.x && !previousGamepad1.x) {
+                position += 0.001;
+            }
+            if (currentGamepad1.y && !previousGamepad1.y) {
+                position -= 0.001;
+            }
             // X/Y Kick Stand   (Left = ControlHub P5 / Right = ExpHub P0)
             // SQ TRI ps5 controller
 //            if (currentGamepad1.x != previousGamepad1.x) {

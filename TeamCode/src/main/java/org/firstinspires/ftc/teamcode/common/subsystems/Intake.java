@@ -17,7 +17,7 @@ public class Intake {
 
     DcMotorEx intakeMotor;
 
-    private Boolean activeIntake = false;
+    private int activeIntake = 0;
     public final double INTAKE_POWER = 1.0;
 
 
@@ -85,12 +85,17 @@ public class Intake {
 
     public void startIntake() {
         setIntakeMotorPower(INTAKE_POWER);
+        activeIntake = 1;
     }
     public void stopIntake() {
+
         setIntakeMotorPower(0);
+        activeIntake = 0;
     }
     public void reverseIntake() {
+
         setIntakeMotorPower(-1);
+        activeIntake = -1;
     }
 
     public void setIntakeMotorPower(double speed) {
@@ -100,7 +105,7 @@ public class Intake {
         return intakeMotor.getPower();
     }
 
-    public Boolean isActive(){
+    public int getIntakeState(){
         return activeIntake;
     }
 }

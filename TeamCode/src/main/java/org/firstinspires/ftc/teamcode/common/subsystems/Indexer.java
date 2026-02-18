@@ -43,11 +43,11 @@ public class Indexer {
 
     public ArtifactColor[] artifactColorArray = new ArtifactColor[]{ArtifactColor.NONE, ArtifactColor.NONE, ArtifactColor.NONE};
 
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.190;
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.948;
-    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.569;
-    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = 0.758;
-    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = 0.379;
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT = 0.176;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT = 0.938;
+    public final double POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT = 0.555;
+    public final double POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE = 0.746;
+    public final double POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE = 0.365;
     public final double POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE = 0.0;
 
     public final double AXON_SERVO_VOLTAGE_OFFSET = 0.228;

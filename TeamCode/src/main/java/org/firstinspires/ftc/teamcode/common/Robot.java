@@ -39,7 +39,7 @@ public class Robot {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public final int WAIT_TIME_KICKER = 100; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
+    public final int WAIT_TIME_KICKER = 200; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
@@ -147,7 +147,7 @@ public class Robot {
                      //No empty slot
                      // - update color double check
                      // This line is removed to save time.
-                     indexer.updateUnknowBall();
+                     indexer.updateColorAllSlots();
                      intake3Balls = true;
                      autoIntakeState = AutoIntakeStates.POSITION_FOR_OUTTAKE;
                      break;
@@ -171,13 +171,9 @@ public class Robot {
                  break;
              case POSITION_FOR_OUTTAKE:
                  indexer.positionForOuttake();
-                 intake.reverseIntake();
-                 reverseIntakeTimer.reset();
                  autoIntakeState = AutoIntakeStates.READY_TO_SHOOT;
                  break;
              case READY_TO_SHOOT:
-                 if (reverseIntakeTimer.milliseconds() > 1000)
-                     intake.stopIntake();
                  break;
              default:
                  throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
@@ -358,15 +354,16 @@ public class Robot {
 
         relativeAngle = normalizeAngle(relativeAngle);
 
-        telemetry.addData("deltaX:", deltaX);
-        telemetry.addData("deltaY:", deltaY);
-        telemetry.addData("robotX:", robotX);
-        telemetry.addData("robotY:", robotY);
-        telemetry.addData("absoluteAngleRadians:", absoluteAngleRadians);
-        telemetry.addData("absoluteAngleDegree:", absoluteAngleDegree);
-        telemetry.addData("pinPointHeading:", pinPointHeading);
-        telemetry.addData("relativeAngle:", relativeAngle);
-        telemetry.addData("relativeAngle",relativeAngle);
+//        telemetry.addData("deltaX:", deltaX);
+//        telemetry.addData("deltaY:", deltaY);
+//        telemetry.addData("robotX:", robotX);
+//        telemetry.addData("robotY:", robotY);
+//        telemetry.addData("absoluteAngleRadians:", absoluteAngleRadians);
+//        telemetry.addData("absoluteAngleDegree:", absoluteAngleDegree);
+//        telemetry.addData("pinPointHeading:", pinPointHeading);
+//        telemetry.addData("relativeAngle:", relativeAngle);
+//        telemetry.addData("relativeAngle",relativeAngle);
+
         launcher.setTurretRelativeAngle(relativeAngle);
     }
 
