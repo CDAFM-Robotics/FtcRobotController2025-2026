@@ -99,6 +99,12 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             if (currentGamepad1.left_trigger != 0) {
                 robot.getIntake().reverseIntake();
             }
+            else if (currentGamepad1.left_trigger == 0.0 && previousGamepad1.left_trigger != 0){
+                //robot update artifact colors
+                robot.getIntake().stopIntake();
+            }
+
+
 
             // reverse the intake for half a second to prevent the robot from intake the fourth ball
             if (waitForReverseTimer

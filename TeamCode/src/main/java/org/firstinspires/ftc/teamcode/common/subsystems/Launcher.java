@@ -346,7 +346,7 @@ public class Launcher {
         shootingTable.add(30.20,1080,1.0);
         shootingTable.add(60.02,1200,0.30);
         shootingTable.add(90,1320,0.15);
-        shootingTable.add(90,1560,0.0);
+        shootingTable.add(140,1560,0.0);
 
         //limelight = hardwareMap.get(Limelight3A.class, "limelight");
         //limelight.pipelineSwitch(0);
@@ -410,6 +410,7 @@ public class Launcher {
     }
 
     public void toggleLauncher() {
+        telemetry.addData("toggleLauncher", launcherMotor1.getPower());
        if (launcherMotor1.getPower() == 0) {
            startLauncher();
        }
@@ -452,6 +453,7 @@ public class Launcher {
         }
     }
     public void startLauncher() {
+        telemetry.addData("startLauncher",launcherVelocity);
         //launcherVelocity = shootingTable.getData1(shootingDistance);
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
@@ -688,6 +690,8 @@ public class Launcher {
         telemetry.addData("Difference", "%.2f", diff);
         telemetry.addData("Angle Offset", "%.2f", currentAngleOffset);
         telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
+        telemetry.addData("launcherVelocity", "%.2f", launcherVelocity);
+        telemetry.addData("launcherVelocity from motor", "%.2f", launcherMotor1.getVelocity());
 
         // TODO don't do this here. one time per loooop
 //        telemetry.update();
