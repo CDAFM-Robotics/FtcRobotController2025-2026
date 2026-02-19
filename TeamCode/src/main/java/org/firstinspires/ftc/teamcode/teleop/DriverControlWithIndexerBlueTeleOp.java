@@ -188,6 +188,13 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
+            if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+                robot.shootMotifPattern();
+            }
+            if (!currentGamepad2.right_bumper&& !robot.isSafeToStop()) {
+                robot.shootMotifPattern();
+            }
+
             //TODO: driver 1 would like the gamepad 1 to rumble when the robot pick up a ball
 /*            if (robot.isIntake1Ball()) {
                 gamepad1.rumble(250);

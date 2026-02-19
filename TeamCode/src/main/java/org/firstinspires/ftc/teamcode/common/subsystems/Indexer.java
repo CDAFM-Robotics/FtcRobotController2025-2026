@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.common.RobotStaticValuesClass;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
@@ -900,5 +901,45 @@ public class Indexer {
 
     }
 
+    public int getSlotMatchingMotifPattern() {
+        int matchingSlot = -1;
+        for(int i = 0; i < 2; i++){
+            for(int ia = 0; ia < 2; i ++) {
+                if(artifactColorArray[ia] == RobotStaticValuesClass.MotifPattern[i]){
+                    matchingSlot = ia;
+                    break;
+                }
+                else{
+                    matchingSlot = ia;
+                }
+            }
+        }
+        return matchingSlot;
+    }
 
+    public void moveToSlot(int slot) {
+        switch(slot){
+            case 0:
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ZERO_OUTPUT);
+                break;
+            case 1:
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_ONE_OUTPUT);
+                break;
+            case 2:
+                rotateToPosition(POSITION_INDEXER_SERVO_SLOT_TWO_OUTPUT);
+                break;
+            default:
+                RobotLog.d("Unexpected Rotate position given");
+                throw  new IllegalStateException("Rotator Slot Servo Unexpected Value: " + slot);
+        }
+    }
+    public int findANonEmptySlot() {
+        int output = 0;
+        for(int i = 0; i < artifactColorArray.length; i++) {
+            if(artifactColorArray[i] != ArtifactColor.NONE) {
+                output = i;
+            }
+        }
+        return output;
+    }
 }

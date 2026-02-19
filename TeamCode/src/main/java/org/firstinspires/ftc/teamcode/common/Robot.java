@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
 
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Arrays;
 
 public class Robot {
 
@@ -283,6 +282,72 @@ public class Robot {
                         throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
                 }
         }
+    }
+
+    public void shootMotifPattern() {
+        int slotMatch = 0;
+        switch (launchState) {
+            case INIT:
+                if(getIndexer().getSlotMatchingMotifPattern() != -1) {
+                    slotMatch = getIndexer().getSlotMatchingMotifPattern();
+                    launchState = LaunchBallStates.TURN_TO_LAUNCH;
+                }
+                else if(indexer.findABall()) {
+                    slotMatch = getIndexer().findANonEmptySlot();
+                }
+                else if (!indexer.atIntake()) {
+                    indexer.positionForIntake();
+                    launchState = LaunchBallStates.READY_TO_INTAKE;
+                    break;
+                }
+                break;
+            case TURN_TO_LAUNCH:
+                getIndexer().moveToSlot(slotMatch);
+                break;
+            case KICK_BALL:
+                telemetry.addLine("shootAllBalls: KICK_BALL");
+                RobotLog.d("shootAllBalls: KICK_BALL");
+                if (indexer.indexerFinishedTurning()) {
+                    safeToStop = false;
+                    launcher.kickBall();
+                    timeSinceKick.reset();
+                    launchState = LaunchBallStates.RESET_KICKER;
+                    break;
+                } else {
+                    break;
+                }
+            case RESET_KICKER:
+                telemetry.addLine("shootAllBalls: RESET_KICKER");
+                RobotLog.d("shootAllBalls: RESET_KICKER");
+                if (timeSinceKick.milliseconds() > WAIT_TIME_KICKER) {
+                    launcher.resetKicker();
+                    timeSinceKickReset.reset();
+                    launchState = LaunchBallStates.UPDATE_INDEXER;
+                    break;
+                } else {
+                    break;
+                }
+            case UPDATE_INDEXER:
+                telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
+                RobotLog.d("shootAllBalls: UPDATE_INDEXER");
+                if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
+                    safeToStop = true;
+                    indexer.updateAfterShoot();
+                    launchState = LaunchBallStates.INIT;
+                    RobotLog.d("shootAllBalls: UPDATE_INDEXER set init");
+                }
+                break;
+            case READY_TO_INTAKE:
+                if (indexer.indexerFinishedTurning()) {
+                    updateColorAllSlots();
+                    launchState = LaunchBallStates.INIT;
+                }
+                break;
+            default:
+                RobotLog.d("shootMotifPattern Unexpected");
+                throw new IllegalStateException("shootMotifPattern Unexpected value: " + launchState);
+        }
+
     }
 
     public void resetIndexer() {
