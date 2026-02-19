@@ -909,7 +909,8 @@ public class Launcher {
 
         telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
 
-        telemetry.update();
+        // TODO don't do this here. one time per loooop
+//        telemetry.update();
 
         // Logging
 

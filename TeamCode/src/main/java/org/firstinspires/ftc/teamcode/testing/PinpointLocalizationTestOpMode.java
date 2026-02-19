@@ -30,7 +30,13 @@ public class PinpointLocalizationTestOpMode extends LinearOpMode {
 
         double mmPerTick = inPerTick * 25.4;
         pinpoint.setEncoderResolution(1 / mmPerTick, DistanceUnit.MM);
-        pinpoint.setOffsets(mmPerTick * parYTicks, mmPerTick * perpXTicks, DistanceUnit.MM);
+
+        // pinpoint.setOffsets(mmPerTick * parYTicks, mmPerTick * perpXTicks, DistanceUnit.MM);
+        //TODO COPIED FROM drivebase.java
+        pinpoint.setOffsets(8, -3.25, DistanceUnit.INCH); //Tuned for 2026 Bot2 17Feb26
+
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         pinpoint.resetPosAndIMU();
 

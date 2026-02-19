@@ -74,6 +74,9 @@ public class DriveBase {
         double startX = 0;
         double startY = 0;
         double startHeading = 0;
+
+
+
         // if the auto completed, use the value from end of auto
         if (RobotStaticValuesClass.autoCompleted) {
             startX = RobotStaticValuesClass.robotStaticX;
@@ -82,7 +85,7 @@ public class DriveBase {
         }
 
         // Set the location of the robot - this should be the place you are starting the robot from
-            pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
+        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
 
     }
 
@@ -99,12 +102,13 @@ public class DriveBase {
 
     public void configurePinpoint(){
 
-        pinpoint.setOffsets(-116.0, -156.0, DistanceUnit.MM); //Tuned for Archimedes 1.5 31Oct25
+        // TODO TESTING Orientation may be wrong.
+        pinpoint.setOffsets(8, -3.25, DistanceUnit.INCH); //Tuned for 2026 Bot2 17Feb26 OK
 
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         pinpoint.resetPosAndIMU();
     }
