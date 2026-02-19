@@ -33,13 +33,12 @@ public class Robot {
     public boolean intake1Ball = false; //Picked up one ball
     private boolean safeToStop = true; //if kicker is down
 
-    private double shootingDistance = 0;
     private ArtifactColor ballColor = ArtifactColor.NONE;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public final int WAIT_TIME_KICKER = 500; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
+    public final int WAIT_TIME_KICKER = 300; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
@@ -140,7 +139,8 @@ public class Robot {
                      // This line is removed to save time.
                      indexer.updateColorAllSlots();
                      intake3Balls = true;
-                     autoIntakeState = AutoIntakeStates.POSITION_FOR_OUTTAKE;
+//                     indexer.positionForOuttake();
+                     autoIntakeState = AutoIntakeStates.INIT;
                      break;
                  }
              case TURN_EMPTY_SLOT_TO_INTAKE:
@@ -154,17 +154,16 @@ public class Robot {
                      if (indexer.isBallAtIntake()) {
                          telemetry.addLine("Robot: isBallAtIntake");
                          intake1Ball = true;
-                         indexer.updateBallColorAtIntake(indexer.getIndexerPosition());
+                         indexer.updateColorAtIntakeOnly();
                          autoIntakeState = AutoIntakeStates.INIT;
                          break;
                      }
                  }
                  break;
              case POSITION_FOR_OUTTAKE:
-                 indexer.positionForOuttake();
-                 autoIntakeState = AutoIntakeStates.READY_TO_SHOOT;
-                 break;
-             case READY_TO_SHOOT:
+                 if (indexer.indexerFinishedTurning()) {
+                     autoIntakeState = AutoIntakeStates.INIT;
+                 }
                  break;
              default:
                  throw new IllegalStateException("intakeWithIndexerTurn Unexpected value: " + autoIntakeState);
@@ -218,7 +217,6 @@ public class Robot {
             RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
             RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
 
-
                 switch (launchState) {
                     case INIT:
                         telemetry.addLine("shootAllBalls: INIT");
@@ -227,9 +225,12 @@ public class Robot {
                             launchState = LaunchBallStates.TURN_TO_LAUNCH;
                             break;
                         }
-                        else {
+                        else if (!indexer.atIntake()){
                             indexer.positionForIntake();
                             launchState = LaunchBallStates.READY_TO_INTAKE;
+                            break;
+                        }
+                        else {
                             break;
                         }
                     case TURN_TO_LAUNCH:
@@ -274,6 +275,7 @@ public class Robot {
                     case READY_TO_INTAKE:
                         if (indexer.indexerFinishedTurning()) {
                             updateColorAllSlots();
+                            launchState = LaunchBallStates.INIT;
                         }
                         break;
                     default:
@@ -330,7 +332,8 @@ public class Robot {
         // calculate vector to blue goal
         double deltaX = blueGoalX - robotX;
         double deltaY = blueGoalY - robotY;
-        shootingDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        double distanceToGoal = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        launcher.setShootingDistance(distanceToGoal);
 
         //calculates the angle in radians between the positive x-axis and a point
         double absoluteAngleRadians = Math.atan2(deltaY, deltaX);
@@ -340,15 +343,15 @@ public class Robot {
 
         relativeAngle = normalizeAngle(relativeAngle);
 
-//        telemetry.addData("deltaX:", deltaX);
-//        telemetry.addData("deltaY:", deltaY);
-//        telemetry.addData("robotX:", robotX);
-//        telemetry.addData("robotY:", robotY);
-//        telemetry.addData("absoluteAngleRadians:", absoluteAngleRadians);
-//        telemetry.addData("absoluteAngleDegree:", absoluteAngleDegree);
-//        telemetry.addData("pinPointHeading:", pinPointHeading);
-//        telemetry.addData("relativeAngle:", relativeAngle);
-//        telemetry.addData("relativeAngle",relativeAngle);
+        telemetry.addData("deltaX:", deltaX);
+        telemetry.addData("deltaY:", deltaY);
+        telemetry.addData("robotX:", robotX);
+        telemetry.addData("robotY:", robotY);
+        telemetry.addData("absoluteAngleRadians:", absoluteAngleRadians);
+        telemetry.addData("absoluteAngleDegree:", absoluteAngleDegree);
+        telemetry.addData("pinPointHeading:", pinPointHeading);
+        telemetry.addData("relativeAngle:", relativeAngle);
+        telemetry.addData("distance to goal",distanceToGoal);
 
         launcher.setTurretRelativeAngle(relativeAngle);
     }

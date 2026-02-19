@@ -99,10 +99,6 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             if (currentGamepad1.left_trigger != 0) {
                 robot.getIntake().reverseIntake();
             }
-            else if (currentGamepad1.left_trigger == 0 && previousGamepad1.left_trigger != 0){
-                reverseIntakeTimer.reset();
-                waitForReverseTimer = true;
-            }
 
             // reverse the intake for half a second to prevent the robot from intake the fourth ball
             if (waitForReverseTimer
@@ -134,11 +130,11 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
             }
 
             if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                robot.getLauncher().changeLauncherVelocity(50);
+                robot.getLauncher().changeLauncherVelocity(20);
             }
 
             if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                robot.getLauncher().changeLauncherVelocity(-50);
+                robot.getLauncher().changeLauncherVelocity(-20);
             }
 
             if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
@@ -182,9 +178,9 @@ public class DriverControlWithIndexerBlueTeleOp extends LinearOpMode {
                 robot.shootAllBalls();
             }
 
-//            if (currentGamepad2.right_trigger == 0 && !robot.isSafeToStop()) {
-//                robot.shootAllBalls();
-//            }
+            if (currentGamepad2.right_trigger == 0 && !robot.isSafeToStop()) {
+                robot.shootAllBalls();
+            }
 
             //TODO: driver 1 would like the gamepad 1 to rumble when the robot pick up a ball
 /*            if (robot.isIntake1Ball()) {

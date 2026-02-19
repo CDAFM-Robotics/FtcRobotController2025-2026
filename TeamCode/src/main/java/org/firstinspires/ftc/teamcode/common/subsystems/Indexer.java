@@ -211,7 +211,7 @@ public class Indexer {
         telemetry.addData("sensor1Distance", sensor1Distance);
         telemetry.addData("sensor2Distance", sensor2Distance);
 
-        if (sensor1Distance > 5) {
+        if (sensor1Distance > 3.5) {
             sensor1DetectedColor = ArtifactColor.NONE;
         } else if (sensor1RGBA.blue > sensor1RGBA.green) {
             sensor1DetectedColor = ArtifactColor.PURPLE;
@@ -221,7 +221,7 @@ public class Indexer {
 
         ArtifactColor sensor2DetectedColor;
 
-        if (sensor2Distance > 5) {
+        if (sensor2Distance > 3.5) {
             sensor2DetectedColor = ArtifactColor.NONE;
         } else if (sensor2RGBA.blue > sensor2RGBA.green) {
             sensor2DetectedColor = ArtifactColor.PURPLE;
@@ -240,6 +240,40 @@ public class Indexer {
         }
     }
 
+    private ArtifactColor getPredictedColorAtIntake(NormalizedRGBA sensor1RGBA, NormalizedRGBA sensor2RGBA, double sensor1Distance, double sensor2Distance) {
+
+        ArtifactColor sensor1DetectedColor;
+        telemetry.addData("sensor1Distance", sensor1Distance);
+        telemetry.addData("sensor2Distance", sensor2Distance);
+
+        if (sensor1Distance > 5) {
+            sensor1DetectedColor = ArtifactColor.UNKNOWN;
+        } else if (sensor1RGBA.blue > sensor1RGBA.green) {
+            sensor1DetectedColor = ArtifactColor.PURPLE;
+        } else {
+            sensor1DetectedColor = ArtifactColor.GREEN;
+        }
+
+        ArtifactColor sensor2DetectedColor;
+
+        if (sensor2Distance > 5) {
+            sensor2DetectedColor = ArtifactColor.UNKNOWN;
+        } else if (sensor2RGBA.blue > sensor2RGBA.green) {
+            sensor2DetectedColor = ArtifactColor.PURPLE;
+        } else {
+            sensor2DetectedColor = ArtifactColor.GREEN;
+        }
+
+        if (sensor1DetectedColor == sensor2DetectedColor) {
+            return sensor1DetectedColor;
+        } else if (sensor2DetectedColor != ArtifactColor.UNKNOWN) {
+            return sensor2DetectedColor;
+        } else if (sensor1DetectedColor != ArtifactColor.UNKNOWN) {
+            return sensor1DetectedColor;
+        } else {
+            return ArtifactColor.UNKNOWN;
+        }
+    }
     public void updateBallColorAtBackL(double position) {
         telemetry.addLine("updateBallColorAtOuttake() start");
         RobotLog.d("Indexer: updateBallColorAtOuttake() start");
@@ -272,9 +306,9 @@ public class Indexer {
     public void updateBallColorAtIntake(double position) {
         telemetry.addLine("updateBallColorAtIntakeLeft() start");
         RobotLog.d("Indexer: updateBallColorAtIntakeLeft() start");
-        //telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
-        //telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
-        //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
+        telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
+        telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
+        telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
 
         int i = 0;
 
@@ -289,6 +323,36 @@ public class Indexer {
         }
 
         artifactColorArray[i] = getPredictedColor(
+            colorSensorIntakeL.getNormalizedColors(),
+            colorSensorIntakeR.getNormalizedColors(),
+            ((DistanceSensor) colorSensorIntakeL).getDistance(DistanceUnit.CM),
+            ((DistanceSensor) colorSensorIntakeR).getDistance(DistanceUnit.CM));
+        telemetry.addData("updateBallColors index", i);
+        telemetry.addData("updateBallColors color1", artifactColorArray[i]);
+        RobotLog.d("updateBallColors color Intake Left %s",artifactColorArray[i]);
+
+    }
+
+    public void updateColorAtIntakeOnly() {
+        telemetry.addLine("updateBallColorAtIntakeLeft() start");
+        RobotLog.d("Indexer: updateBallColorAtIntakeLeft() start");
+        //telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
+        //telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
+        //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
+        double position = getIndexerPosition();
+        int i = 0;
+
+        if (position == POSITION_INDEXER_SERVO_SLOT_ZERO_INTAKE) {
+            i = 0;
+        } else if (position == POSITION_INDEXER_SERVO_SLOT_ONE_INTAKE) {
+            i = 1;
+        } else if (position == POSITION_INDEXER_SERVO_SLOT_TWO_INTAKE) {
+            i = 2;
+        } else {
+            telemetry.addLine("ERROR: updateBallColors");
+        }
+
+        artifactColorArray[i] = getPredictedColorAtIntake(
             colorSensorIntakeL.getNormalizedColors(),
             colorSensorIntakeR.getNormalizedColors(),
             ((DistanceSensor) colorSensorIntakeL).getDistance(DistanceUnit.CM),
@@ -761,8 +825,8 @@ public class Indexer {
             ((DistanceSensor) colorSensorIntakeL).getDistance(DistanceUnit.CM));
         telemetry.addData("isBallAtIntake colorSensorIntakeLL",
             ((DistanceSensor) colorSensorIntakeR).getDistance(DistanceUnit.CM));
-        if (((DistanceSensor) colorSensorIntakeL).getDistance(DistanceUnit.CM) < 3.25
-            || ((DistanceSensor) colorSensorIntakeR).getDistance(DistanceUnit.CM) < 3.25) {
+        if (((DistanceSensor) colorSensorIntakeL).getDistance(DistanceUnit.CM) < 2.5
+            || ((DistanceSensor) colorSensorIntakeR).getDistance(DistanceUnit.CM) < 2.5) {
             return true;
         } else {
             return false;

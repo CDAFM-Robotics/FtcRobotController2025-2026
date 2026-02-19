@@ -25,6 +25,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Robot;
 import org.firstinspires.ftc.teamcode.common.RobotStaticValuesClass;
 import org.firstinspires.ftc.teamcode.common.util.ArtifactColor;
+import org.firstinspires.ftc.teamcode.common.util.InterpolationTable;
 import org.firstinspires.ftc.teamcode.common.util.RunTimeoutAction;
 import org.firstinspires.ftc.teamcode.common.util.WaitUntilAction;
 
@@ -69,17 +70,17 @@ public class Launcher {
     public final double POSITION_TUREET_SERVO_INIT = 0.5;
 
     // Hood Servo
-    public final double POSITION_HOOD_SERVO_INIT = 0.5;
-    public final double POSITION_HOOD_SERVO_HIGH = 0.0;
-    public final double POSITION_HOOD_SERVO_LOW = 0.85;
+    public final double POSITION_HOOD_SERVO_INIT = 0.1;
+    public final double POSITION_HOOD_SERVO_HIGH = 0.1;
+    public final double POSITION_HOOD_SERVO_LOW = 1.0;
 
     public final double LAUNCH_POWER_FAR = 0.9;
     public final double LAUNCH_POWER_NEAR= 0.8;
     public final double LAUNCH_POWER_FULL= 1.0;
     public final double LAUNCH_POWER_LOW=0.3;   // TODO find lowest valuable power and set this
-    public final double LAUNCH_VELOCITY_FAR = 6000;
+    public final double LAUNCH_VELOCITY_FAR = 2200; // was: 6000 (wrong, 2200tps/28ppr*60 rpm 4714 rpm )
     public final double LAUNCH_VELOCITY_NEAR= 1300;
-    public final double LAUNCH_VELOCITY_FULL= 1500;
+    public final double LAUNCH_VELOCITY_FULL= 2200;
     public final double LAUNCH_VELOCITY_LOW= 1060;   // TODO find lowest valuable power and set this
     public final double LIMELIGHT_OFFSET = 17.4;
     public final double LIMELIGHT_HEIGHT_OFFSET = 436;
@@ -111,10 +112,10 @@ public class Launcher {
     public static double shootKf = 1.1;
     public static double targetVelocity;
     public static double currentVelocity;
+    private double shootingDistance;
 
-    // A TreeMap is better than HashMap for interpolation because it keeps
-    // keys sorted, allowing easy finding of surrounding points.
-    private final TreeMap<Double, Double> distanceToVelocityMap = new TreeMap<>();
+    // Use a table for interpolation
+    private InterpolationTable shootingTable;
 
     // Turret control variables
     public static double turretkF = 0.10;
@@ -340,6 +341,13 @@ public class Launcher {
         lastAngle = currentAngle;
         lastVoltage = currentVoltage;
 
+        shootingTable = new InterpolationTable(InterpolationTable.ExtrapolationMode.LINEAR);
+
+        shootingTable.add(30.20,1080,1.0);
+        shootingTable.add(60.02,1200,0.30);
+        shootingTable.add(90,1320,0.15);
+        shootingTable.add(90,1560,0.0);
+
         //limelight = hardwareMap.get(Limelight3A.class, "limelight");
         //limelight.pipelineSwitch(0);
 
@@ -348,33 +356,6 @@ public class Launcher {
         // Initialize the map with calibration points.
         // Distances in cm, velocities as motor power (0.0 to 1.0)
         // Example values:
-        distanceToVelocityMap.put(650.0, 1160.0);
-        distanceToVelocityMap.put(684.0, 1160.0);
-        distanceToVelocityMap.put(768.0, 1180.0);
-        distanceToVelocityMap.put(890.0, 1180.0);
-        distanceToVelocityMap.put(976.0, 1180.0);
-        distanceToVelocityMap.put(1051.0, 1200.0);
-        distanceToVelocityMap.put(1126.0, 1200.0);
-        distanceToVelocityMap.put(1244.0, 1200.0);
-        distanceToVelocityMap.put(1326.0, 1220.0);
-        distanceToVelocityMap.put(1436.0, 1220.0);
-        distanceToVelocityMap.put(1524.0, 1220.0);
-        distanceToVelocityMap.put(1648.0, 1230.0);
-        distanceToVelocityMap.put(1748.0, 1230.0);
-        distanceToVelocityMap.put(1825.0, 1240.0);
-        distanceToVelocityMap.put(1925.0, 1260.0);
-        distanceToVelocityMap.put(2046.0, 1280.0);
-        distanceToVelocityMap.put(2126.0, 1300.0);
-        distanceToVelocityMap.put(2169.0, 1310.0);
-        distanceToVelocityMap.put(2400.0, 1360.0);
-        distanceToVelocityMap.put(2528.0, 1360.0);
-        distanceToVelocityMap.put(2681.0, 1380.0);
-        distanceToVelocityMap.put(2751.0, 1400.0);
-        distanceToVelocityMap.put(2853.0, 1420.0);
-        distanceToVelocityMap.put(2952.0, 1440.0);
-        distanceToVelocityMap.put(3014.0, 1440.0);
-        distanceToVelocityMap.put(3100.0, 1440.0);
-        distanceToVelocityMap.put(3550.0, 1460.0);  // Far, max speed
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
@@ -388,7 +369,6 @@ public class Launcher {
             7: OBELISK              AprilTag            USED
 
      */
-
 
     public ArtifactColor[] getMotifPattern() {
 //        LLResult result = limelight.getLatestResult();
@@ -472,7 +452,7 @@ public class Launcher {
         }
     }
     public void startLauncher() {
-        launcherVelocity = LAUNCH_VELOCITY_FAR;
+        //launcherVelocity = shootingTable.getData1(shootingDistance);
         setLauncherVelocity(launcherVelocity);
         launcherActive = true;
     }
@@ -534,6 +514,19 @@ public class Launcher {
         }
     }
 
+    public void changeHood(double change) {
+        hoodPosition += change;
+
+        if (hoodPosition > 1.0) {
+            hoodPosition = 1.0;
+        }
+        else if (hoodPosition < 0.0) {
+            hoodPosition = 0.0;
+        }
+
+        hoodServo.setPosition(hoodPosition);
+    }
+
     /*****************************
      *******LAUNCHER MOTOR********
      *****************************/
@@ -546,19 +539,8 @@ public class Launcher {
         launcherMotor1.setPower(launcherMotor1.getPower() - 0.25);
         launcherMotor2.setPower(launcherMotor2.getPower() - 0.25);
     }
-    public double getLauncherMotorPower(){return launcherMotor1.getPower();}
 
-//    public void startLauncherManualNear(){
-//        launcherVelocity = LAUNCH_VELOCITY_NEAR;
-//        setLauncherVelocity(launcherVelocity);
-//        launcherActive = true;
-//    }
-//
-//    public void startLauncherManualFar(){
-//        launcherVelocity = LAUNCH_VELOCITY_FAR;
-//        setLauncherVelocity(launcherVelocity);
-//        launcherActive = true;
-//    }
+    public double getLauncherMotorPower(){return launcherMotor1.getPower();}
 
     public void reduceLauncherPower() {
         if (launchPower >= 0.1) {
@@ -571,47 +553,6 @@ public class Launcher {
         }
         setLauncherPower(launchPower);
     }
-
-    public void increaseLauncherPower() {
-        if (launchPower < LAUNCH_POWER_FULL) {
-            launchPower += 0.1;
-            if (launchPower > LAUNCH_POWER_FULL)
-                launchPower=LAUNCH_POWER_FULL;
-        }
-        else{
-            launchPower = 1;
-        }
-        setLauncherPower(launchPower);
-        launcherActive = true;
-    }
-
-    public void changeLauncherPower(double change) {
-        launchPower += change;
-
-        if (launchPower > 1.0) {
-            launchPower = 1.0;
-        }
-        else if (launchPower < 0.0) {
-            launchPower = 0.0;
-        }
-
-        setLauncherPower(launchPower);
-        launcherActive = (launchPower != 0.0);
-    }
-
-//    public void startLauncherPartialPower() {
-//        //launchPower = LAUNCH_POWER_NEAR;
-//        //setLauncherPower(launchPower);
-//        //start launcher with velocity
-//        if ( limelightValid() ) {
-//            launcherVelocity = getVelocityDistance(getGoalDistance());
-//        }
-//        else {
-//            launcherVelocity = LAUNCH_VELOCITY_NEAR;
-//        }
-//        setLauncherVelocity(launcherVelocity);
-//        launcherActive = true;
-//    }
 
     public void stopLauncher() {
         launchPower = 0;
@@ -646,138 +587,11 @@ public class Launcher {
         return launcherActive;
     }
 
-//    public LLResult getLimelightResult(){
-//        return limelight.getLatestResult();
-//    }
-
-/*    public double getRedAimingPower(){
-        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        LLResult result = limelight.getLatestResult();
-        double answer = 0;
-        if(result.isValid()){
-            if(Math.abs(result.getTx()) > 3){
-                if(result.getTx() < 0){
-                    answer = -0.17;
-                }
-                else if(result.getTx() > 0){
-                    answer = 0.17;
-                }
-            }
-            else{
-                answer = 0;
-            }
-        }
-
-        return answer;
-    }
-*/
-    public Boolean limelightValid() {
-        return limelight.getLatestResult().isValid();
-    }
-
-    public void setLimelightPipeline(int pipeline) {
-        limelight.pipelineSwitch(pipeline);
-    }
-
-    public void setLimelightPipeline(boolean isRed) {
-        if (isRed) {
-            limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        } else {
-            limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = BLUE_GOAL
-        }
-    }
-
-    public double getAimingPower(){
-        LLResult result = limelight.getLatestResult();
-        double answer = 0;
-        if(result.isValid()){
-            if(Math.abs(result.getTx()) > 3){
-                if(result.getTx() < 1){
-                    answer = -0.2;
-                }
-                if(result.getTx() > 1){
-                    answer = 0.2;
-                }
-            }
-            else{
-                answer = 0;
-            }
-        }
-        return answer;
-    }
-
-    public double setAimPowerPID (double time, boolean isRed) {
-        double currentTime = time;
-        double deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-
-        LLResult result = limelight.getLatestResult();
-        double power = 0;
-        if(result.isValid()) {
-            double currentX = result.getTx();
-            if (!isRed) {
-                currentX -= 1.25;
-            }
-
-            // Proportional term
-            double proportional = 0.0;
-            proportional = aimKp * currentX;
-
-            // Integral term
-            integralSum += currentX * deltaTime;
-            // Clamp integral sum to prevent windup
-            if (integralSum > integralSumMax) {
-                integralSum = integralSumMax;
-            } else if (integralSum < integralSumMin) {
-                integralSum = integralSumMin;
-            }
-            double integral = aimKi * integralSum;
-
-            // Derivative term
-            double derivative = aimKd * ((currentX - lastError) / deltaTime);
-            lastError = currentX;
-
-            // Feedforward term (can be used to counteract gravity or apply a base power)
-            double feedforward = 0.0;
-            if (currentX < 0) {
-                feedforward = 0 - powerStatic; // Or kF * signum(target - currentPosition) for simple direction
-            }
-            else{
-                feedforward = powerStatic;
-            }
-
-            // Combine all terms
-            power = proportional + integral + derivative + feedforward;
-        }
-        return power;
-    }
-
-
-//    public double getGoalDistance () {
-//        LLResult llresult = limelight.getLatestResult();
-//        double distance = 0;
-//        if (llresult.isValid()) {
-//            distance = LIMELIGHT_HEIGHT_OFFSET / Math.tan(Math.toRadians(llresult.getTy() + LIMELIGHT_OFFSET));
-//        }
-//        return distance;
-//    }
-
     public void setLauncherVelocity(double velocity) {
         launcherMotor2.setVelocity(launcherVelocity);
         launcherMotor1.setVelocity(launcherVelocity);
     }
 
-    public void setLauncherVelocityDistance() {
-//        launcherVelocity = getVelocityDistance(getGoalDistance());
-        setLauncherVelocity(launcherVelocity);
-        targetVelocity = launcherVelocity;
-    }
-
-/*    public void setLauncherVelocityBlueDistance() {
-        launcherVelocity = getVelocityDistance(getGoalDistance());
-        setLauncherVelocity(launcherVelocity);
-    }
-*/
 
     public void changeLauncherVelocity(double change) {
         launcherVelocity += change;
@@ -791,19 +605,6 @@ public class Launcher {
 
         setLauncherVelocity(launcherVelocity);
         launcherActive = (launcherVelocity != 0.0);
-    }
-
-    public void changeHood(double change) {
-        hoodPosition += change;
-
-        if (hoodPosition > 1.0) {
-            hoodPosition = 1.0;
-        }
-        else if (hoodPosition < 0.0) {
-            hoodPosition = 0.0;
-        }
-
-        hoodServo.setPosition(hoodPosition);
     }
 
     public void changeKicker(double change) {
@@ -823,34 +624,6 @@ public class Launcher {
         return kickerServo.getPosition();
     }
 
-    public double getVelocityByDistance(double currentDistance) {
-        // Handle edge cases: distance beyond min/max points
-        if (currentDistance <= distanceToVelocityMap.firstKey()) {
-            return distanceToVelocityMap.firstEntry().getValue();
-        }
-        if (currentDistance >= distanceToVelocityMap.lastKey()) {
-            return distanceToVelocityMap.lastEntry().getValue();
-        }
-
-        // Find the bounding points for linear interpolation
-        Map.Entry<Double, Double> lower = distanceToVelocityMap.floorEntry(currentDistance);
-        Map.Entry<Double, Double> upper = distanceToVelocityMap.ceilingEntry(currentDistance);
-
-        if (lower == null || upper == null) {
-            return 0.0; // Should not happen with the edge case checks, but for safety
-        }
-
-        // Perform linear interpolation (LERP)
-        double dist1 = lower.getKey();
-        double vel1 = lower.getValue();
-        double dist2 = upper.getKey();
-        double vel2 = upper.getValue();
-
-        // Formula: v = v1 + (v2 - v1) * ((d - d1) / (d2 - d1))
-        double velocity = vel1 + (vel2 - vel1) * ((currentDistance - dist1) / (dist2 - dist1));
-
-        return velocity;
-    }
 
     //For launch motor coefficients testing only
     public void setLaunchMotorPIDFCoefficients() {
@@ -894,6 +667,15 @@ public class Launcher {
         double turretPower = updateTurretPID(turretTarget, actualAngle);
         launcherServo.setPower(turretPower);
 
+        // Set hood Servo position
+        hoodPosition = shootingTable.getData2(shootingDistance);
+        hoodServo.setPosition(hoodPosition);
+
+        // Set launcher power
+        launcherVelocity = shootingTable.getData1(shootingDistance);
+        if (isLauncherActive())
+            setLauncherVelocity(launcherVelocity);
+
         // Add telemetry data for debugging
 
         telemetry.addData("Power", turretPower);
@@ -903,10 +685,8 @@ public class Launcher {
         telemetry.addLine();
         telemetry.addData("Last Servo Voltage", "%.2f", lastVoltage);
         telemetry.addData("Last Servo Angle Raw", "%.2f", lastAngle);
-        telemetry.addLine();
         telemetry.addData("Difference", "%.2f", diff);
         telemetry.addData("Angle Offset", "%.2f", currentAngleOffset);
-
         telemetry.addData("Actual Servo Angle", "%.2f", actualAngle);
 
         // TODO don't do this here. one time per loooop
@@ -948,10 +728,11 @@ public class Launcher {
         telemetry.addData("turret Integral", "%.2f", turretIntegralSum);
         telemetry.addData("turret Derivative", "%.2f", derivative);
         telemetry.addData("turret Power", "%.2f", turretPower);
-        telemetry.addLine();
 
         return turretPower;
     }
 
-
+    public void setShootingDistance(double distanceToGoal) {
+        shootingDistance = distanceToGoal;
+    }
 }
