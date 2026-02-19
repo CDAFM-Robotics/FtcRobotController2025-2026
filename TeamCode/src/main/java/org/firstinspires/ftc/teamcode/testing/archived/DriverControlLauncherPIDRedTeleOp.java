@@ -47,7 +47,6 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
 
         initializedIndexerTimer.reset();
         aimTimer.reset();
-        robot.resetIndexerColorStart();
         while (initializedIndexerTimer.milliseconds() < 1800) {
             robot.resetIndexer();
         }
@@ -143,9 +142,6 @@ public class DriverControlLauncherPIDRedTeleOp extends LinearOpMode {
             }*/
 
             // When indexer stuck or out of alignment, recover the color of the balls
-            if (currentGamepad2.left_trigger != 0 && previousGamepad2.left_trigger == 0){
-                robot.resetIndexerColorStart();
-            }
 
             if (currentGamepad2.left_trigger != 0)
                 robot.resetIndexer();

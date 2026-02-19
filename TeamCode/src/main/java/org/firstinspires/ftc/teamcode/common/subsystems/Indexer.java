@@ -23,7 +23,7 @@ public class Indexer {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    Servo indexerServo = null;
+    public Servo indexerServo = null;
     private ElapsedTime timeSinceTurnIndex = new ElapsedTime();
     private int nextEmptySlot;
     private int nextShootSlot;
@@ -211,7 +211,7 @@ public class Indexer {
         telemetry.addData("sensor1Distance", sensor1Distance);
         telemetry.addData("sensor2Distance", sensor2Distance);
 
-        if (sensor1Distance > 3) {
+        if (sensor1Distance > 5) {
             sensor1DetectedColor = ArtifactColor.NONE;
         } else if (sensor1RGBA.blue > sensor1RGBA.green) {
             sensor1DetectedColor = ArtifactColor.PURPLE;
@@ -221,7 +221,7 @@ public class Indexer {
 
         ArtifactColor sensor2DetectedColor;
 
-        if (sensor2Distance > 3) {
+        if (sensor2Distance > 5) {
             sensor2DetectedColor = ArtifactColor.NONE;
         } else if (sensor2RGBA.blue > sensor2RGBA.green) {
             sensor2DetectedColor = ArtifactColor.PURPLE;
@@ -300,8 +300,8 @@ public class Indexer {
     }
 
     public void updateBallColorAtBackR(double position) {
-        telemetry.addLine("updateBallColorAtIntakeRight() start");
-        RobotLog.d("Indexer: updateBallColorAtIntakeRight() start");
+        telemetry.addLine("updateBallColorAtBackR() start");
+        RobotLog.d("Indexer: updateBallColorAtBackR() start");
         //telemetry.addData("updateBallColors Color 0", artifactColorArray[0]);
         //telemetry.addData("updateBallColors Color 1", artifactColorArray[1]);
         //telemetry.addData("updateBallColors Color 2", artifactColorArray[2]);
@@ -325,7 +325,7 @@ public class Indexer {
             ((DistanceSensor) colorSensorBackRL).getDistance(DistanceUnit.CM));
         telemetry.addData("updateBallColors index", i);
         telemetry.addData("updateBallColors color1", artifactColorArray[i]);
-        RobotLog.d("updateBallColors color intake right %s",artifactColorArray[i]);
+        RobotLog.d("updateBallColorAtBackR %s",artifactColorArray[i]);
     }
 
     public void updateColorAllSlots(){
@@ -684,6 +684,7 @@ public class Indexer {
     public void updateAfterShoot() {
         // the ball has been shot in nextShootSlot
         //telemetry.addData("updateAfterShoot: next shoot slot", nextShootSlot);
+        RobotLog.d("updateAfterShoot: next shoot slot %d", nextShootSlot);
         artifactColorArray[nextShootSlot] = ArtifactColor.NONE;
     }
 

@@ -30,7 +30,7 @@ public class KickerServoTestOpMode extends LinearOpMode {
         double voltageScaler = 27/0.2815; // 27 degrees / 0.2815 on average change b/t every number
         double theReading = 0.0;
 
-
+        robot.getIndexer().indexerServo.setPosition(0.176);
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();

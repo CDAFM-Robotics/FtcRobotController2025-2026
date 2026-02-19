@@ -64,7 +64,7 @@ public class Launcher {
 
     double lastServoPosition;
 
-    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.22; // 0.26
+    public final double POSITION_KICKER_SERVO_KICK_BALL = 0.16; // 0.26
     public final double POSITION_KICKER_SERVO_INIT = 0.51;
     public final double POSITION_TUREET_SERVO_INIT = 0.5;
 
@@ -414,12 +414,14 @@ public class Launcher {
     private boolean launcherActive = false;
 
     public void kickBall() {
+        RobotLog.d("kickball");
         if (isLauncherActive()) {
             kickerServo.setPosition(POSITION_KICKER_SERVO_KICK_BALL);
         }
     }
 
     public void resetKicker() {
+        RobotLog.d("reset kicker");
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
     }
 
@@ -750,16 +752,6 @@ public class Launcher {
         return power;
     }
 
-/*    public double getREDGoalDistance() {
-        limelight.pipelineSwitch(Robot.LLPipelines.RED_GOAL.ordinal());    // 5 = RED_GOAL
-        return getGoalDistance();
-    }
-
-    public double getBlueGoalDistance(){
-        limelight.pipelineSwitch(Robot.LLPipelines.BLUE_GOAL.ordinal());    // 6 = Blue_GOAL
-        return getGoalDistance();
-    }
-*/
 
 //    public double getGoalDistance () {
 //        LLResult llresult = limelight.getLatestResult();
@@ -831,7 +823,7 @@ public class Launcher {
         return kickerServo.getPosition();
     }
 
-    public double getVelocityDistance(double currentDistance) {
+    public double getVelocityByDistance(double currentDistance) {
         // Handle edge cases: distance beyond min/max points
         if (currentDistance <= distanceToVelocityMap.firstKey()) {
             return distanceToVelocityMap.firstEntry().getValue();

@@ -39,7 +39,7 @@ public class Robot {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public final int WAIT_TIME_KICKER = 200; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
+    public final int WAIT_TIME_KICKER = 500; // 75 didn't shoot once  // was 175 // was 275 (SNGLE RB WHEEL)
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         // Create an instance of the hardware map and telemetry in the Robot class
@@ -69,22 +69,14 @@ public class Robot {
         READY_TO_SHOOT
     }
 
-    public enum IndexerResetStates {
-        INIT,
-        CHECK_INTAKE,
-        CHECK_0TO1,
-        CHECK_1TO2,
-        CHECK_2TO1,
-        CHECK_LAST
-    }
-
     public enum LaunchBallStates {
         IDLE,
         INIT,
         TURN_TO_LAUNCH,
         KICK_BALL,
         RESET_KICKER,
-        UPDATE_INDEXER
+        UPDATE_INDEXER,
+        READY_TO_INTAKE
     }
     /*
         LIMELIGHT PIPELINES:        TYPE:               STATUS:
@@ -109,8 +101,7 @@ public class Robot {
         OBELISK
     }
 
-    IndexerResetStates indexerResetState = IndexerResetStates.INIT;
-    LaunchBallStates launchState = LaunchBallStates.IDLE;
+    LaunchBallStates launchState = LaunchBallStates.INIT;
     AutoIntakeStates autoIntakeState = AutoIntakeStates.INIT;
 
     public DriveBase getDriveBase() {
@@ -215,27 +206,32 @@ public class Robot {
 
     public void shootAllBalls() {
         telemetry.addLine("shootAllBalls");
-        if (indexer.atIntake()) {
-            indexer.updateColorAllSlots();
-        }
+
         telemetry.addData("color:", indexer.artifactColorArray[0]);
         telemetry.addData("color:", indexer.artifactColorArray[1]);
         telemetry.addData("color:", indexer.artifactColorArray[2]);
 
         // check to see if flywheel motors are running
         if(launcher.isLauncherActive()) {
-            //RobotLog.d("shootAllBalls");
-            //RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
-            //RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
-            //RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
+            RobotLog.d("shootAllBalls");
+            RobotLog.d("0 color: %s", indexer.artifactColorArray[0]);
+            RobotLog.d("1 color: %s", indexer.artifactColorArray[1]);
+            RobotLog.d("2 color: %s", indexer.artifactColorArray[2]);
 
-            if (indexer.findABall()) {
+
                 switch (launchState) {
                     case INIT:
                         telemetry.addLine("shootAllBalls: INIT");
-                        //RobotLog.d("shootAllBalls: INIT");
-                        launchState = LaunchBallStates.TURN_TO_LAUNCH;
-                        break;
+                        RobotLog.d("shootAllBalls: INIT");
+                        if(indexer.findABall()) {
+                            launchState = LaunchBallStates.TURN_TO_LAUNCH;
+                            break;
+                        }
+                        else {
+                            indexer.positionForIntake();
+                            launchState = LaunchBallStates.READY_TO_INTAKE;
+                            break;
+                        }
                     case TURN_TO_LAUNCH:
                         telemetry.addLine("shootAllBalls: TURN_TO_LAUNCH");
                         RobotLog.d("shootAllBalls: TURN_TO_LAUNCH");
@@ -268,33 +264,23 @@ public class Robot {
                     case UPDATE_INDEXER:
                         telemetry.addLine("shootAllBalls: UPDATE_INDEXER");
                         RobotLog.d("shootAllBalls: UPDATE_INDEXER");
-                        indexer.updateAfterShoot();
                         if (timeSinceKickReset.milliseconds() > WAIT_TIME_KICKER) {
                             safeToStop = true;
+                            indexer.updateAfterShoot();
+                            launchState = LaunchBallStates.INIT;
+                            RobotLog.d("shootAllBalls: UPDATE_INDEXER set init");
                         }
-                        launchState = LaunchBallStates.INIT;
+                        break;
+                    case READY_TO_INTAKE:
+                        if (indexer.indexerFinishedTurning()) {
+                            updateColorAllSlots();
+                        }
                         break;
                     default:
                         RobotLog.d("shootAllBalls Unexpected");
                         throw new IllegalStateException("shootAllBalls Unexpected value: " + launchState);
                 }
-            }
-            else {
-                //robot think there's no more balls. verify
-                // to update color need to position for intake first
-                // This may create a racing condition
-                indexer.positionForIntake();
-            }
         }
-
-    }
-
-    public void resetIndexerColorStart(){
-        //telemetry.addData("resetIndexerColorStart: start state", indexerResetState);
-        //RobotLog.d("resetIndexerColorStart: start state: %s", indexerResetState);
-        indexerResetState = IndexerResetStates.CHECK_INTAKE;
-        //telemetry.addData("resetIndexerColorStart: done state", indexerResetState);
-        //RobotLog.d("resetIndexerColorStart: done state %s", indexerResetState);
     }
 
     public void resetIndexer() {
