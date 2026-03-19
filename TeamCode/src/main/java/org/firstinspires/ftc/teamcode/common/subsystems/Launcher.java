@@ -139,6 +139,9 @@ public class Launcher {
     private double turretIntegralSum = 0;
     private double turretTime = 0;
 
+    public static double MOUNTING_HEIGHT_INCHES = 18.5;
+    public static double BALL_RADIUS_INCHES = 2.5;
+
     // Autonomous Actions
     public class SpinLauncherAction implements Action {
 
@@ -215,6 +218,10 @@ public class Launcher {
 
             return false;
         }
+    }
+
+    public LLResult getLimelightResult(){
+        return limelight.getLatestResult();
     }
 
     public class AprilTagAction implements Action {
@@ -735,6 +742,28 @@ public class Launcher {
 
         return turretPower;
     }
+
+    public double getDistanceToNearestPurpleArtifiact(){
+        limelight.pipelineSwitch(0);
+        double distToTargetY = (MOUNTING_HEIGHT_INCHES - BALL_RADIUS_INCHES) / Math.tan(-Math.toRadians(getLimelightResult().getTy()));
+        return distToTargetY;
+    }
+    public double getDistanceToNearestPurpleArtifiactX(){
+        limelight.pipelineSwitch(0);
+        double distToTargetX = getDistanceToNearestPurpleArtifiact() * Math.tan(Math.toRadians(getLimelightResult().getTx()));
+        return distToTargetX;
+    }
+    public double getDistanceToNearestGreenArtifiact(){
+        limelight.pipelineSwitch(1);
+        double distToTargetY = (MOUNTING_HEIGHT_INCHES - BALL_RADIUS_INCHES) / Math.tan(-Math.toRadians(getLimelightResult().getTy()));
+        return distToTargetY;
+    }
+    public double getDistanceToNearestGreenArtifiactX(){
+        limelight.pipelineSwitch(1);
+        double distToTargetX = getDistanceToNearestGreenArtifiact() * Math.tan(Math.toRadians(getLimelightResult().getTx()));
+        return distToTargetX;
+    }
+
 
     public void setShootingDistance(double distanceToGoal) {
         shootingDistance = distanceToGoal;
