@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.testing.archived;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+@Disabled
 @TeleOp(name = "ballDetector", group = "0testing")
 public class ballDetectionLimelightTest extends LinearOpMode {
     private Limelight3A limelight;
     private static double MOUNTING_HEIGHT_INCHES = 18.5;
     private static double BALL_RADIUS_INCHES = 2.5;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
