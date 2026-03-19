@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -56,6 +57,7 @@ public class Launcher {
     // turret servo
     CRServo launcherServo;
     AnalogInput launcherAnalogInput;
+    TouchSensor turretMagneticSensor;
 
     public enum QuadrantRotatorServo{
         POSITIVE, NEGATIVE, ZERO
@@ -315,6 +317,7 @@ public class Launcher {
         launcherServo = hardwareMap.get(CRServo.class, "turretServo");
         launcherAnalogInput = hardwareMap.get(AnalogInput.class, "turretAnalog");
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
+        turretMagneticSensor = hardwareMap.get(TouchSensor.class, "turretMagneticSensor");
 
         kickerPosition = POSITION_KICKER_SERVO_INIT;
         kickerServo.setPosition(POSITION_KICKER_SERVO_INIT);
@@ -764,6 +767,7 @@ public class Launcher {
         return distToTargetX;
     }
 
+    public boolean turretMagneticSensorDetects(){return turretMagneticSensor.isPressed();}
 
     public void setShootingDistance(double distanceToGoal) {
         shootingDistance = distanceToGoal;
