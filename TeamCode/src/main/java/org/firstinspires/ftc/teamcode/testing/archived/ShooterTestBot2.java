@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.archived;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.common.Robot;
-
 @TeleOp(name="shooter Test", group = "Testing")
+@Disabled
 public class ShooterTestBot2 extends LinearOpMode {
     public DcMotor shooterLeftMotor = null;
     public DcMotor shooterRightMotor = null;

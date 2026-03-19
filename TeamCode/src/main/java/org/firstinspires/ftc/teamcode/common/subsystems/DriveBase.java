@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.common.RobotStaticValuesClass;
 
 public class DriveBase {
 
@@ -44,9 +45,9 @@ public class DriveBase {
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
-        leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
-        kickStandLight = hardwareMap.get(Servo.class, "kickStandLight");
+        //rightKickStand = hardwareMap.get(Servo.class, "rightKickStand");
+        //leftKickStand = hardwareMap.get(Servo.class, "leftKickStand");
+        //kickStandLight = hardwareMap.get(Servo.class, "kickStandLight");
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -59,21 +60,32 @@ public class DriveBase {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // initialize the kick stand servos
-        rightKickStand.setPosition(0.5);
-        leftKickStand.setPosition(0.5);
+        //rightKickStand.setPosition(0.5);
+        //leftKickStand.setPosition(0.5);
 
         // ground lights OFF
-        kickStandLight.setPosition(0.0);
-
+        //kickStandLight.setPosition(0.0);
 
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // Configure the sensor
         configurePinpoint();
+        double startX = 0;
+        double startY = 0;
+        double startHeading = 0;
+
+
+
+        // if the auto completed, use the value from end of auto
+        if (RobotStaticValuesClass.autoCompleted) {
+            startX = RobotStaticValuesClass.robotStaticX;
+            startY = RobotStaticValuesClass.robotStaticY;
+            startHeading = RobotStaticValuesClass.robotStaticHeading;
+        }
 
         // Set the location of the robot - this should be the place you are starting the robot from
-        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0));
+        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, startX, startY, AngleUnit.RADIANS, startHeading));
 
     }
 
@@ -90,12 +102,13 @@ public class DriveBase {
 
     public void configurePinpoint(){
 
-        pinpoint.setOffsets(-116.0, -156.0, DistanceUnit.MM); //Tuned for Archimedes 1.5 31Oct25
+        // TODO TESTING Orientation may be wrong.
+        pinpoint.setOffsets(8, -3.25, DistanceUnit.INCH); //Tuned for 2026 Bot2 17Feb26 OK
 
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         pinpoint.resetPosAndIMU();
     }
@@ -144,7 +157,7 @@ public class DriveBase {
         backLeftMotor.setPower(backLeftPower);
     }
 
-    public void setKickStand() {
+/*    public void setKickStand() {
         rightKickStand.setPosition(0.0);
         leftKickStand.setPosition(1.0);
     }
@@ -164,6 +177,17 @@ public class DriveBase {
 
     public void adjustKickStandLight(double power){
         kickStandLight.setPosition(power);
+    }*/
+
+    public double getPinPointPosX() {
+        return pinpoint.getPosX(DistanceUnit.INCH);
     }
 
+    public double getPinPointPosY() {
+        return pinpoint.getPosY(DistanceUnit.INCH);
+    }
+
+    public double getPinPointHeading() {
+        return pinpoint.getHeading(AngleUnit.RADIANS);
+    }
 }
